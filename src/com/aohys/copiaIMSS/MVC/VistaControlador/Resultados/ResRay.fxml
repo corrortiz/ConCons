@@ -78,7 +78,7 @@
                      <center>
                         <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                            <children>
-                              <StackPane layoutX="14.0" layoutY="14.0" prefHeight="500.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <StackPane fx:id="stackPane" layoutX="14.0" layoutY="14.0" prefHeight="500.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
                                     <ImageView fx:id="imageView" fitHeight="331.0" fitWidth="318.0" pickOnBounds="true" preserveRatio="true" styleClass="imagenAdentro">
                                        <effect>

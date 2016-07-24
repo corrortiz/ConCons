@@ -81,7 +81,11 @@ public class Efectos implements Initializable{
         borderPane.setTop(hBoxOcualta);
     }
     
-    private void bindgAModo(Node node){
+    /**
+     * bindea la opacidad
+     * @param node 
+     */
+    public DoubleBinding bindgAModo(Node node){
         DoubleBinding opacityBinding = new DoubleBinding() {
             {
                 // List the dependencies with super.bind()
@@ -92,6 +96,7 @@ public class Efectos implements Initializable{
                return (node.isDisable()) ? 0 : 1;
             }
         };
+        return opacityBinding;
     }
     
 }

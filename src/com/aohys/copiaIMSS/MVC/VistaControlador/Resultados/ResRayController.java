@@ -7,6 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Resultados;
 
+
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.imagenrayos;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.imagenrayos.cargaUnaImagen;
@@ -14,6 +15,8 @@ import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.Modelo.Rayos;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
+import com.aohys.rehabSys.Utilidades.ClasesAuxiliares.Efectos;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -25,11 +28,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -55,11 +57,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
+import org.controlsfx.control.InfoOverlay;
 
 /**
  * FXML Controller class
@@ -111,9 +115,12 @@ public class ResRayController implements Initializable {
     @FXML private AnchorPane anchorPane;
     @FXML private ImageView imageView;
     @FXML private ProgressIndicator pi;
+    @FXML private StackPane stackPane;
     //Variables de control
-    private BooleanProperty activarButtonAgregar = new SimpleBooleanProperty(false);
+    private BooleanProperty activarButtonAgregar = new SimpleBooleanProperty(true);
+    //private ExecutorService dbExeccutor;
     private ExecutorService dbExeccutor;
+    
     //Imagenes Botones
     Image impresora = 
         new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
@@ -123,20 +130,6 @@ public class ResRayController implements Initializable {
         new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     Image Nohay = 
         new Image("file:src/com/aohys/copiaIMSS/Utilidades/Imagenes/OncoVera.png");
-    
-     /**
-     * clase para crear hilos de la base de datos
-     */
-    static class databaseThreadFactory implements ThreadFactory {
-        static final AtomicInteger poolNumber = new AtomicInteger(1);
-        
-        @Override 
-        public Thread newThread(Runnable runnable) {
-          Thread thread = new Thread(runnable, "Database-Connection-" + poolNumber.getAndIncrement() + "-thread");
-          thread.setDaemon(true);
-          return thread;
-        }
-    }  
     
     /**
      * metodo para pedir un hilo antes de una llamada a la bd
@@ -170,10 +163,10 @@ public class ResRayController implements Initializable {
         });
         
         pi.setVisible(false);
-        bttAgregar.setVisible(false);
+        
         
         bttAgregar.disableProperty().bind(activarButtonAgregar);
-        bttAgregar.visibleProperty().bind(activarButtonAgregar);
+        bttAgregar.opacityProperty().bind(new Efectos().bindgAModo(bttAgregar));
         bttAgregar.setGraphic(new ImageView(guardar));
         
     }
@@ -237,7 +230,7 @@ public class ResRayController implements Initializable {
             public void handle(WorkerStateEvent t) {
                  rayosVacio = cargaImag.getValue();
                  if (rayosVacio!=null) {
-                     imageView.setImage(rayosVacio.getIma__imaRay());
+                     colocaImagen(rayosVacio.getIma__imaRay());
                      activarButtonAgregar.set(true);
                  }else{
                      imageView.setImage(Nohay);
@@ -273,9 +266,8 @@ public class ResRayController implements Initializable {
 
         if (file!=null) {
             try {
-              
                 guardaImagenBD(pi, file);
-                activarButtonAgregar.set(false);
+                activarButtonAgregar.set(true);
             } catch (IOException ex) {
                 Logger.getLogger(ResRayController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -292,7 +284,6 @@ public class ResRayController implements Initializable {
     public void guardaImagenBD(final ProgressIndicator dbProgresoInd, File file) throws IOException {
         BufferedImage bufferedImage = ImageIO.read(file);
         WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
-        imageView.setImage(image);
         String id_imaRay = aux.generaID();
         Image ima__imaRay = imageView.getImage();
         String id_rayos = rayosSeleccionados.getId_rayos();
@@ -308,6 +299,7 @@ public class ResRayController implements Initializable {
         sub.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
            @Override
            public void handle(WorkerStateEvent t) {
+               colocaImagen(image);
            }
         }
         );
@@ -352,7 +344,24 @@ public class ResRayController implements Initializable {
                 .subtract(10f));
         imageView.fitHeightProperty().bind(anchorPane.heightProperty()
                 .subtract(10f));
-        aux.toolTip(anchorPane, "Doble clik para ampliar la imagen");
+        InfoOverlay inf = new InfoOverlay(imageView, "Dobleclik para ampliar la imagen");
+        inf.setShowOnHover(true);
+    }
+    
+    /**
+     * coloca la imagen con todo y la anotacion 
+     * @param image 
+     */
+    private void colocaImagen(Image image){
+        imageView.setImage(image);
+        imageView.setPreserveRatio(true);
+        imageView.fitWidthProperty().unbind();
+        imageView.fitHeightProperty().unbind();
+        imageView.fitWidthProperty().bind(
+                stackPane.widthProperty()
+                .subtract(40f));
+        imageView.fitHeightProperty().bind(stackPane.heightProperty()
+                .subtract(40f));
         doubleclik();
     }
 
@@ -402,7 +411,7 @@ public class ResRayController implements Initializable {
         //le carga el formato de las imagenes
         formatoImagen();
         //formato del ejecutor
-        //ejecutorDeServicio();
+        ejecutorDeServicio();
     } 
     
    
