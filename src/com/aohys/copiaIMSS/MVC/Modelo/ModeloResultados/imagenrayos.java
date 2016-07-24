@@ -58,35 +58,6 @@ public class imagenrayos {
     Vitro dbConn = new Vitro();
     Auxiliar aux = new Auxiliar();
 
-    
-    
-    /**
-     * carga solo uno
-     * @param dato
-     * @param conex
-     * @return 
-     */
-    public imagenrayos cargaSolaUnResultado(String dato, Connection conex){
-        imagenrayos im = null; 
-        String sqlSt = "SELECT `id_imaRay`,\n" +
-                        "`ima__imaRay`,\n" +
-                        "`id_rayos` \n"+
-                        "FROM imagenrayos\n" +
-                       "WHERE id_rayos = '"+dato+"';";
-        try(PreparedStatement stta = conex.prepareStatement(sqlSt);
-            ResultSet res = stta.executeQuery()){
-            if (res.next()) {
-                Image image = new Image(res.getBinaryStream("ima__imaRay"));
-                im = new imagenrayos(  res.getString   ("id_imaRay"),
-                                    image, 
-                                    res.getString   ("id_rayos"));
-            }
-       } catch (SQLException ex) {
-            ex.printStackTrace();
-       }
-    return im;
-   }
-
     /**
      * clase astracta de task
      * @param <T> 

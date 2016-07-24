@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -77,11 +78,23 @@
                      <center>
                         <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                            <children>
-                              <ImageView fx:id="imageView" fitHeight="331.0" fitWidth="318.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" styleClass="imagenAdentro" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
-                                 <effect>
-                                    <DropShadow color="#908c8c" height="109.95" offsetX="10.0" offsetY="10.0" radius="67.0775" spread="0.37" width="160.36" />
-                                 </effect>
-                              </ImageView>
+                              <StackPane layoutX="14.0" layoutY="14.0" prefHeight="500.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <ImageView fx:id="imageView" fitHeight="331.0" fitWidth="318.0" pickOnBounds="true" preserveRatio="true" styleClass="imagenAdentro">
+                                       <effect>
+                                          <DropShadow color="#908c8c" height="109.95" offsetX="10.0" offsetY="10.0" radius="67.0775" spread="0.37" width="160.36" />
+                                       </effect>
+                                    </ImageView>
+                                    <ProgressIndicator fx:id="pi" progress="0.0">
+                                       <effect>
+                                          <DropShadow blurType="GAUSSIAN" height="20.0" offsetX="1.0" offsetY="1.0" radius="29.5" width="100.0" />
+                                       </effect>
+                                       <StackPane.margin>
+                                          <Insets bottom="150.0" left="150.0" right="150.0" top="150.0" />
+                                       </StackPane.margin>
+                                    </ProgressIndicator>
+                                 </children>
+                              </StackPane>
                            </children>
                         </AnchorPane>
                      </center>
@@ -130,19 +143,11 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button fx:id="bttAgregar" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" text="Agregar Resultados">
+                              <Button fx:id="bttAgregar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Agregar Resultados">
                                  <VBox.margin>
-                                    <Insets bottom="5.0" left="60.0" right="60.0" top="10.0" />
+                                    <Insets bottom="5.0" left="60.0" right="60.0" top="80.0" />
                                  </VBox.margin>
                               </Button>
-                              <ProgressIndicator fx:id="pi" prefHeight="154.0" prefWidth="340.0" progress="0.0">
-                                 <VBox.margin>
-                                    <Insets top="20.0" />
-                                 </VBox.margin>
-                                 <effect>
-                                    <DropShadow blurType="GAUSSIAN" height="20.0" offsetX="1.0" offsetY="1.0" radius="29.5" width="100.0" />
-                                 </effect>
-                              </ProgressIndicator>
                            </children>
                            <BorderPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

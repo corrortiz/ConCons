@@ -13,8 +13,10 @@ import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.binding.DoubleBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -77,6 +79,19 @@ public class Efectos implements Initializable{
         HboxAltura = hBox.getPrefHeight();
         borderPane.setTop(null);
         borderPane.setTop(hBoxOcualta);
+    }
+    
+    private void bindgAModo(Node node){
+        DoubleBinding opacityBinding = new DoubleBinding() {
+            {
+                // List the dependencies with super.bind()
+                super.bind(node.disableProperty());
+            }
+            @Override
+            protected double computeValue() {
+               return (node.isDisable()) ? 0 : 1;
+            }
+        };
     }
     
 }

@@ -29,23 +29,15 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -54,8 +46,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -70,7 +60,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import javax.imageio.ImageIO;
 
 /**
@@ -160,20 +149,13 @@ public class ResRayController implements Initializable {
             
         });
         
+        pi.setVisible(false);
+        bttAgregar.setVisible(false);
+        
         bttAgregar.disableProperty().bind(activarButtonAgregar);
-        DoubleBinding opacityBinding = new DoubleBinding() {
-            {
-                // List the dependencies with super.bind()
-                super.bind(bttAgregar.disableProperty());
-            }
-            @Override
-            protected double computeValue() {
-               return (bttAgregar.isDisable()) ? 0 : 1;
-            }
-        };
-        bttAgregar.opacityProperty().bind(opacityBinding);
+        bttAgregar.visibleProperty().bind(bttAgregar.disableProperty());
         bttAgregar.setGraphic(new ImageView(guardar));
-        pi.setVisible(true);
+        
     }
     
     
@@ -216,8 +198,6 @@ public class ResRayController implements Initializable {
             actualizaLabels(nuevo);
             rayosSeleccionados = nuevo;
             fetchNamesFromDatabaseToListView(pi, nuevo.getId_rayos());
-            
-            
         });
         
     }
@@ -280,6 +260,7 @@ public class ResRayController implements Initializable {
             );
             try {
                 guarda(pi, file);
+                activarButtonAgregar.set(false);
             } catch (IOException ex) {
                 Logger.getLogger(ResRayController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -306,7 +287,6 @@ public class ResRayController implements Initializable {
         sub.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
            @Override
            public void handle(WorkerStateEvent t) {
-               
            }
         }
         );
