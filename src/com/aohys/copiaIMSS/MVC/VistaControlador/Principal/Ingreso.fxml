@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../../../Utilidades/CSSstyle/MantoEstelar.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController">
+   <children>
+      <VBox alignment="CENTER" layoutX="1.0" layoutY="4.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="625.0" prefWidth="1200.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fx:id="imageView" fitHeight="300.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" />
+            <TextField fx:id="txtUSuario" alignment="CENTER" prefHeight="30.0" prefWidth="250.0" promptText="Usuario">
+               <VBox.margin>
+                  <Insets top="40.0" />
+               </VBox.margin></TextField>
+            <PasswordField fx:id="pswContraseña" alignment="CENTER" prefHeight="30.0" prefWidth="240.0" promptText="Contraseña" />
+            <Button fx:id="bttAceptar" mnemonicParsing="false" prefHeight="29.0" prefWidth="126.0" text="Aceptar" textAlignment="CENTER">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <tooltip>
+                  <Tooltip text="Iniciar Aplicación" />
+               </tooltip>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="30.0" left="248.0" right="275.0" top="10.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

@@ -1,0 +1,370 @@
+
+
+/**************************************************************************************/
+.menu{
+    -fx-font-size: 12;
+    -fx-cursor: hand;
+}
+
+/**************************************************************************************/
+/*Labels*/
+.label{
+    -fx-font: 11pt "verdena";
+}
+
+/**************************************************************************************/
+/*Botones*/
+.button{
+    -fx-font: 11pt "verdena";
+    -fx-cursor: hand;
+}
+
+/**************************************************************************************/
+/*splitButtons*/
+.split-menu-button .label,
+.split-menu-button .text-field,
+.split-menu-button > .list-cell,
+.split-menu-button > .arrow-button{
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+}
+
+
+
+/**************************************************************************************/
+/*TexField y TextArea*/
+.text-field,
+.text-area{
+    -fx-font: 11pt "verdena";
+    -fx-border-radius: 1;
+    -fx-background-radius: 1;
+    
+}
+
+/**************************************************************************************/
+/*TableView*/
+.table-view{
+    -fx-padding: 1;
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+.table-cell{
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center-left;
+    -fx-border-insets: 2 2 2 10;
+    -fx-cursor: hand;
+}
+
+
+.table-view .column-header,
+.table-view .filler{
+    -fx-font: 13pt "verdena"; 
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-border-insets: 5 5 5 5;
+    -fx-cursor: hand;
+}
+
+.table-view .column-header .label,
+.table-view .column-header-background{
+    -fx-font: 16pt "verdena"; 
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-border-insets: 5 5 5 5;
+    -fx-cursor: hand;
+}
+
+/**************************************************************************************/
+/*SplipPane (barra de enmedio de la escena partida)*/
+.split-pane:horizontal .split-pane-divider{
+    -fx-border-color: transparent;
+}
+
+/**************************************************************************************/
+/*Radio Butons*/
+.radio-button{
+    -fx-font: 11pt "verdena";
+    -fx-cursor: hand;
+}
+
+/**************************************************************************************/
+/*HiperLink*/
+.hyperlink{
+    -fx-font: 12pt "verdena";
+    -fx-cursor: hand;
+}
+
+.hp{
+    -fx-font: 25pt "verdena";
+    -fx-cursor: hand;
+}
+
+.hp:visited{
+    -fx-font: 25pt "verdena";
+    -fx-text-fill: #039ED3;
+    -fx-cursor: hand;
+}
+
+/**************************************************************************************/
+/*ImageView*/
+.imagenAdentro{
+    -fx-cursor: hand;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.6) , 5, 0.0 , 5 , 5);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ProgressIndicator                                                           *
+ *                                                                             *
+ ******************************************************************************/
+.progress-indicator .progress {
+    -fx-padding: 2em; 
+}
+.progress-indicator:indeterminate .spinner {    
+    -fx-padding: 1.5em;
+}
+.progress-indicator .percentage {
+    -fx-font: 18px "Verdena";    
+    -fx-text-fill: #706f72;    
+}
+
+
+/**************************************************************************************/
+/*DatePicker*/
+.date-picker{
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+.date-picker .text-field{
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center;
+}
+
+.date-picker-popup .label{
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+.date-picker-popup > * > .day-name-cell{
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+.date-picker-popup > * > .day-cell{
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+/**************************************************************************************/
+/*ComboBox*/
+.combo-box,
+.combo-box:editable{
+   -fx-font: 11pt "verdena";
+   -fx-cursor: hand;
+}
+
+.combo-box .text-input{
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center-left;
+    -fx-font-weight: bold;
+}
+
+.combo-box .label,
+.combo-box .text-field,
+.combo-box > .list-cell,
+.combo-box-base > .arrow-button,
+.combo-box-popup .list-view .list-cell,
+.combo-box:editable .label,
+.combo-box:editable .text-field,
+.combo-box:editable > .list-cell,
+.combo-box-base:editable > .arrow-button {
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center-left;
+}
+
+
+/**************************************************************************************/
+/*TabPane*/
+.tab-pane > .tab-header-area > .headers-region > .tab:top,
+.tab-pane > .tab-header-area > .headers-region > .tab:left{
+    -fx-pref-height: 40px;
+    -fx-font: 12pt "verdena";
+    -fx-cursor: hand;
+}
+
+
+/**************************************************************************************/
+/*Contex Menu*/
+.context-menu{
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+}
+
+.context-menu .label{
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+}
+
+
+/**************************************************************************************/
+/*CheckBox*/
+.check-box{
+    -fx-font: 11pt "verdena";
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+}
+
+
+/**************************************************************************************/
+/*Scroll Bar de todo el programa*/
+.scroll-bar {
+   -fx-background-color: transparent;
+}
+
+.scroll-bar > .track-background {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .track {
+    -fx-background-color: transparent;
+    -fx-background-radius: 3;
+}
+
+.scroll-bar > .thumb {
+    -fx-background-color: #706f72;
+    -fx-background-radius: 3;
+}
+
+.scroll-bar:hover > .thumb,
+.scroll-bar:pressed > .thumb
+{
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.6) , 5, 0.0 , 5 , 5);
+}
+
+.scroll-bar > .decrement-button {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .decrement-arrow {
+    -fx-background-color: white;
+}
+
+.scroll-bar > .increment-button {
+   -fx-background-color: transparent;
+}
+
+.scroll-bar > .increment-arrow {
+   -fx-background-color: white;
+}
+
+
+
+/**************************************************************************************/
+.label-marcadore{
+    -fx-font: 16pt "verdena";
+    -fx-font-weight: bold;
+}
+/**************************************************************************************/
+.label-cabezeMayor{
+    -fx-font: 16pt "verdena";
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    
+}
+
+
+/**************************************************************************************/
+/*Tooltip*/
+.tooltip{
+    -fx-font: 14pt "verdena";
+    -fx-background-color: rgba(164, 164, 193, .5);
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.6) , 5, 0.3 , 10 , 10 );
+}
+
+/**************************************************************************************/
+/*TableView especial*/
+.tablachica{
+    -fx-padding: 1;
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+.tablachica .table-cell{
+    -fx-font: 10pt "verdena";
+    -fx-alignment: center-left;
+    -fx-border-insets: 0 0 0 10;
+    -fx-cursor: hand;
+}
+
+
+.tablachica .column-header,
+.tablachica .filler{
+    -fx-font: 10pt "verdena"; 
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-border-insets: 0 0 0 10;
+    -fx-cursor: hand;
+}
+
+.tablachica .column-header .label,
+.tablachica .column-header-background{
+    -fx-font: 12pt "verdena"; 
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-border-insets: 1 1 1 1;
+    -fx-cursor: hand;
+}
+
+/**************************************************************************************/
+/*TableView Dialog*/
+.dialog-pane {
+    -fx-background-color: rgba(164, 164, 193, .5);
+}
+
+.dialog-pane .button{
+    -fx-background-color: 
+        #c3c4c4, 
+        linear-gradient(#d6d6d6 50%, white 100%), 
+        radial-gradient(center 50% -40%, radius 200%, #e6e6e6 45%, rgba(230,230,230,0) 50%);
+    -fx-background-radius: 30;
+    -fx-background-insets: 0,4,4;
+    -fx-text-fill: black;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 3, 0.0 , 0 , 1 );
+    -fx-font: 12pt "verdena";
+    -fx-graphic: url('file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png');
+    
+}
+
+.dialog-pane .button:pressed,
+.dialog-pane .button:armed{
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.6) , 5, 0.3 , 5 , 5 );   
+    
+}
+
+.dialog-pane .button:hover{
+    -fx-effect: dropshadow( gaussian , #039ED3 , 20, 0.3 , 0 , 0);
+}
+
+.dialog-pane .label {
+    -fx-font: 14pt "verdena";
+    -fx-text-fill: white;
+}
+
+.dialog-pane:header .header-panel {
+    -fx-background-color: rgba(164, 164, 193, .7);
+}
+
+.dialog-pane:header .header-panel .label {
+    -fx-font: 18pt "verdena";
+   
+}
+
