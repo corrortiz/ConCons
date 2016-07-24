@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -114,7 +113,7 @@ public class ResRayController implements Initializable {
     @FXML private ProgressIndicator pi;
     //Variables de control
     private BooleanProperty activarButtonAgregar = new SimpleBooleanProperty(false);
-    private ExecutorService databaseExecutor;
+    private ExecutorService dbExeccutor;
     //Imagenes Botones
     Image impresora = 
         new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
@@ -130,7 +129,9 @@ public class ResRayController implements Initializable {
      */
     static class databaseThreadFactory implements ThreadFactory {
         static final AtomicInteger poolNumber = new AtomicInteger(1);
-        @Override public Thread newThread(Runnable runnable) {
+        
+        @Override 
+        public Thread newThread(Runnable runnable) {
           Thread thread = new Thread(runnable, "Database-Connection-" + poolNumber.getAndIncrement() + "-thread");
           thread.setDaemon(true);
           return thread;
@@ -141,7 +142,7 @@ public class ResRayController implements Initializable {
      * metodo para pedir un hilo antes de una llamada a la bd
      */
     private void ejecutorDeServicio(){
-        databaseExecutor = Executors.newFixedThreadPool(
+        dbExeccutor = Executors.newFixedThreadPool(
             1, 
             new databaseThreadFactory()
         ); 
@@ -207,12 +208,9 @@ public class ResRayController implements Initializable {
         });
         
         tvFechaLabo.setItems(ray.listaRayosPaciente(conex, paci.getId_paciente()));
-        
-        
-        
+      
         tvFechaLabo.getSelectionModel().selectedItemProperty().addListener((observable,viejo,nuevo)->{
             actualizaLabels(nuevo);
-            ejecutorDeServicio();
             rayosSeleccionados = nuevo;
             cargaImagenBD(pi, nuevo.getId_rayos());
         });
@@ -253,7 +251,7 @@ public class ResRayController implements Initializable {
                 .bind(Bindings.when(cargaImag.runningProperty())
                         .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
         //lanza el iris
-        databaseExecutor.submit(cargaImag);
+        dbExeccutor.submit(cargaImag);
       }
     
     /**
@@ -275,6 +273,7 @@ public class ResRayController implements Initializable {
 
         if (file!=null) {
             try {
+              
                 guardaImagenBD(pi, file);
                 activarButtonAgregar.set(false);
             } catch (IOException ex) {
@@ -286,11 +285,11 @@ public class ResRayController implements Initializable {
     
     /**
      * metodo para guarda la imagen en la base de datos con bindings para la actividad de db
-     * @param databaseActivityIndicator
+     * @param dbProgresoInd
      * @param file
      * @throws IOException 
      */
-    public void guardaImagenBD(final ProgressIndicator databaseActivityIndicator, File file) throws IOException {
+    public void guardaImagenBD(final ProgressIndicator dbProgresoInd, File file) throws IOException {
         BufferedImage bufferedImage = ImageIO.read(file);
         WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
         imageView.setImage(image);
@@ -299,10 +298,10 @@ public class ResRayController implements Initializable {
         String id_rayos = rayosSeleccionados.getId_rayos();
         imagenrayos.subeImagen sub = imagenrayos.new subeImagen(id_imaRay, ima__imaRay, id_rayos);
 
-        databaseActivityIndicator.visibleProperty().bind(
+        dbProgresoInd.visibleProperty().bind(
                 sub.runningProperty()
         );
-        databaseActivityIndicator.progressProperty().bind(
+        dbProgresoInd.progressProperty().bind(
                 sub.progressProperty()
         );
 
@@ -317,7 +316,7 @@ public class ResRayController implements Initializable {
                 .bind(Bindings.when(sub.runningProperty())
                         .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
 
-        databaseExecutor.submit(sub);
+        dbExeccutor.submit(sub);
       }
     
    
@@ -350,9 +349,9 @@ public class ResRayController implements Initializable {
     private void formatoImagen(){
         imageView.fitWidthProperty().bind(
                 anchorPane.widthProperty()
-                .subtract(50f));
+                .subtract(10f));
         imageView.fitHeightProperty().bind(anchorPane.heightProperty()
-                .subtract(50f));
+                .subtract(10f));
         aux.toolTip(anchorPane, "Doble clik para ampliar la imagen");
         doubleclik();
     }
@@ -402,8 +401,8 @@ public class ResRayController implements Initializable {
         formatoBotones();
         //le carga el formato de las imagenes
         formatoImagen();
-        
-        
+        //formato del ejecutor
+        //ejecutorDeServicio();
     } 
     
    
