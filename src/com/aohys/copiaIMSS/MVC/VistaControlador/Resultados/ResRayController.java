@@ -9,6 +9,7 @@ package com.aohys.copiaIMSS.MVC.VistaControlador.Resultados;
 
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.imagenrayos;
+import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.imagenrayos.FetchNamesTask;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.Modelo.Rayos;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
@@ -22,15 +23,25 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.embed.swing.SwingFXUtils;
@@ -39,9 +50,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
@@ -101,6 +114,7 @@ public class ResRayController implements Initializable {
     //Tabla
     @FXML private TableView<Rayos> tvFechaLabo;
     @FXML private TableColumn<Rayos, String> colFecha;
+    private ObservableList<Rayos> listRayos = FXCollections.observableArrayList();
     //FXML resultados
     @FXML private Label lbEstudio;
     @FXML private Label lbIndicaciones;
@@ -109,7 +123,9 @@ public class ResRayController implements Initializable {
     @FXML private AnchorPane anchorPane;
     @FXML private ImageView imageView;
     @FXML private ProgressIndicator pi;
-    
+    //Variables de control
+    private BooleanProperty activarButtonAgregar = new SimpleBooleanProperty(false);
+    private ExecutorService databaseExecutor;
     //Imagenes Botones
     Image impresora = 
         new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
@@ -144,9 +160,20 @@ public class ResRayController implements Initializable {
             
         });
         
-        bttAgregar.setDisable(true);
-        bttAgregar.setStyle("-fx-opacity: 0;");
-        pi.setStyle("-fx-opacity: 0;");
+        bttAgregar.disableProperty().bind(activarButtonAgregar);
+        DoubleBinding opacityBinding = new DoubleBinding() {
+            {
+                // List the dependencies with super.bind()
+                super.bind(bttAgregar.disableProperty());
+            }
+            @Override
+            protected double computeValue() {
+               return (bttAgregar.isDisable()) ? 0 : 1;
+            }
+        };
+        bttAgregar.opacityProperty().bind(opacityBinding);
+        bttAgregar.setGraphic(new ImageView(guardar));
+        pi.setVisible(true);
     }
     
     
@@ -180,55 +207,54 @@ public class ResRayController implements Initializable {
         });
         tvFechaLabo.setItems(ray.listaRayosPaciente(conex, paci.getId_paciente()));
         
+        databaseExecutor = Executors.newFixedThreadPool(
+            1, 
+            new DatabaseThreadFactory()
+        ); 
+        
         tvFechaLabo.getSelectionModel().selectedItemProperty().addListener((observable,viejo,nuevo)->{
             actualizaLabels(nuevo);
             rayosSeleccionados = nuevo;
-            pi.setProgress(-1);
-            Task<Void> task = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                  try {
-                      Thread.sleep(1);
-                  } catch (InterruptedException ex) {
-                      ex.printStackTrace();
-                  }
-                  Platform.runLater(new Runnable(){
-                      public void run(){
-                          try(Connection conexionInterna = dbConn.conectarBD()) {
-                            rayosVacio = imagenrayos.cargaSolaUnResultado(nuevo.getId_rayos(), conexionInterna);
-                            if (rayosVacio!=null) {
-                                imageView.setImage(rayosVacio.getIma__imaRay());
-                                bttAgregar.setDisable(true);
-                                bttAgregar.setStyle("-fx-opacity: 0;");
-                                pi.setStyle("-fx-opacity: 1;");
-                            }else{
-                                imageView.setImage(Nohay);
-                                bttAgregar.setDisable(false);
-                                bttAgregar.setStyle("-fx-opacity: 1;");
-                                pi.setStyle("-fx-opacity: 0;");
-                            }
-                          } catch (SQLException e) {
-                              e.printStackTrace();
-                          }
-                        
-                      }
-                  });
-                  return null;
-                }
-                    };
-                    task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                      @Override
-                      public void handle(WorkerStateEvent event) {
-                          lineTiempo();
-                      }
-                    });
-            Thread tt = new Thread(task);
-            tt.setDaemon(false);
-            tt.start();
-           
+            fetchNamesFromDatabaseToListView(pi, nuevo.getId_rayos());
+            
+            
         });
         
     }
+    
+    public void fetchNamesFromDatabaseToListView(
+          final ProgressIndicator databaseActivityIndicator, 
+           String dato) {
+       FetchNamesTask fetchNamesTask = imagenrayos.new FetchNamesTask(dato);
+
+        databaseActivityIndicator.visibleProperty().bind(
+                fetchNamesTask.runningProperty()
+        );
+        databaseActivityIndicator.progressProperty().bind(
+                fetchNamesTask.progressProperty()
+        );
+
+        fetchNamesTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+           @Override
+           public void handle(WorkerStateEvent t) {
+                rayosVacio = fetchNamesTask.getValue();
+                if (rayosVacio!=null) {
+                    imageView.setImage(rayosVacio.getIma__imaRay());
+                    activarButtonAgregar.set(true);
+                }else{
+                    imageView.setImage(Nohay);
+                    activarButtonAgregar.set(false);
+                }
+           }
+        }
+        );
+        
+        anchorPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(fetchNamesTask.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+
+        databaseExecutor.submit(fetchNamesTask);
+      }
     
     /**
      * file showcer
@@ -248,46 +274,60 @@ public class ResRayController implements Initializable {
         File file = fileChooser.showOpenDialog(null);
 
         if (file!=null) {
-            pi.setStyle("-fx-opacity: 1;");
-            pi.setProgress(-1);
-            Task<Void> task = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                  try {
-                      Thread.sleep(1);
-                  } catch (InterruptedException ex) {
-                      ex.printStackTrace();
-                  }
-                  Platform.runLater(new Runnable(){
-                      public void run(){
-                          try(Connection conex = dbConn.conectarBD()){
-                                BufferedImage bufferedImage = ImageIO.read(file);
-                                WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
-                                imageView.setImage(image);
-                                guardaImagen(conex);
-                                bttAgregar.setDisable(true);
-                                bttAgregar.setStyle("-fx-opacity: 0;");
-                            } catch (IOException ex) {
-                                Logger.getLogger(ResRayController.class.getName()).log(Level.SEVERE, null, ex);
-                            } catch (SQLException ex) {
-                                Logger.getLogger(ResRayController.class.getName()).log(Level.SEVERE, null, ex);
-                            } 
-                      }
-                  });
-                  return null;
-                }
-                    };
-                    task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                      @Override
-                      public void handle(WorkerStateEvent event) {
-                          lineTiempo();
-                      }
-                    });
-            Thread tt = new Thread(task);
-            tt.setDaemon(false);
-            tt.start();
+            databaseExecutor = Executors.newFixedThreadPool(
+                1, 
+                new DatabaseThreadFactory()
+            );
+            try {
+                guarda(pi, file);
+            } catch (IOException ex) {
+                Logger.getLogger(ResRayController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
         }
     }
+    
+    public void guarda(final ProgressIndicator databaseActivityIndicator, File file) throws IOException {
+        BufferedImage bufferedImage = ImageIO.read(file);
+        WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
+        imageView.setImage(image);
+        String id_imaRay = aux.generaID();
+        Image ima__imaRay = imageView.getImage();
+        String id_rayos = rayosSeleccionados.getId_rayos();
+        imagenrayos.subeImagen sub = imagenrayos.new subeImagen(id_imaRay, ima__imaRay, id_rayos);
+
+        databaseActivityIndicator.visibleProperty().bind(
+                sub.runningProperty()
+        );
+        databaseActivityIndicator.progressProperty().bind(
+                sub.progressProperty()
+        );
+
+        sub.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+           @Override
+           public void handle(WorkerStateEvent t) {
+               
+           }
+        }
+        );
+        
+        anchorPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(sub.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+
+        databaseExecutor.submit(sub);
+      }
+    
+    
+    static class DatabaseThreadFactory implements ThreadFactory {
+        static final AtomicInteger poolNumber = new AtomicInteger(1);
+
+        @Override public Thread newThread(Runnable runnable) {
+          Thread thread = new Thread(runnable, "Database-Connection-" + poolNumber.getAndIncrement() + "-thread");
+          thread.setDaemon(true);
+          return thread;
+        }
+    }  
     
     /**
      * carga los datos de los rayos selecionados
@@ -399,7 +439,7 @@ public class ResRayController implements Initializable {
         formatoBotones();
         //le carga el formato de las imagenes
         formatoImagen();
-        bttAgregar.setGraphic(new ImageView(guardar));
+        
         
     } 
     

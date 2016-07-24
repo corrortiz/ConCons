@@ -130,7 +130,7 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button fx:id="bttAgregar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Agregar Resultados">
+                              <Button fx:id="bttAgregar" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" text="Agregar Resultados">
                                  <VBox.margin>
                                     <Insets bottom="5.0" left="60.0" right="60.0" top="10.0" />
                                  </VBox.margin>

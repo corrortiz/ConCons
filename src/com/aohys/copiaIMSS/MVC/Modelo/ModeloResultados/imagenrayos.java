@@ -8,6 +8,7 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados;
 
+import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -20,6 +21,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
@@ -29,6 +34,7 @@ import javax.imageio.ImageIO;
  */
 
 public class imagenrayos {
+    private static final Logger logger = Logger.getLogger(imagenrayos.class.getName());
     private String id_imaRay;
     private Image ima__imaRay;
     private String id_rayos;
@@ -110,6 +116,96 @@ public class imagenrayos {
     return im;
    }
 
+    abstract class DBTask<T> extends Task<T> {
+        DBTask() {
+          setOnFailed(t -> logger.log(Level.SEVERE, null, getException()));
+        }
+    }
+    
+    Vitro dbConn = new Vitro();
+    
+    public class FetchNamesTask extends DBTask<imagenrayos> {
+        String dato;
+        public FetchNamesTask(String dato) {
+            this.dato = dato;
+        }
+        
+        @Override
+        protected imagenrayos call() throws Exception {
+            imagenrayos im = null; 
+            String sqlSt = "SELECT `id_imaRay`,\n" +
+                            "`ima__imaRay`,\n" +
+                            "`id_rayos` \n"+
+                            "FROM imagenrayos\n" +
+                           "WHERE id_rayos = '"+dato+"';";
+            try(Connection conex = dbConn.conectarBD();
+                PreparedStatement stta = conex.prepareStatement(sqlSt);
+                ResultSet res = stta.executeQuery()){
+                if (res.next()) {
+                    //byte[] data = res.getBytes("ima__imaRay");
+                    //BufferedImage img = ImageIO.read(new ByteArrayInputStream(data));
+                    //Image image = SwingFXUtils.toFXImage(img, null);
+                    Image image = new Image(res.getBinaryStream("ima__imaRay"));
+                    im = new imagenrayos(  res.getString   ("id_imaRay"),
+                                        image, 
+                                        res.getString   ("id_rayos"));
+                }
+           } catch (SQLException ex) {
+                ex.printStackTrace();
+           }
+        return im;
+        }
+
+        public FetchNamesTask() {
+        }
+    }
+    
+    public class subeImagen extends DBTask<Void> {
+        String id_imaRay;
+        Image ima__imaRay; 
+        String id_rayos;
+
+        public subeImagen(String id_imaRay, Image ima__imaRay, String id_rayos) {
+            this.id_imaRay = id_imaRay;
+            this.ima__imaRay = ima__imaRay;
+            this.id_rayos = id_rayos;
+        }
+        
+        @Override
+        protected Void call() throws Exception {
+        
+            String sqlst =  "INSERT INTO `imagenrayos`\n" +
+                            "(`id_imaRay`,\n" +
+                            "`ima__imaRay`,\n" +
+                            "`id_rayos`)\n" +
+                            "VALUES (?,?,?)";    
+            try (Connection conex = dbConn.conectarBD();
+                    PreparedStatement sttm = conex.prepareStatement(sqlst)){
+                conex.setAutoCommit(false);
+                File imageFile = new File("test.png");
+                RenderedImage renderedImage = SwingFXUtils.fromFXImage(ima__imaRay, null);
+                ImageIO.write(renderedImage, "png", imageFile);
+                try(FileInputStream fis = new FileInputStream(imageFile)) {
+                    sttm.setString          (1, id_imaRay);
+                    sttm.setBinaryStream    (2, (InputStream)fis, (int)(imageFile.length()));
+                    sttm.setString          (3, id_rayos);
+                    sttm.addBatch();
+                    sttm.executeBatch();
+                    conex.commit();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+                    
+           return null;
+        }
+    }
+    /***********************************************************************************/
+    
     public String getId_imaRay() {
         return id_imaRay;
     }
