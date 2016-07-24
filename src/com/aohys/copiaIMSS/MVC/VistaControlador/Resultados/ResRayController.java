@@ -125,6 +125,27 @@ public class ResRayController implements Initializable {
     Image Nohay = 
         new Image("file:src/com/aohys/copiaIMSS/Utilidades/Imagenes/OncoVera.png");
     
+     /**
+     * clase para crear hilos de la base de datos
+     */
+    static class databaseThreadFactory implements ThreadFactory {
+        static final AtomicInteger poolNumber = new AtomicInteger(1);
+        @Override public Thread newThread(Runnable runnable) {
+          Thread thread = new Thread(runnable, "Database-Connection-" + poolNumber.getAndIncrement() + "-thread");
+          thread.setDaemon(true);
+          return thread;
+        }
+    }  
+    
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        databaseExecutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
+    }
     /**
      * Carga componentes
      */
@@ -132,8 +153,6 @@ public class ResRayController implements Initializable {
         String nombre = paci.getNombre_paciente()+" "+paci.getApellido_paciente()+" "+paci.getApMaterno_paciente();
         lbNombre.setText(nombre);
     }    
-   
-    
     
     /**
      * formato al botton de guardar
@@ -153,11 +172,10 @@ public class ResRayController implements Initializable {
         bttAgregar.setVisible(false);
         
         bttAgregar.disableProperty().bind(activarButtonAgregar);
-        bttAgregar.visibleProperty().bind(bttAgregar.disableProperty());
+        bttAgregar.visibleProperty().bind(activarButtonAgregar);
         bttAgregar.setGraphic(new ImageView(guardar));
         
     }
-    
     
     /**
      * verifica que los campos esten llenos
@@ -187,53 +205,55 @@ public class ResRayController implements Initializable {
             String ageInYear = lol.format(kkk);
             return new ReadOnlyStringWrapper(ageInYear);
         });
+        
         tvFechaLabo.setItems(ray.listaRayosPaciente(conex, paci.getId_paciente()));
         
-        databaseExecutor = Executors.newFixedThreadPool(
-            1, 
-            new DatabaseThreadFactory()
-        ); 
+        
         
         tvFechaLabo.getSelectionModel().selectedItemProperty().addListener((observable,viejo,nuevo)->{
             actualizaLabels(nuevo);
+            ejecutorDeServicio();
             rayosSeleccionados = nuevo;
-            fetchNamesFromDatabaseToListView(pi, nuevo.getId_rayos());
+            cargaImagenBD(pi, nuevo.getId_rayos());
         });
         
     }
     
-    public void fetchNamesFromDatabaseToListView(
-          final ProgressIndicator databaseActivityIndicator, 
-           String dato) {
-       cargaUnaImagen fetchNamesTask = imagenrayos.new cargaUnaImagen(dato);
-
-        databaseActivityIndicator.visibleProperty().bind(
-                fetchNamesTask.runningProperty()
+    /**
+     * metodo para pedir la imagen en la base de datos por medio de tareas uniendolo al barra de progreso
+     * @param dbActividad
+     * @param dato 
+     */
+    public void cargaImagenBD(final ProgressIndicator dbActividad, String dato) {
+        cargaUnaImagen cargaImag = imagenrayos.new cargaUnaImagen(dato);
+        //Bindigs del indicador de progreso
+        dbActividad.visibleProperty().bind(
+                cargaImag.runningProperty()
         );
-        databaseActivityIndicator.progressProperty().bind(
-                fetchNamesTask.progressProperty()
+        dbActividad.progressProperty().bind(
+                cargaImag.progressProperty()
         );
-
-        fetchNamesTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-           @Override
-           public void handle(WorkerStateEvent t) {
-                rayosVacio = fetchNamesTask.getValue();
-                if (rayosVacio!=null) {
-                    imageView.setImage(rayosVacio.getIma__imaRay());
-                    activarButtonAgregar.set(true);
-                }else{
-                    imageView.setImage(Nohay);
-                    activarButtonAgregar.set(false);
-                }
-           }
-        }
+        //Cuando termina
+        cargaImag.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent t) {
+                 rayosVacio = cargaImag.getValue();
+                 if (rayosVacio!=null) {
+                     imageView.setImage(rayosVacio.getIma__imaRay());
+                     activarButtonAgregar.set(true);
+                 }else{
+                     imageView.setImage(Nohay);
+                     activarButtonAgregar.set(false);
+                 }
+            }
+         }
         );
-        
+        //Maouse en modo esperar
         anchorPane.getScene().getRoot().cursorProperty()
-                .bind(Bindings.when(fetchNamesTask.runningProperty())
+                .bind(Bindings.when(cargaImag.runningProperty())
                         .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
-
-        databaseExecutor.submit(fetchNamesTask);
+        //lanza el iris
+        databaseExecutor.submit(cargaImag);
       }
     
     /**
@@ -254,12 +274,8 @@ public class ResRayController implements Initializable {
         File file = fileChooser.showOpenDialog(null);
 
         if (file!=null) {
-            databaseExecutor = Executors.newFixedThreadPool(
-                1, 
-                new DatabaseThreadFactory()
-            );
             try {
-                guarda(pi, file);
+                guardaImagenBD(pi, file);
                 activarButtonAgregar.set(false);
             } catch (IOException ex) {
                 Logger.getLogger(ResRayController.class.getName()).log(Level.SEVERE, null, ex);
@@ -268,7 +284,13 @@ public class ResRayController implements Initializable {
         }
     }
     
-    public void guarda(final ProgressIndicator databaseActivityIndicator, File file) throws IOException {
+    /**
+     * metodo para guarda la imagen en la base de datos con bindings para la actividad de db
+     * @param databaseActivityIndicator
+     * @param file
+     * @throws IOException 
+     */
+    public void guardaImagenBD(final ProgressIndicator databaseActivityIndicator, File file) throws IOException {
         BufferedImage bufferedImage = ImageIO.read(file);
         WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
         imageView.setImage(image);
@@ -298,16 +320,7 @@ public class ResRayController implements Initializable {
         databaseExecutor.submit(sub);
       }
     
-    
-    static class DatabaseThreadFactory implements ThreadFactory {
-        static final AtomicInteger poolNumber = new AtomicInteger(1);
-
-        @Override public Thread newThread(Runnable runnable) {
-          Thread thread = new Thread(runnable, "Database-Connection-" + poolNumber.getAndIncrement() + "-thread");
-          thread.setDaemon(true);
-          return thread;
-        }
-    }  
+   
     
     /**
      * carga los datos de los rayos selecionados
@@ -335,9 +348,12 @@ public class ResRayController implements Initializable {
      * le da formato al image view
      */
     private void formatoImagen(){
-        imageView.fitWidthProperty().bind(anchorPane.widthProperty());
-        imageView.fitHeightProperty().bind(anchorPane.heightProperty());
-        aux.toolTip(imageView, "Doble clik para ampliar la imagen");
+        imageView.fitWidthProperty().bind(
+                anchorPane.widthProperty()
+                .subtract(50f));
+        imageView.fitHeightProperty().bind(anchorPane.heightProperty()
+                .subtract(50f));
+        aux.toolTip(anchorPane, "Doble clik para ampliar la imagen");
         doubleclik();
     }
 
