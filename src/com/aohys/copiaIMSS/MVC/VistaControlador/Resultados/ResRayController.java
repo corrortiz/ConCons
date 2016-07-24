@@ -9,7 +9,7 @@ package com.aohys.copiaIMSS.MVC.VistaControlador.Resultados;
 
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.imagenrayos;
-import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.imagenrayos.FetchNamesTask;
+import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.imagenrayos.cargaUnaImagen;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.Modelo.Rayos;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
@@ -225,7 +225,7 @@ public class ResRayController implements Initializable {
     public void fetchNamesFromDatabaseToListView(
           final ProgressIndicator databaseActivityIndicator, 
            String dato) {
-       FetchNamesTask fetchNamesTask = imagenrayos.new FetchNamesTask(dato);
+       cargaUnaImagen fetchNamesTask = imagenrayos.new cargaUnaImagen(dato);
 
         databaseActivityIndicator.visibleProperty().bind(
                 fetchNamesTask.runningProperty()
@@ -394,39 +394,6 @@ public class ResRayController implements Initializable {
                     }
                 }
             });
-    }
-    
-    
-    /**
-     * guarda la imagen que fue seleccionada por el file shocer
-     * @param conex 
-     */
-    private void guardaImagen(Connection conex){
-        String id_imaRay = aux.generaID();
-        Image ima__imaRay = imageView.getImage();
-        String id_rayos = rayosSeleccionados.getId_rayos();
-        
-        imagenrayos.agregarPDF(id_imaRay, ima__imaRay, id_rayos, conex);
-    }
-    
-    private void lineTiempo(){
-        Integer START_TIME = 1;
-        Timeline timeline = new Timeline();
-        IntegerProperty timeSeconds = new SimpleIntegerProperty((START_TIME) * 100);
-        pi.progressProperty().bind(timeSeconds.divide((START_TIME) * 100.0).subtract(1).multiply(-1));
-        if (timeline != null){
-            timeline.stop();
-        }
-        timeSeconds.set((START_TIME) * 100);
-        timeline.getKeyFrames().add(
-                new KeyFrame(Duration.seconds(.2), new KeyValue(timeSeconds, 0)));
-        timeline.playFromStart();
-        timeline.setOnFinished(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event) {
-                pi.progressProperty().unbind();
-            }
-        });
     }
     
     /**
