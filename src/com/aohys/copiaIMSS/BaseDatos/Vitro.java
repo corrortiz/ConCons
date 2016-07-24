@@ -20,7 +20,7 @@ import org.vibur.dbcp.ViburDBCPDataSource;
 public class Vitro {
     private static final DataSource DATA_SOURCE;
     private static final String DRIVER   =  "com.mysql.jdbc.Driver";
-    private static final String JDBC_URL =  "jdbc:mysql://localhost:3306/copia?&useSSL=false";
+    private static final String JDBC_URL =  "jdbc:mysql://192.168.0.12:3306/copia?&useSSL=false";
     Connection coneccion;
     
     static {
