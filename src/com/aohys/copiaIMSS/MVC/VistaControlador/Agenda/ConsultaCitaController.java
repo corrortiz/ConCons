@@ -310,8 +310,7 @@ public class ConsultaCitaController implements Initializable {
             try(Connection conex = dbConn.conectarBD()) {
                 if (n!=null) {
                     fecha(n);
-                    formatoTablaCitas(cita.cargaCitasFechaUsuario(
-                            conex, Date.valueOf(n), this.usuario.getId_medico()));  
+                    formatoTablaCitas(conex, n);  
                     formatoLabel();
                 }
             } catch (SQLException e) {
@@ -383,29 +382,30 @@ public class ConsultaCitaController implements Initializable {
     }
     /**
      * le da formato a las citas de ese dia
-     * @param listaCitas
      * @param conex 
+     * @param fecha 
      */
-    public void formatoTablaCitas(ObservableList<Cita>listaCitas){
+    public void formatoTablaCitas(Connection conex, LocalDate fecha){
         colHoraCita.setCellValueFactory(new PropertyValueFactory<>  ("hora_cit"));
         colNombre.setCellValueFactory(cellData -> {
             Cita cita = cellData.getValue();
             Paciente p = new Paciente();
-            try(Connection conex = dbConn.conectarBD()) {
-                p = paci.cargaSoloUno(cita.getId_Paciente(), conex);
+            try(Connection conexInterna = dbConn.conectarBD()) {
+                p = paci.cargaSoloUno(cita.getId_Paciente(), conexInterna);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             String regresaColumna = p.getNombre_paciente()+" "+p.getApellido_paciente()+" "+p.getApMaterno_paciente();
             return new ReadOnlyStringWrapper(regresaColumna);
         });
-        tvCitas.setItems(listaCitas);
+        tvCitas.setItems(cita.cargaCitasFechaUsuario(
+                            conex, Date.valueOf(fecha), this.usuario.getId_medico()));
         
          tvCitas.getSelectionModel().selectedItemProperty().addListener((valor,v,n)->{
              if (n!=null) {
-                try(Connection conex = dbConn.conectarBD()) {
-                    cargaDatosLabels(n, conex);
-                    Paciente pacienteDentroTabla = paci.cargaSoloUno(n.getId_Paciente(),conex);
+                try(Connection conexInternaA = dbConn.conectarBD()) {
+                    cargaDatosLabels(n, conexInternaA);
+                    Paciente pacienteDentroTabla = paci.cargaSoloUno(n.getId_Paciente(),conexInternaA);
                     cargaDatos(pacienteDentroTabla);
                     PrincipalController.recibePaciente(pacienteDentroTabla);
                     cita = n;

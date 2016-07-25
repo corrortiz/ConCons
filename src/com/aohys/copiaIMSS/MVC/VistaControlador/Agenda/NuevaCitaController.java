@@ -98,11 +98,7 @@ public class NuevaCitaController implements Initializable {
         this.princi = princi;
         this.paciente = paci;
         cargaDatos(paci);
-        try(Connection conex = dbConn.conectarBD()) {
-            cargaComboBoxs(conex);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        
     }
     
     //FXML de arriba
@@ -198,7 +194,8 @@ public class NuevaCitaController implements Initializable {
                     if (item == null || empty) {
                         setText(null);
                     } else {
-                        setText(item.getNombre_medico()+ " " + item.getApellido_medico()+" "+item.getApMaterno_medico());
+                        setText(String.format("%s %s %s", 
+                                item.getNombre_medico(), item.getApellido_medico(), item.getApMaterno_medico()));
                     }
                 }
             };
@@ -210,7 +207,8 @@ public class NuevaCitaController implements Initializable {
                 if (item == null) {
                     return null;
                 } else {
-                    return item.getNombre_medico()+ " " + item.getApellido_medico()+" "+item.getApMaterno_medico();
+                    return String.format("%s %s %s", 
+                                item.getNombre_medico(), item.getApellido_medico(), item.getApMaterno_medico());
                 }
             }
 
@@ -296,32 +294,31 @@ public class NuevaCitaController implements Initializable {
                 }
                 try(Connection conex = dbConn.conectarBD()) {
                     if (usuario != null) {
-                    confirDiasConsulta(usuario, conex);
-                    //dias validos de consulta
-                    Integer entero = item.getDayOfWeek().getValue();
-                    if (entero.equals(lunes)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(martes)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(miercoles)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(jueves)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(viernes)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(sabado)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(domingo)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }
-                    
+                        confirDiasConsulta(usuario, conex);
+                        //dias validos de consulta
+                        Integer entero = item.getDayOfWeek().getValue();
+                        if (entero.equals(lunes)) {
+                            setStyle("-fx-background-color: #ffc0cb;");
+                            setDisable(true);
+                        }else if (entero.equals(martes)) {
+                            setStyle("-fx-background-color: #ffc0cb;");
+                            setDisable(true);
+                        }else if (entero.equals(miercoles)) {
+                            setStyle("-fx-background-color: #ffc0cb;");
+                            setDisable(true);
+                        }else if (entero.equals(jueves)) {
+                            setStyle("-fx-background-color: #ffc0cb;");
+                            setDisable(true);
+                        }else if (entero.equals(viernes)) {
+                            setStyle("-fx-background-color: #ffc0cb;");
+                            setDisable(true);
+                        }else if (entero.equals(sabado)) {
+                            setStyle("-fx-background-color: #ffc0cb;");
+                            setDisable(true);
+                        }else if (entero.equals(domingo)) {
+                            setStyle("-fx-background-color: #ffc0cb;");
+                            setDisable(true);
+                        }
                         //perido de vacaciones
                         for(peridoVacaMedico per : listPeridoMedicos){
                              if (item.isAfter(per.getInicia_pvm().toLocalDate())
@@ -358,8 +355,7 @@ public class NuevaCitaController implements Initializable {
                     formatoHorario(conex, this.usuario, Date.valueOf(n));
                     if (cbbMedico.getValue()!=null) {
                         fecha(n);
-                        formatoTablaCitas(cita.cargaCitasFechaUsuario(
-                                conex, Date.valueOf(n), this.usuario.getId_medico()));  
+                        formatoTablaCitas(Date.valueOf(n), this.usuario.getId_medico(), conex);  
                     }
                 }
             } catch (SQLException e) {
@@ -411,12 +407,15 @@ public class NuevaCitaController implements Initializable {
      */
     public void formatoHorario(Connection conex, Usuario usuarioID, Date fecha){
         if (cbbMedico.getValue()!=null) {
+            
             ObservableList<LocalTime> listaHorasValidas = FXCollections.observableArrayList();
             ObservableList<LocalTime> listaHorasUsadas = FXCollections.observableArrayList();
             ObservableList<LocalTime> listaResultado = FXCollections.observableArrayList();
-            listaHorasValidas = horaio.listaHorarioDisponible(usuarioID.getId_medico(), conex);
-            listaResultado = horaio.listaHorarioDisponible(usuarioID.getId_medico(), conex);
-            listaHorasUsadas = cita.horariosCitasFechaUsuario(conex, fecha, usuarioID.getId_medico());
+            
+            listaHorasValidas.addAll(horaio.listaHorarioDisponible(usuarioID.getId_medico(), conex));
+            listaResultado.addAll(listaHorasValidas);
+            listaHorasUsadas.addAll(cita.horariosCitasFechaUsuario(conex, fecha, usuarioID.getId_medico()));
+            
             for(LocalTime horasUsadas : listaHorasUsadas){
                 for (LocalTime horasValidas : listaHorasValidas) {
                     if (horasUsadas.equals(horasValidas)) {
@@ -424,7 +423,9 @@ public class NuevaCitaController implements Initializable {
                     }
                 }
             };
+            
             cbbHoraConsul.setItems(listaResultado);
+            
         }else{
             aux.alertaError("Es necesario seleccionar un medico", "Es necesario seleccionar un medico", 
                     "Para poder seleccionar una fecha es necesario seleccionar un medico");
@@ -452,23 +453,24 @@ public class NuevaCitaController implements Initializable {
     
     /**
      * le da formato a las citas de ese dia
-     * @param listaCitas
+     * @param fecha
+     * @param idMed
      * @param conex 
      */
-    public void formatoTablaCitas(ObservableList<Cita>listaCitas){
+    public void formatoTablaCitas(Date fecha, String idMed, Connection conex){
         colHoraCita.setCellValueFactory(new PropertyValueFactory<>  ("hora_cit"));
         colNombre.setCellValueFactory(cellData -> {
             Cita cita = cellData.getValue();
             Paciente p = new Paciente();
-            try(Connection conex = dbConn.conectarBD()) {
-                p = paci.cargaSoloUno(cita.getId_Paciente(), conex);
+            try(Connection conexinterna = dbConn.conectarBD()) {
+                p = paci.cargaSoloUno(cita.getId_Paciente(), conexinterna);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             String regresaColumna = p.getNombre_paciente()+" "+p.getApellido_paciente()+" "+p.getApMaterno_paciente();
             return new ReadOnlyStringWrapper(regresaColumna);
         });
-        tvCitas.setItems(listaCitas);
+        tvCitas.setItems(cita.cargaCitasFechaUsuario(conex, fecha, idMed));
         
     }
     
@@ -484,8 +486,8 @@ public class NuevaCitaController implements Initializable {
             if (continuaSINOTratamiento()) {
                 try(Connection conex = dbConn.conectarBD()) {
                     guardarCita(conex);
-                    formatoTablaCitas(cita.cargaCitasFechaUsuario(
-                            conex, Date.valueOf(dpFechaConsulta.getValue()), this.usuario.getId_medico()));
+                    formatoTablaCitas(Date.valueOf(dpFechaConsulta.getValue()), 
+                            this.usuario.getId_medico(), conex);
                     formatoHorario(conex, usuario, Date.valueOf(dpFechaConsulta.getValue()));
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -560,7 +562,12 @@ public class NuevaCitaController implements Initializable {
         fecha(LocalDate.now());
         //formato bottones
         formatoBottnesInferiores();
-       
+        //formato de los combobox
+        try(Connection conex = dbConn.conectarBD()) {
+            cargaComboBoxs(conex);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }    
     
 }

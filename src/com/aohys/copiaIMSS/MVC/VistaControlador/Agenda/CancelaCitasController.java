@@ -67,7 +67,7 @@ public class CancelaCitasController implements Initializable {
         this.paciente = paci;
         cargaDatos(paci);
         try(Connection conex = dbConn.conectarBD()) {
-            formatoTablaCitas(cita.listaCitasTotalUsuario(conex, paci.getId_paciente()));
+            formatoTablaCitas(conex, paci.getId_paciente());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -111,16 +111,17 @@ public class CancelaCitasController implements Initializable {
     
     /**
      * le da formato a las citas de ese dia
-     * @param listaCitas 
+     * @param conex 
+     * @param Idpaci 
      */
-    public void formatoTablaCitas(ObservableList<Cita>listaCitas){
+    public void formatoTablaCitas(Connection conex, String Idpaci){
         colHoraCita.setCellValueFactory(new PropertyValueFactory<>  ("hora_cit"));
         colFecha.setCellValueFactory(new PropertyValueFactory<>  ("fecha_cit"));
-        tvCitas.setItems(listaCitas);
+        tvCitas.setItems(cita.listaCitasTotalUsuario(conex, Idpaci));
         
         tvCitas.getSelectionModel().selectedItemProperty().addListener((valor,v,n)->{
-            try(Connection conex = dbConn.conectarBD()) {
-                cargaDatosLabels(n, conex);
+            try(Connection conexInterna = dbConn.conectarBD()) {
+                cargaDatosLabels(n, conexInterna);
                 cita = n;
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -130,7 +131,7 @@ public class CancelaCitasController implements Initializable {
     
     public void borraCita(Connection conex){
         cita.borrarCita(cita.getId_cit(), conex);
-        formatoTablaCitas(cita.listaCitasTotalUsuario(conex, paciente.getId_paciente()));
+        formatoTablaCitas(conex, paciente.getId_paciente());
     }
     
     /**
