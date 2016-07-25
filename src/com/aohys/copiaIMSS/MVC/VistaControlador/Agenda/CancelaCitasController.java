@@ -151,7 +151,7 @@ public class CancelaCitasController implements Initializable {
         });
         
         bttNuevaCancelacion.setOnAction(evento->{
-            cordi.lanzaBusquedaBorrarInterna();
+            princi.lanzaCitas(1);
         });
         
         bttNuevaCancelacion.setGraphic(new ImageView(aceptar));
