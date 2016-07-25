@@ -13,6 +13,7 @@ import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
@@ -22,6 +23,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -53,7 +57,8 @@ public class CancelaCitasController implements Initializable {
     Paciente paciente;
     Cita cita = new Cita();
     Paciente paci = new Paciente();
-  
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
     /**
      * Inicia la esecena 
      * @param cordi 
@@ -66,12 +71,21 @@ public class CancelaCitasController implements Initializable {
         this.princi = princi;
         this.paciente = paci;
         cargaDatos(paci);
-        try(Connection conex = dbConn.conectarBD()) {
-            formatoTablaCitas(conex, paci.getId_paciente());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        //formato de tabla
+        formatoTablaCitas();
+        //actualiza la tabla 
+        actualizaTablaTask(paci.getId_paciente());
     }
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
+    }
+    
     
     //FXML de arriba
     @FXML private Label lbNombre;
@@ -94,7 +108,7 @@ public class CancelaCitasController implements Initializable {
     
     Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
     Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
-    
+    ObservableList<Cita> listaCitasMedicos = FXCollections.observableArrayList();
     /**
      * Carga los datos de la escena 
      * @param paci
@@ -111,13 +125,11 @@ public class CancelaCitasController implements Initializable {
     
     /**
      * le da formato a las citas de ese dia
-     * @param conex 
-     * @param Idpaci 
      */
-    public void formatoTablaCitas(Connection conex, String Idpaci){
+    public void formatoTablaCitas(){
         colHoraCita.setCellValueFactory(new PropertyValueFactory<>  ("hora_cit"));
         colFecha.setCellValueFactory(new PropertyValueFactory<>  ("fecha_cit"));
-        tvCitas.setItems(cita.listaCitasTotalUsuario(conex, Idpaci));
+        tvCitas.setItems(listaCitasMedicos);
         
         tvCitas.getSelectionModel().selectedItemProperty().addListener((valor,v,n)->{
             try(Connection conexInterna = dbConn.conectarBD()) {
@@ -129,9 +141,14 @@ public class CancelaCitasController implements Initializable {
         });
     }
     
+    /**
+     * borra la cita
+     * @param conex 
+     */
     public void borraCita(Connection conex){
         cita.borrarCita(cita.getId_cit(), conex);
-        formatoTablaCitas(conex, paciente.getId_paciente());
+        listaCitasMedicos.remove(cita);
+        //formatoTablaCitas(conex, paciente.getId_paciente());
     }
     
     /**
@@ -191,13 +208,29 @@ public class CancelaCitasController implements Initializable {
     }
     
     /**
+     * metodo para actualizar la tabla
+     * @param idMed 
+     */
+    private void actualizaTablaTask(String idMed){
+        Cita.listaCitasTotalUsuarioTask actTask = cita.new listaCitasTotalUsuarioTask(idMed);
+        actTask.setOnSucceeded(evento->{
+            listaCitasMedicos.clear();
+            listaCitasMedicos.addAll(actTask.getValue());
+        });
+        dbExeccutor.submit(actTask);
+    }
+    
+    /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //formato bottones
         formatoBottnesInferiores();
-       //fomarto labels
-       formatoLabel();
+        //fomarto labels
+        formatoLabel();
+        //ejecutor del servicio
+        ejecutorDeServicio();
+        
     }   
 }

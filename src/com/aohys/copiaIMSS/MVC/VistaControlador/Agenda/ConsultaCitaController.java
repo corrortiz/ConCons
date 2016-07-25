@@ -18,6 +18,7 @@ import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
@@ -29,6 +30,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -72,6 +75,8 @@ public class ConsultaCitaController implements Initializable {
     horario horaio = new horario();
     Cita cita = new Cita();
     Paciente paci = new Paciente();
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
     //integers que representan dias
     int lunes = 0;
     int martes = 0;
@@ -95,6 +100,16 @@ public class ConsultaCitaController implements Initializable {
         }
     }
     
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
+    }
+    
     //Combobox de seleccion de medico
     @FXML private ComboBox<Usuario> cbbServicio;
     @FXML private ComboBox<Usuario> cbbMedico;
@@ -112,7 +127,7 @@ public class ConsultaCitaController implements Initializable {
     ObservableList<peridoVacaMedico> listPeridoMedicos = FXCollections.observableArrayList();
     ObservableList<DiasFestivos> listDiasFest = FXCollections.observableArrayList();
     ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
-    
+    ObservableList<Cita> listaCitasMedicos = FXCollections.observableArrayList();
     /**
      * crea y da formato a los combobox servicio y medico
      * @param conex 
@@ -307,14 +322,11 @@ public class ConsultaCitaController implements Initializable {
         dpFechaConsulta.setDayCellFactory(dayCellFactory);
         
         dpFechaConsulta.valueProperty().addListener((variable,v,n)->{
-            try(Connection conex = dbConn.conectarBD()) {
-                if (n!=null) {
-                    fecha(n);
-                    formatoTablaCitas(conex, n);  
-                    formatoLabel();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            if (n != null) {
+                fecha(n);
+                actualizaTablaTask(Date.valueOf(n), this.usuario.getId_medico());
+                //formatoTablaCitas(conex, n);  
+                formatoLabel();
             }
         });
     }
@@ -382,10 +394,8 @@ public class ConsultaCitaController implements Initializable {
     }
     /**
      * le da formato a las citas de ese dia
-     * @param conex 
-     * @param fecha 
      */
-    public void formatoTablaCitas(Connection conex, LocalDate fecha){
+    public void formatoTablaCitas(){
         colHoraCita.setCellValueFactory(new PropertyValueFactory<>  ("hora_cit"));
         colNombre.setCellValueFactory(cellData -> {
             Cita cita = cellData.getValue();
@@ -398,10 +408,9 @@ public class ConsultaCitaController implements Initializable {
             String regresaColumna = p.getNombre_paciente()+" "+p.getApellido_paciente()+" "+p.getApMaterno_paciente();
             return new ReadOnlyStringWrapper(regresaColumna);
         });
-        tvCitas.setItems(cita.cargaCitasFechaUsuario(
-                            conex, Date.valueOf(fecha), this.usuario.getId_medico()));
+        tvCitas.setItems(listaCitasMedicos);
         
-         tvCitas.getSelectionModel().selectedItemProperty().addListener((valor,v,n)->{
+        tvCitas.getSelectionModel().selectedItemProperty().addListener((valor,v,n)->{
              if (n!=null) {
                 try(Connection conexInternaA = dbConn.conectarBD()) {
                     cargaDatosLabels(n, conexInternaA);
@@ -497,6 +506,19 @@ public class ConsultaCitaController implements Initializable {
         }
     }
     
+    /**
+     * metodo para actualizar la tabla
+     * @param fecha
+     * @param idMed 
+     */
+    private void actualizaTablaTask(Date fecha, String idMed){
+        Cita.cargaCitasFechaUsuarioTask actTask = cita.new cargaCitasFechaUsuarioTask(fecha, idMed);
+        actTask.setOnSucceeded(evento->{
+            listaCitasMedicos.clear();
+            listaCitasMedicos.addAll(actTask.getValue());
+        });
+        dbExeccutor.submit(actTask);
+    }
     
     /**
      * Initializes the controller class.
@@ -511,6 +533,10 @@ public class ConsultaCitaController implements Initializable {
         formatoLabel();
         //escucha doble clik en la tabala
         escuchaDobleclik();
+        //formato de la tabla
+        formatoTablaCitas();
+        //ejecutor de servicios
+        ejecutorDeServicio();
     }   
     
 }

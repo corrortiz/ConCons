@@ -17,12 +17,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -37,10 +40,20 @@ public class Cita {
     private StringProperty id_Usuario;
     private StringProperty id_Paciente;
 
-    //Base de datos
-    Vitro dbConec = new Vitro();
-    //Variables auxiliares
+    //Variables de clase
+    private static final Logger logger = Logger.getLogger(Cita.class.getName());
+    Vitro dbConn = new Vitro();
     Auxiliar aux = new Auxiliar();
+    
+    /**
+     * clase astracta de task
+     * @param <T> 
+     */
+    abstract class DBTask<T> extends Task<T> {
+        DBTask() {
+          setOnFailed(t -> logger.log(Level.SEVERE, null, getException()));
+        }
+    }
     
     /**
      * constructor vacio
@@ -68,95 +81,138 @@ public class Cita {
     }
 
     /**
-     * Agrega una cita a la base de datos
-     * @param id_cit
-     * @param fecha_cit
-     * @param hora_cit
-     * @param primVis_cit
-     * @param id_Usuario
-     * @param id_Paciente
-     * @param conex 
+     * clase para agregar citas a la base de datos 
      */
-    public void agregaCita(String id_cit, Date fecha_cit, Time hora_cit, 
-        Boolean primVis_cit, String id_Usuario, String id_Paciente,Connection conex){
-        String sqlst =  "INSERT INTO Cita (id_cit, fecha_cit,\n"+
+    public class agregaCitaCsl extends DBTask<Void> {
+        String id_cit;
+        Date fecha_cit; 
+        Time hora_cit; 
+        Boolean primVis_cit; 
+        String id_Usuario;
+        String id_Paciente;
+        /**
+         * constructor de la clase
+         * @param id_cit
+         * @param fecha_cit
+         * @param hora_cit
+         * @param primVis_cit
+         * @param id_Usuario
+         * @param id_Paciente 
+         */
+        public agregaCitaCsl(String id_cit, Date fecha_cit, Time hora_cit, 
+                Boolean primVis_cit, String id_Usuario, String id_Paciente) {
+            this.id_cit = id_cit;
+            this.fecha_cit = fecha_cit;
+            this.hora_cit = hora_cit;
+            this.primVis_cit = primVis_cit;
+            this.id_Usuario = id_Usuario;
+            this.id_Paciente = id_Paciente;
+        }
+        
+        @Override
+        protected Void call() throws Exception {
+            String sqlst =  "INSERT INTO Cita (id_cit, fecha_cit,\n"+
                         "hora_cit, primVis_cit, id_medico, id_Paciente)"+
                         "VALUES (?,?,?,?,?,?)";
-        try(PreparedStatement sttm = conex.prepareStatement(sqlst)) {
-            conex.setAutoCommit(false);
-            sttm.setString  (1, id_cit);
-            sttm.setDate    (2, fecha_cit);
-            sttm.setTime    (3, hora_cit);
-            sttm.setBoolean (4, primVis_cit);
-            sttm.setString  (5, id_Usuario);
-            sttm.setString  (6, id_Paciente);
-            sttm.addBatch();
-            sttm.executeBatch();
-            conex.commit();
-            aux.informacionUs("La cita ha sido agendada", 
-                    "La cita ha sido agendada", 
-                    "La cita ha sido agregada a la base de datos exitosamente");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-    
-    /**
-     * realiza una lista de citas en esa fecha y con ese medico
-     * @param conex
-     * @param fecha
-     * @param idUs
-     * @return 
-     */
-    public ObservableList<Cita> cargaCitasFechaUsuario(Connection conex, Date fecha, String idUs){
-        ObservableList<Cita> listaCita = FXCollections.observableArrayList();
-        String sql ="SELECT id_cit, fecha_cit,\n" +
-                    "hora_cit, primVis_cit, id_medico, id_Paciente\n" +
-                    "FROM Cita WHERE fecha_cit = '"+fecha+"' AND id_medico = '"+idUs+"'\n" +
-                    "ORDER BY hora_cit ASC;";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
-            while (res.next()) {
-                listaCita.add(new Cita( res.getString ("id_cit"), 
-                                        res.getDate   ("fecha_cit"),
-                                        res.getTime   ("hora_cit"), 
-                                        res.getBoolean("primVis_cit"),
-                                        res.getString ("id_medico"),
-                                        res.getString ("id_Paciente")));
+            try(Connection conex = dbConn.conectarBD();
+                PreparedStatement sttm = conex.prepareStatement(sqlst)) {
+                conex.setAutoCommit(false);
+                sttm.setString  (1, id_cit);
+                sttm.setDate    (2, fecha_cit);
+                sttm.setTime    (3, hora_cit);
+                sttm.setBoolean (4, primVis_cit);
+                sttm.setString  (5, id_Usuario);
+                sttm.setString  (6, id_Paciente);
+                sttm.addBatch();
+                sttm.executeBatch();
+                conex.commit();
+                
+            } catch (SQLException ex) {
+                logger.log(Level.SEVERE, null, ex);
             }
-        }catch (SQLException ex) {
-            ex.printStackTrace();
+            return null;
         }
-        return listaCita;
     }
     
     /**
-     * Regresa lista de citas del usuario
-     * @param conex
-     * @param idUs
-     * @return 
+     * clase que regresa una lista de citar en la fecha con ese medico 
      */
-    public ObservableList<Cita> listaCitasTotalUsuario(Connection conex, String idUs){
-        ObservableList<Cita> listaCita = FXCollections.observableArrayList();
-        String sql ="SELECT id_cit, fecha_cit,\n" +
+    public class cargaCitasFechaUsuarioTask extends DBTask<ObservableList<Cita> > {
+        Date fecha; 
+        String idUs;
+        /**
+         * constructor de la clase
+         * @param fecha
+         * @param idUs 
+         */
+        public cargaCitasFechaUsuarioTask(Date fecha, String idUs) {
+            this.fecha = fecha;
+            this.idUs = idUs;
+        }
+        
+        @Override
+        protected ObservableList<Cita> call() throws Exception {
+            ObservableList<Cita> listaCita = FXCollections.observableArrayList();
+            String sql ="SELECT id_cit, fecha_cit,\n" +
+                        "hora_cit, primVis_cit, id_medico, id_Paciente\n" +
+                        "FROM Cita WHERE fecha_cit = '"+fecha+"' AND id_medico = '"+idUs+"'\n" +
+                        "ORDER BY hora_cit ASC;";
+            try(Connection conex = dbConn.conectarBD();
+                PreparedStatement stta = conex.prepareStatement(sql);
+                ResultSet res = stta.executeQuery()) {
+                while (res.next()) {
+                    listaCita.add(new Cita( res.getString ("id_cit"), 
+                                            res.getDate   ("fecha_cit"),
+                                            res.getTime   ("hora_cit"), 
+                                            res.getBoolean("primVis_cit"),
+                                            res.getString ("id_medico"),
+                                            res.getString ("id_Paciente")));
+                }
+            }catch (SQLException ex) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+            return listaCita;
+        }
+    }
+   
+    /**
+     * clase que legresa lista de citas del usuario
+     */
+    public class listaCitasTotalUsuarioTask extends DBTask<ObservableList<Cita> > {
+        String idUs;
+        /**
+         * constructor de clase 
+         * @param idUs 
+         */
+        public listaCitasTotalUsuarioTask(String idUs) {
+            this.idUs = idUs;
+        }
+        
+        @Override
+        protected ObservableList<Cita> call() throws Exception {
+            ObservableList<Cita> listaCita = FXCollections.observableArrayList();
+            String sql ="SELECT id_cit, fecha_cit,\n" +
                     "hora_cit, primVis_cit, id_medico, id_Paciente\n" +
                     "FROM Cita WHERE id_Paciente = '"+idUs+"'\n" +
                     "ORDER BY hora_cit ASC;";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
-            while (res.next()) {
-                listaCita.add(new Cita( res.getString ("id_cit"), 
-                                        res.getDate   ("fecha_cit"),
-                                        res.getTime   ("hora_cit"), 
-                                        res.getBoolean("primVis_cit"),
-                                        res.getString ("id_medico"),
-                                        res.getString ("id_Paciente")));
+            try(Connection conex = dbConn.conectarBD();
+                PreparedStatement stta = conex.prepareStatement(sql);
+                ResultSet res = stta.executeQuery()) {
+                while (res.next()) {
+                    listaCita.add(new Cita( res.getString ("id_cit"), 
+                                            res.getDate   ("fecha_cit"),
+                                            res.getTime   ("hora_cit"), 
+                                            res.getBoolean("primVis_cit"),
+                                            res.getString ("id_medico"),
+                                            res.getString ("id_Paciente")));
+                }
+            }catch (SQLException ex) {
+                logger.log(Level.SEVERE, null, ex);
             }
-        }catch (SQLException ex) {
-            ex.printStackTrace();
+            return listaCita;
         }
-        return listaCita;
     }
+    
     
     /**
      * Borrar cita seleccionada 
@@ -251,7 +307,7 @@ public class Cita {
      * @param idUs
      * @return 
      */
-    public ObservableList<LocalTime> horariosCitasFechaUsuario(Connection conex, Date fecha, String idUs){
+    /*public ObservableList<LocalTime> horariosCitasFechaUsuario(Connection conex, Date fecha, String idUs){
         ObservableList<LocalTime> listaCita = FXCollections.observableArrayList();
         String sql ="SELECT hora_cit\n"+
                     "FROM Cita WHERE fecha_cit = '"+fecha+"' AND id_medico = '"+idUs+"'\n" +
@@ -265,6 +321,42 @@ public class Cita {
             ex.printStackTrace();
         }
         return listaCita;
+    }*/
+    
+    /**
+     * clase que regresa una lista de las fechas validas
+     */
+    public class horariosCitasFechaUsuarioTask extends DBTask<ObservableList<LocalTime>> {
+        Date fecha;
+        String idUs;
+        /**
+         * constructor lleno de la clase 
+         * @param fecha
+         * @param idUs 
+         */
+        public horariosCitasFechaUsuarioTask(Date fecha, String idUs) {
+            this.fecha = fecha;
+            this.idUs = idUs;
+        }
+        
+        @Override
+        protected ObservableList<LocalTime> call() throws Exception {
+            ObservableList<LocalTime> listaCita = FXCollections.observableArrayList();
+            String sql ="SELECT hora_cit\n"+
+                        "FROM Cita WHERE fecha_cit = '"+fecha+"' AND id_medico = '"+idUs+"'\n" +
+                        "ORDER BY hora_cit ASC;";
+            try(Connection conex = dbConn.conectarBD();
+                PreparedStatement stta = conex.prepareStatement(sql);
+                ResultSet res = stta.executeQuery()) {
+                while (res.next()) {
+                    listaCita.add(res.getTime("hora_cit").toLocalTime());
+                }
+            }catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return listaCita;
+        }
+        
     }
     
     

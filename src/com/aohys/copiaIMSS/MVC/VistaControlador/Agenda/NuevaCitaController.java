@@ -9,6 +9,9 @@ package com.aohys.copiaIMSS.MVC.VistaControlador.Agenda;
 
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.Cita;
+import com.aohys.copiaIMSS.MVC.Modelo.Cita.agregaCitaCsl;
+import com.aohys.copiaIMSS.MVC.Modelo.Cita.cargaCitasFechaUsuarioTask;
+import com.aohys.copiaIMSS.MVC.Modelo.Cita.horariosCitasFechaUsuarioTask;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.DiasFestivos;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.diasConsulta;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.horario;
@@ -18,6 +21,7 @@ import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
@@ -29,6 +33,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -36,6 +45,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
@@ -78,6 +88,8 @@ public class NuevaCitaController implements Initializable {
     horario horaio = new horario();
     Cita cita = new Cita();
     Paciente paci = new Paciente();
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
     //integers que representan dias
     int lunes = 0;
     int martes = 0;
@@ -99,6 +111,15 @@ public class NuevaCitaController implements Initializable {
         this.paciente = paci;
         cargaDatos(paci);
         
+    }
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
     }
     
     //FXML de arriba
@@ -132,6 +153,9 @@ public class NuevaCitaController implements Initializable {
     ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
     Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
     Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+    ObservableList<LocalTime> listaHorasUsadas = FXCollections.observableArrayList();
+    ObservableList<Cita> listaCitasMedicos = FXCollections.observableArrayList();
+    
     /**
      * Carga los datos de la escena 
      * @param paci
@@ -355,7 +379,8 @@ public class NuevaCitaController implements Initializable {
                     formatoHorario(conex, this.usuario, Date.valueOf(n));
                     if (cbbMedico.getValue()!=null) {
                         fecha(n);
-                        formatoTablaCitas(Date.valueOf(n), this.usuario.getId_medico(), conex);  
+                        actualizaTablaTask(Date.valueOf(n), this.usuario.getId_medico());
+                        //formatoTablaCitas(Date.valueOf(n), this.usuario.getId_medico(), conex);  
                     }
                 }
             } catch (SQLException e) {
@@ -409,12 +434,12 @@ public class NuevaCitaController implements Initializable {
         if (cbbMedico.getValue()!=null) {
             
             ObservableList<LocalTime> listaHorasValidas = FXCollections.observableArrayList();
-            ObservableList<LocalTime> listaHorasUsadas = FXCollections.observableArrayList();
+            
             ObservableList<LocalTime> listaResultado = FXCollections.observableArrayList();
             
             listaHorasValidas.addAll(horaio.listaHorarioDisponible(usuarioID.getId_medico(), conex));
             listaResultado.addAll(listaHorasValidas);
-            listaHorasUsadas.addAll(cita.horariosCitasFechaUsuario(conex, fecha, usuarioID.getId_medico()));
+            actializaHorariosFactibles(fecha, usuarioID.getId_medico());
             
             for(LocalTime horasUsadas : listaHorasUsadas){
                 for (LocalTime horasValidas : listaHorasValidas) {
@@ -453,12 +478,10 @@ public class NuevaCitaController implements Initializable {
     
     /**
      * le da formato a las citas de ese dia
-     * @param fecha
-     * @param idMed
-     * @param conex 
      */
-    public void formatoTablaCitas(Date fecha, String idMed, Connection conex){
+    public void formatoTablaCitas(){
         colHoraCita.setCellValueFactory(new PropertyValueFactory<>  ("hora_cit"));
+        
         colNombre.setCellValueFactory(cellData -> {
             Cita cita = cellData.getValue();
             Paciente p = new Paciente();
@@ -470,7 +493,7 @@ public class NuevaCitaController implements Initializable {
             String regresaColumna = p.getNombre_paciente()+" "+p.getApellido_paciente()+" "+p.getApMaterno_paciente();
             return new ReadOnlyStringWrapper(regresaColumna);
         });
-        tvCitas.setItems(cita.cargaCitasFechaUsuario(conex, fecha, idMed));
+        tvCitas.setItems(listaCitasMedicos);
         
     }
     
@@ -479,19 +502,23 @@ public class NuevaCitaController implements Initializable {
      */
     private void formatoBottnesInferiores(){
         bttNuevaCit.setOnAction(evento->{
-            princi.lanzaCitas(0);
+            princi.lanzaCitas(1);
         });
         
         bttNuevaCitPac.setOnAction(evento->{
             if (continuaSINOTratamiento()) {
                 try(Connection conex = dbConn.conectarBD()) {
-                    guardarCita(conex);
-                    formatoTablaCitas(Date.valueOf(dpFechaConsulta.getValue()), 
-                            this.usuario.getId_medico(), conex);
+                    guardaCitaBD();
+                    actualizaTablaTask(Date.valueOf(dpFechaConsulta.getValue()), this.usuario.getId_medico());
+                    /*formatoTablaCitas(Date.valueOf(dpFechaConsulta.getValue()), 
+                            this.usuario.getId_medico(), conex);*/
                     formatoHorario(conex, usuario, Date.valueOf(dpFechaConsulta.getValue()));
+                    aux.informacionUs("La cita ha sido agendada", 
+                        "La cita ha sido agendada", 
+                        "La cita ha sido agregada a la base de datos exitosamente");
                 } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                    Logger.getLogger(NuevaCitaController.class.getName()).log(Level.SEVERE, null, e);
+                } 
             }
         });
         
@@ -503,7 +530,7 @@ public class NuevaCitaController implements Initializable {
      * guarda la cita  
      * @param conex 
      */
-    public void guardarCita(Connection conex){
+   /* public void guardarCita(Connection conex){
         String id_cit = aux.generaID();
         Date fecha_cit = Date.valueOf(dpFechaConsulta.getValue());
         Time hora_cit = Time.valueOf(cbbHoraConsul.getValue());
@@ -512,6 +539,55 @@ public class NuevaCitaController implements Initializable {
         String id_Paciente = paciente.getId_paciente();
         
         cita.agregaCita(id_cit, fecha_cit, hora_cit, primVis_cit, id_Usuario, id_Paciente, conex);
+    }*/
+    
+    /**
+     * Guarda una cita en la base de datos 
+     * @throws java.sql.SQLException
+     */
+    public void guardaCitaBD() throws SQLException {
+        String id_cit = aux.generaID();
+        Date fecha_cit = Date.valueOf(dpFechaConsulta.getValue());
+        Time hora_cit = Time.valueOf(cbbHoraConsul.getValue());
+        boolean primVis_cit = primeraVez.getValue();
+        String id_Usuario = usuario.getId_medico();
+        String id_Paciente = paciente.getId_paciente();
+        Cita.agregaCitaCsl dbCsl = cita.new agregaCitaCsl(id_cit, fecha_cit, hora_cit, 
+                 primVis_cit,  id_Usuario,  id_Paciente);
+        
+        dpFechaConsulta.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(dbCsl.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+
+        dbExeccutor.submit(dbCsl);
+    }
+    
+    /**
+     * metodo para actualizar la tabla
+     * @param fecha
+     * @param idMed 
+     */
+    private void actualizaTablaTask(Date fecha, String idMed){
+        cargaCitasFechaUsuarioTask actTask = cita.new cargaCitasFechaUsuarioTask(fecha, idMed);
+        actTask.setOnSucceeded(evento->{
+            listaCitasMedicos.clear();
+            listaCitasMedicos.addAll(actTask.getValue());
+        });
+        dbExeccutor.submit(actTask);
+    }
+    
+    /**
+     * actualiza la los horarios factibles 
+     * @param fecha
+     * @param usuarioID 
+     */
+    private void actializaHorariosFactibles(Date fecha, String usuarioID){
+        horariosCitasFechaUsuarioTask actTask = cita.new horariosCitasFechaUsuarioTask(fecha, usuarioID);
+        actTask.setOnSucceeded(evento->{
+            listaHorasUsadas.clear();
+            listaHorasUsadas.addAll(actTask.getValue());
+        });
+        dbExeccutor.submit(actTask);
     }
     
     /**
@@ -568,6 +644,10 @@ public class NuevaCitaController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        //Forjecutor de servicio
+        ejecutorDeServicio();
+        //Formato de la tabla
+        formatoTablaCitas();
     }    
     
 }
