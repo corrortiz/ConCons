@@ -355,13 +355,6 @@ public class ResRayController implements Initializable {
     private void colocaImagen(Image image){
         imageView.setImage(image);
         imageView.setPreserveRatio(true);
-        imageView.fitWidthProperty().unbind();
-        imageView.fitHeightProperty().unbind();
-        imageView.fitWidthProperty().bind(
-                stackPane.widthProperty()
-                .subtract(40f));
-        imageView.fitHeightProperty().bind(stackPane.heightProperty()
-                .subtract(40f));
         doubleclik();
     }
 
