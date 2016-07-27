@@ -228,7 +228,7 @@ public class ResRayController implements Initializable {
             @Override
             public void handle(WorkerStateEvent t) {
                  rayosVacio = cargaImag.getValue();
-                 if (rayosVacio!=null) {
+                 if (rayosVacio != null) {
                      colocaImagen(rayosVacio.getIma__imaRay());
                      activarButtonAgregar.set(true);
                  }else{
@@ -283,6 +283,7 @@ public class ResRayController implements Initializable {
     public void guardaImagenBD(final ProgressIndicator dbProgresoInd, File file) throws IOException {
         BufferedImage bufferedImage = ImageIO.read(file);
         WritableImage image = SwingFXUtils.toFXImage(bufferedImage, null);
+        colocaImagen(image);
         String id_imaRay = aux.generaID();
         Image ima__imaRay = imageView.getImage();
         String id_rayos = rayosSeleccionados.getId_rayos();
@@ -298,7 +299,7 @@ public class ResRayController implements Initializable {
         sub.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
            @Override
            public void handle(WorkerStateEvent t) {
-               colocaImagen(image);
+               
            }
         }
         );
@@ -340,9 +341,9 @@ public class ResRayController implements Initializable {
     private void formatoImagen(){
         imageView.fitWidthProperty().bind(
                 anchorPane.widthProperty()
-                .subtract(10f));
+                .subtract(5f));
         imageView.fitHeightProperty().bind(anchorPane.heightProperty()
-                .subtract(10f));
+                .subtract(5f));
         InfoOverlay inf = new InfoOverlay(imageView, "Dobleclik para ampliar la imagen");
         inf.setShowOnHover(true);
     }

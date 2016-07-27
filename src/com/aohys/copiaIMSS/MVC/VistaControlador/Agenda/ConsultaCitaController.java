@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -587,8 +588,12 @@ public class ConsultaCitaController implements Initializable {
         //formato de la tabla
         formatoTablaCitas();
         //CARGA EL DIA DE HOY
-        dpFechaConsulta.setValue(LocalDate.now());
-        
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+              dpFechaConsulta.setValue(LocalDate.now());
+            }
+        });
     }   
     
 }

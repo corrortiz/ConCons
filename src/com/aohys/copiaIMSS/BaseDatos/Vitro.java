@@ -28,7 +28,7 @@ public class Vitro {
         ds.setJdbcUrl(JDBC_URL);
         ds.setUsername("corrortiz");
         ds.setPassword("calixio2106");
-        ds.setPoolInitialSize(1);
+        ds.setPoolInitialSize(10);
         ds.setPoolMaxSize(60);
         //Added to tray to refrehs the conecctions
         ds.setPoolFair(true);
@@ -39,7 +39,7 @@ public class Vitro {
         ds.setTestConnectionQuery("isValid");
         ds.setLogQueryExecutionLongerThanMs(500);
         ds.setLogStackTraceForLongQueryExecution(true);
-        ds.setStatementCacheMaxSize(200);
+        ds.setStatementCacheMaxSize(400);
         ds.start();
         DATA_SOURCE = ds; 
     }
