@@ -25,35 +25,27 @@ public class Vitro {
     
     static {
         ViburDBCPDataSource ds = new ViburDBCPDataSource();
-
         ds.setJdbcUrl(JDBC_URL);
         ds.setUsername("corrortiz");
         ds.setPassword("calixio2106");
-        
-        
-        ds.setPoolInitialSize(10);
+        ds.setPoolInitialSize(1);
         ds.setPoolMaxSize(60);
-
+        //Added to tray to refrehs the conecctions
         ds.setPoolFair(true);
         ds.setPoolEnableConnectionTracking(true);
-        ds.setConnectionIdleLimitInSeconds(0);
+        ds.setConnectionIdleLimitInSeconds(10);
         ds.setResetDefaultsAfterUse(true);
-        
         ds.setConnectionIdleLimitInSeconds(1);
         ds.setTestConnectionQuery("isValid");
-
         ds.setLogQueryExecutionLongerThanMs(500);
         ds.setLogStackTraceForLongQueryExecution(true);
-
         ds.setStatementCacheMaxSize(200);
-
         ds.start();
-        
         DATA_SOURCE = ds; 
     }
     
     /**
-     * Conecta a la base de datos
+     * Method to ask for connectio to de pool 
      * @return 
      */
     public Connection conectarBD(){

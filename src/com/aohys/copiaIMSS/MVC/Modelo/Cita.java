@@ -197,7 +197,7 @@ public class Cita {
                     "hora_cit, primVis_cit, id_medico, id_Paciente\n" +
                     "FROM Cita WHERE id_Paciente = '"+idUs+"'\n" +
                     "AND fecha_cit <= '"+dia+"'\n" +
-                    "ORDER BY hora_cit ASC;";
+                    "ORDER BY fecha_cit DESC;";
             try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
                 ResultSet res = stta.executeQuery()) {
@@ -302,29 +302,6 @@ public class Cita {
         }
         return cit;
     }
-    
-    /**
-     * regresa una lista de las fehcas validas
-     * @param conex
-     * @param fecha
-     * @param idUs
-     * @return 
-     */
-    /*public ObservableList<LocalTime> horariosCitasFechaUsuario(Connection conex, Date fecha, String idUs){
-        ObservableList<LocalTime> listaCita = FXCollections.observableArrayList();
-        String sql ="SELECT hora_cit\n"+
-                    "FROM Cita WHERE fecha_cit = '"+fecha+"' AND id_medico = '"+idUs+"'\n" +
-                    "ORDER BY hora_cit ASC;";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
-            while (res.next()) {
-                listaCita.add(res.getTime("hora_cit").toLocalTime());
-            }
-        }catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return listaCita;
-    }*/
     
     /**
      * clase que regresa una lista de las fechas validas
