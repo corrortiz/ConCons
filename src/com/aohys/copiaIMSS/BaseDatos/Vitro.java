@@ -34,7 +34,12 @@ public class Vitro {
         ds.setPoolInitialSize(10);
         ds.setPoolMaxSize(60);
 
-        ds.setConnectionIdleLimitInSeconds(100);
+        ds.setPoolFair(true);
+        ds.setPoolEnableConnectionTracking(true);
+        ds.setConnectionIdleLimitInSeconds(0);
+        ds.setResetDefaultsAfterUse(true);
+        
+        ds.setConnectionIdleLimitInSeconds(1);
         ds.setTestConnectionQuery("isValid");
 
         ds.setLogQueryExecutionLongerThanMs(500);
