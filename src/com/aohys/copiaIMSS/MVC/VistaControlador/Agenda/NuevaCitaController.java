@@ -21,7 +21,6 @@ import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.horario.listaHorarioDisponibleT
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.peridoVacaMedico;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.peridoVacaMedico.listaPeridoVacacionalTask;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
-import com.aohys.copiaIMSS.MVC.Modelo.Paciente.cargaNombrePacienteTask;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario.cargaListaMedEspecialidadTask;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario.cargaListaMedTask;
@@ -43,7 +42,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
@@ -439,6 +437,7 @@ public class NuevaCitaController implements Initializable {
                     actualizaListasParaHoraValido(this.usuario.getId_medico(), Date.valueOf(n));
                     fecha(n);
                     actualizaTablaTask(Date.valueOf(n), this.usuario.getId_medico());
+                    System.err.println(listaCitasMedicos);
                 }else{
                     aux.alertaError("Es necesario seleccionar un medico", "Es necesario seleccionar un medico", 
                     "Para poder seleccionar una fecha es necesario seleccionar un medico");
@@ -572,6 +571,7 @@ public class NuevaCitaController implements Initializable {
                     aux.informacionUs("La cita ha sido agendada",
                             "La cita ha sido agendada",
                             "La cita ha sido agregada a la base de datos exitosamente");
+                    System.err.println(listaCitasMedicos);
                 } catch (SQLException ex) {
                     Logger.getLogger(NuevaCitaController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -613,6 +613,9 @@ public class NuevaCitaController implements Initializable {
         actTask.setOnSucceeded(evento->{
             listaCitasMedicos.clear();
             listaCitasMedicos.addAll(actTask.getValue());
+            for (Cita integer : listaCitasMedicos) {
+                    System.err.println(integer.getHora_cit()+" "+integer.getId_Paciente());
+            }
         });
         dbExeccutor.submit(actTask);
       
