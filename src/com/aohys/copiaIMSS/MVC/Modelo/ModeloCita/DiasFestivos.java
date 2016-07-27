@@ -8,15 +8,21 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
+import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -26,6 +32,20 @@ public class DiasFestivos {
 
    private StringProperty id_DiasFes; 
    private Date fecha_DiasFes;
+   //Variables de clase
+    private static final Logger logger = Logger.getLogger(Usuario.class.getName());
+    Vitro dbConn = new Vitro();
+    Auxiliar aux = new Auxiliar();
+    
+    /**
+     * clase astracta de task
+     * @param <T> 
+     */
+    abstract class DBTask<T> extends Task<T> {
+        DBTask() {
+          setOnFailed(t -> logger.log(Level.SEVERE, null, getException()));
+        }
+    }
 
    /**
     * Constructor lleno
@@ -81,25 +101,29 @@ public class DiasFestivos {
     }
    
    /**
-    * Regresa lista de dias festivos
-    * @param conex
-    * @return 
+    * clase que Regresa lista de dias festivos
     */
-   public ObservableList<DiasFestivos> listaDiasFestivos(Connection conex){
-       ObservableList<DiasFestivos> listaFes = FXCollections.observableArrayList();
-        String sql = "SELECT id_DiasFes, fecha_DiasFes \n" +
-                     "FROM DiasFestivos\n"+
-                     "ORDER BY fecha_DiasFes ASC;";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
-            while (res.next()) {
-                listaFes.add(new DiasFestivos(res.getString("id_DiasFes"), 
-                                              res.getDate("fecha_DiasFes")));
+   public class listaDiasFestivosTask extends DBTask<ObservableList<DiasFestivos>> {
+
+        @Override
+        protected ObservableList<DiasFestivos> call() throws Exception {
+            ObservableList<DiasFestivos> listaFes = FXCollections.observableArrayList();
+            String sql = "SELECT id_DiasFes, fecha_DiasFes \n" +
+                        "FROM DiasFestivos\n"+
+                        "ORDER BY fecha_DiasFes ASC;";
+            try(Connection conex = dbConn.conectarBD();
+                PreparedStatement stta = conex.prepareStatement(sql);
+                 ResultSet res = stta.executeQuery()) {
+               while (res.next()) {
+                   listaFes.add(new DiasFestivos(res.getString("id_DiasFes"), 
+                                                 res.getDate("fecha_DiasFes")));
+               }
+            }catch (SQLException ex) {
+               ex.printStackTrace();
             }
-        }catch (SQLException ex) {
-            ex.printStackTrace();
+           return listaFes;
         }
-        return listaFes;
+       
    }
    
    /*******************************************************************************/

@@ -16,24 +16,34 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
+import javafx.concurrent.Task;
 
 public class Usuario{
     
     //Base de datos
-    Vitro conn = new Vitro();
     Connection connection;
-    Auxiliar aux = new Auxiliar();
+  
     public Usuario medicoUnico;
+    //Variables de clase
+    private static final Logger logger = Logger.getLogger(Usuario.class.getName());
+    Vitro dbConn = new Vitro();
+    Auxiliar aux = new Auxiliar();
     
+    /**
+     * clase astracta de task
+     * @param <T> 
+     */
+    abstract class DBTask<T> extends Task<T> {
+        DBTask() {
+          setOnFailed(t -> logger.log(Level.SEVERE, null, getException()));
+        }
+    }
     /**
      * Variables
      */
@@ -52,8 +62,8 @@ public class Usuario{
          * constructor lleno 
          * @param id_medico
          * @param contraseña_medico
-         * @param nombre_medico
-         * @param apellido_medico
+     * @param nombre_medico
+     * @param apellido_medico
          * @param apMaterno_medico
          * @param cedulaProfecional_medico
          * @param especialidad_medico
@@ -169,37 +179,41 @@ public class Usuario{
         }
     
     /**
-     * Carga Lista de medicos
-     * @param conex
-     * @return 
+     * clase que carga Lista de medicos
      */
-    public ObservableList<Usuario> cargaListaMed(Connection conex){
-        ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
-        String sql = "SELECT  id_medico, contraseña_medico,\n" +
-                "        nombre_medico, apellido_medico,\n" +
-                "        apMaterno_medico, cedulaProfecional_medico,\n" +
-                "        especialidad_medico, telefono_medico,\n" +
-                "        correo_medico, tipo_medico\n" +
-                "FROM Medico WHERE tipo_medico = 'Medico';";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
-            while (res.next()) {
-                listaMed.add(new Usuario( res.getString("id_medico"), 
-                                         res.getString("contraseña_medico"), 
-                                         res.getString("nombre_medico"), 
-                                         res.getString("apellido_medico"), 
-                                         res.getString("apMaterno_medico"), 
-                                         res.getString("cedulaProfecional_medico"), 
-                                         res.getString("especialidad_medico"), 
-                                         res.getString("telefono_medico"), 
-                                         res.getString("correo_medico"),
-                                         res.getString("tipo_medico")));
+    public class cargaListaMedTask extends DBTask<ObservableList<Usuario>> {
+
+        @Override
+        protected ObservableList<Usuario> call() throws Exception {
+           ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
+            String sql = "SELECT  id_medico, contraseña_medico,\n" +
+                    "        nombre_medico, apellido_medico,\n" +
+                    "        apMaterno_medico, cedulaProfecional_medico,\n" +
+                    "        especialidad_medico, telefono_medico,\n" +
+                    "        correo_medico, tipo_medico\n" +
+                    "FROM Medico WHERE tipo_medico = 'Medico';";
+            try(Connection conex = dbConn.conectarBD();
+                    PreparedStatement stta = conex.prepareStatement(sql);
+                  ResultSet res = stta.executeQuery()) {
+                while (res.next()) {
+                    listaMed.add(new Usuario( res.getString("id_medico"), 
+                                             res.getString("contraseña_medico"), 
+                                             res.getString("nombre_medico"), 
+                                             res.getString("apellido_medico"), 
+                                             res.getString("apMaterno_medico"), 
+                                             res.getString("cedulaProfecional_medico"), 
+                                             res.getString("especialidad_medico"), 
+                                             res.getString("telefono_medico"), 
+                                             res.getString("correo_medico"),
+                                             res.getString("tipo_medico")));
+                   }
+               } catch (SQLException ex) {
+                   logger.log(Level.SEVERE, null, ex);
                }
-           } catch (SQLException ex) {
-               ex.printStackTrace();
-           }
-        return listaMed;
-    }
+            return listaMed;
+        }
+         
+     }
     
     /**
      * carga la lista con la clse especial resumen
@@ -236,74 +250,91 @@ public class Usuario{
     }
     
     /**
-     * carga lista de medicos segun especialidad
-     * @param conex
-     * @param dato
-     * @return 
+     * carga lista de medicos segun la especialidad
      */
-    public ObservableList<Usuario> cargaListaMedEspecialidad(Connection conex, String dato){
-        ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
-        String sql ="SELECT  id_medico, contraseña_medico,\n" +
-                    "nombre_medico, apellido_medico,\n" +
-                    "apMaterno_medico, cedulaProfecional_medico,\n" +
-                    "especialidad_medico, telefono_medico,\n" +
-                    "correo_medico, tipo_medico\n" +
-                    "FROM Medico WHERE tipo_medico = 'Medico' \n" +
-                    "AND especialidad_medico = '"+dato+"';";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
-            while (res.next()) {
-                listaMed.add(new Usuario( res.getString("id_medico"), 
-                                         res.getString("contraseña_medico"), 
-                                         res.getString("nombre_medico"), 
-                                         res.getString("apellido_medico"), 
-                                         res.getString("apMaterno_medico"), 
-                                         res.getString("cedulaProfecional_medico"), 
-                                         res.getString("especialidad_medico"), 
-                                         res.getString("telefono_medico"), 
-                                         res.getString("correo_medico"),
-                                         res.getString("tipo_medico")));
+    public class cargaListaMedEspecialidadTask extends DBTask<ObservableList<Usuario>> {
+        String dato;
+        /**
+         * constructor de clase 
+         * @param dato 
+         */
+        public cargaListaMedEspecialidadTask(String dato) {
+            this.dato = dato;
+        }
+        
+        
+        @Override
+        protected ObservableList<Usuario> call() throws Exception {
+            ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
+            String sql ="SELECT  id_medico, contraseña_medico,\n" +
+                        "nombre_medico, apellido_medico,\n" +
+                        "apMaterno_medico, cedulaProfecional_medico,\n" +
+                        "especialidad_medico, telefono_medico,\n" +
+                        "correo_medico, tipo_medico\n" +
+                        "FROM Medico WHERE tipo_medico = 'Medico' \n" +
+                        "AND especialidad_medico = '"+dato+"';";
+            try(Connection conex = dbConn.conectarBD();
+                PreparedStatement stta = conex.prepareStatement(sql);
+                ResultSet res = stta.executeQuery()) {
+                while (res.next()) {
+                    listaMed.add(new Usuario( res.getString("id_medico"), 
+                                             res.getString("contraseña_medico"), 
+                                             res.getString("nombre_medico"), 
+                                             res.getString("apellido_medico"), 
+                                             res.getString("apMaterno_medico"), 
+                                             res.getString("cedulaProfecional_medico"), 
+                                             res.getString("especialidad_medico"), 
+                                             res.getString("telefono_medico"), 
+                                             res.getString("correo_medico"),
+                                             res.getString("tipo_medico")));
+                   }
+               } catch (SQLException ex) {
+                   logger.log(Level.SEVERE, null ,ex);
                }
-           } catch (SQLException ex) {
-               ex.printStackTrace();
-           }
-        return listaMed;
+            return listaMed;
+        }
+        
     }
+    
+    
     
     /**
-     * Carga lista de especialidades medicas
-     * @param conex
-     * @return 
+     * clase que sirve para carga lista de especialidades medicas
      */
-    public ObservableList<Usuario> listaEspeci(Connection conex){
-        ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
-        String sql ="SELECT DISTINCT id_medico, contraseña_medico,\n" +
-                    "nombre_medico, apellido_medico,\n" +
-                    "apMaterno_medico, cedulaProfecional_medico,\n" +
-                    "especialidad_medico, telefono_medico,\n" +
-                    "correo_medico, tipo_medico\n" +
-                    "FROM Medico WHERE tipo_medico = 'Medico'\n" +
-                    "GROUP BY especialidad_medico;";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
-            while (res.next()) {
-                listaMed.add(new Usuario( res.getString("id_medico"), 
-                                         res.getString("contraseña_medico"), 
-                                         res.getString("nombre_medico"), 
-                                         res.getString("apellido_medico"), 
-                                         res.getString("apMaterno_medico"), 
-                                         res.getString("cedulaProfecional_medico"), 
-                                         res.getString("especialidad_medico"), 
-                                         res.getString("telefono_medico"), 
-                                         res.getString("correo_medico"),
-                                         res.getString("tipo_medico")));
+    public class listaEspeciTask extends DBTask<ObservableList<Usuario>> {
+
+        @Override
+        protected ObservableList<Usuario> call() throws Exception {
+            ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
+            String sql ="SELECT DISTINCT id_medico, contraseña_medico,\n" +
+                        "nombre_medico, apellido_medico,\n" +
+                        "apMaterno_medico, cedulaProfecional_medico,\n" +
+                        "especialidad_medico, telefono_medico,\n" +
+                        "correo_medico, tipo_medico\n" +
+                        "FROM Medico WHERE tipo_medico = 'Medico'\n" +
+                        "GROUP BY especialidad_medico;";
+            try(Connection conex = dbConn.conectarBD();
+                    PreparedStatement stta = conex.prepareStatement(sql);
+                  ResultSet res = stta.executeQuery()) {
+                while (res.next()) {
+                    listaMed.add(new Usuario( res.getString("id_medico"), 
+                                             res.getString("contraseña_medico"), 
+                                             res.getString("nombre_medico"), 
+                                             res.getString("apellido_medico"), 
+                                             res.getString("apMaterno_medico"), 
+                                             res.getString("cedulaProfecional_medico"), 
+                                             res.getString("especialidad_medico"), 
+                                             res.getString("telefono_medico"), 
+                                             res.getString("correo_medico"),
+                                             res.getString("tipo_medico")));
+                   }
+               } catch (SQLException ex) {
+                   logger.log(Level.SEVERE, null, ex);
                }
-           } catch (SQLException ex) {
-               ex.printStackTrace();
-           }
-        return listaMed;
-    }
+            return listaMed;
+        }
     
+    }
          
         /**
          * Borra Medico

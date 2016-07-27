@@ -9,14 +9,20 @@ package com.aohys.copiaIMSS.MVC.VistaControlador.Agenda;
 
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.DiasFestivos;
+import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.DiasFestivos.listaDiasFestivosTask;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -48,6 +54,17 @@ public class DiasFestivosController implements Initializable {
     public void pasoPrincipal(PrincipalController cordi) {
         this.cordi = cordi;
     }
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
+    }
     
     //FXML 
     @FXML private DatePicker dpFecha;
@@ -55,7 +72,7 @@ public class DiasFestivosController implements Initializable {
     //Tabla
     @FXML private TableView<DiasFestivos> tvFechas;
     @FXML private TableColumn<DiasFestivos, Date> clmFeche;
-    
+    ObservableList<DiasFestivos> listDiasFest = FXCollections.observableArrayList();
     //Guarda
     @FXML private Button bttGuardar;
     Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
@@ -68,7 +85,7 @@ public class DiasFestivosController implements Initializable {
                 modulito.eliminar(modulito.getId_DiasFes(), conex);
                 aux.informacionUs("Festivo borrado", "Festivo borrado", 
                         "El Festivo ha sido borrado de la base de datos exitosamente");
-                cargaTabla(conex); 
+                listDiasFest.remove(modulito);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -85,16 +102,28 @@ public class DiasFestivosController implements Initializable {
     public void guardar(Connection conex){
         Date festivo = Date.valueOf(dpFecha.getValue());
         diasFes.agregaDiaFes(aux.generaID(), festivo, conex);
-        cargaTabla(conex);
+        actualizaListadiasFestivos();
     }
 
+    /**
+     * actualiza la lista de los dias festivos 
+     */
+    private void actualizaListadiasFestivos(){
+        listaDiasFestivosTask task = diasFes.new listaDiasFestivosTask();
+        task.setOnSucceeded(evento->{
+            listDiasFest.clear();
+            listDiasFest.addAll(task.getValue());
+        });
+        dbExeccutor.submit(task);
+    }
+    
     /**
      * Cargar tabla
      * @param conex 
      */
-    public void cargaTabla(Connection conex){
+    public void cargaTabla(){
         clmFeche.setCellValueFactory  (new PropertyValueFactory<>("fecha_DiasFes"));
-        tvFechas.setItems(diasFes.listaDiasFestivos(conex));
+        tvFechas.setItems(listDiasFest);
     }
     
     /**
@@ -103,11 +132,12 @@ public class DiasFestivosController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         dpFecha.setValue(LocalDate.now());
-        try(Connection conex = dbConn.conectarBD()) {
-            cargaTabla(conex); 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        //carga el ejecutor de servicio 
+        ejecutorDeServicio();
+        //formato tabla
+        cargaTabla();
+        //actualiza la informacion inicial
+        actualizaListadiasFestivos();
         
         bttGuardar.setOnAction((evento)->{
             try(Connection conex = dbConn.conectarBD()) {

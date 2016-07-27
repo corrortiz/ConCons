@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -190,10 +191,12 @@ public class Cita {
         
         @Override
         protected ObservableList<Cita> call() throws Exception {
+            Date dia = Date.valueOf(LocalDate.now());
             ObservableList<Cita> listaCita = FXCollections.observableArrayList();
             String sql ="SELECT id_cit, fecha_cit,\n" +
                     "hora_cit, primVis_cit, id_medico, id_Paciente\n" +
                     "FROM Cita WHERE id_Paciente = '"+idUs+"'\n" +
+                    "AND fecha_cit <= '"+dia+"'\n" +
                     "ORDER BY hora_cit ASC;";
             try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);

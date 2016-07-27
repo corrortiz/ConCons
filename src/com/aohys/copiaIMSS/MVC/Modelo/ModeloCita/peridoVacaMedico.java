@@ -8,15 +8,20 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
+import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -28,7 +33,19 @@ public class peridoVacaMedico {
     private Date inicia_pvm;
     private Date termina_pvm;
     private StringProperty id_medico;
-
+    //Variables de clase
+    private static final Logger logger = Logger.getLogger(peridoVacaMedico.class.getName());
+    Vitro dbConn = new Vitro();
+    Auxiliar aux = new Auxiliar();
+    /**
+     * clase astracta de task
+     * @param <T> 
+     */
+    abstract class DBTask<T> extends Task<T> {
+        DBTask() {
+          setOnFailed(t -> logger.log(Level.SEVERE, null, getException()));
+        }
+    }
     /**
      * constructor de la clase de perido vacaional 
      * @param id_peridoVacaMedico
@@ -77,30 +94,42 @@ public class peridoVacaMedico {
         }
     }
     
+    
     /**
-     * realiza una lista de citas en esa fecha y con ese medico
-     * @param conex
-     * @param idUs
-     * @return 
-    */
-    public ObservableList<peridoVacaMedico> listaPeridoVacacional(Connection conex, String idUs){
-        ObservableList<peridoVacaMedico> listaperidoVacaMedico = FXCollections.observableArrayList();
-        String sql ="SELECT id_peridoVacaMedico, inicia_pvm,\n"+
-                    "termina_pvm, id_medico\n" +
-                    "FROM peridovacamedico WHERE id_medico = '"+idUs+"';";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
-            while (res.next()) {
-                listaperidoVacaMedico.add(new peridoVacaMedico( 
-                                        res.getString ("id_peridoVacaMedico"), 
-                                        res.getDate   ("inicia_pvm"),
-                                        res.getDate   ("termina_pvm"), 
-                                        res.getString ("id_medico")));
-            }
-        }catch (SQLException ex) {
-            ex.printStackTrace();
+     * clase que realiza una lista de citas en esa fecha y con ese medico
+     */
+    public class listaPeridoVacacionalTask extends DBTask<ObservableList<peridoVacaMedico>> {
+        String idUs;
+        /**
+         * constructor lleno
+         * @param idUs 
+         */
+        public listaPeridoVacacionalTask(String idUs) {
+            this.idUs = idUs;
         }
-        return listaperidoVacaMedico;
+        
+        @Override
+        protected ObservableList<peridoVacaMedico> call() throws Exception {
+            ObservableList<peridoVacaMedico> listaperidoVacaMedico = FXCollections.observableArrayList();
+            String sql ="SELECT id_peridoVacaMedico, inicia_pvm,\n"+
+                        "termina_pvm, id_medico\n" +
+                        "FROM peridovacamedico WHERE id_medico = '"+idUs+"';";
+            try(Connection conex = dbConn.conectarBD();
+                PreparedStatement stta = conex.prepareStatement(sql);
+                ResultSet res = stta.executeQuery()) {
+                while (res.next()) {
+                    listaperidoVacaMedico.add(new peridoVacaMedico( 
+                                            res.getString ("id_peridoVacaMedico"), 
+                                            res.getDate   ("inicia_pvm"),
+                                            res.getDate   ("termina_pvm"), 
+                                            res.getString ("id_medico")));
+                }
+            }catch (SQLException ex) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+            return listaperidoVacaMedico;
+        }
+        
     }
     
     /**

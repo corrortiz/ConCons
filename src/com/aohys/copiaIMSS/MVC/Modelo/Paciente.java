@@ -15,8 +15,11 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -29,8 +32,19 @@ public class Paciente {
     
     //Varibles de contol
     Paciente pacienteUnico;
+    //Variables de clase
+    private static final Logger logger = Logger.getLogger(Paciente.class.getName());
+    Vitro dbConn = new Vitro();
     Auxiliar aux = new Auxiliar();
-    
+    /**
+     * clase astracta de task
+     * @param <T> 
+     */
+    abstract class DBTask<T> extends Task<T> {
+        DBTask() {
+          setOnFailed(t -> logger.log(Level.SEVERE, null, getException()));
+        }
+    }
     //Variables
     private String id_paciente;
     private String nombre_paciente;
@@ -174,6 +188,86 @@ public class Paciente {
             ex.printStackTrace();
         }
         return pacienteUnico;
+    }
+    
+    /**
+     * clase que carga un solo paciente 
+     */
+    public class cargaSoloUnPacienteTask extends DBTask<Paciente> {
+        String idAs;
+        /**
+         * constructor lleno de clase
+         * @param idPaciente 
+         */
+        public cargaSoloUnPacienteTask(String idPaciente) {
+            idAs = idPaciente;
+        }
+        
+        @Override
+        protected Paciente call() throws Exception {
+            Paciente paciRegrear = null;
+            String sttm = "SELECT id_paciente,  nombre_paciente, \n" +
+                       " apellido_paciente,  apMaterno_paciente, \n" +
+                       " sexo_paciente,  fechaNacimiento_paciente, \n" +
+                       " curp_paciente, edad_paciente, \n" +
+                       " telefono_paciente, correo_paciente \n" +
+                        "FROM Paciente WHERE id_paciente = '"+idAs+"'"; 
+            try (   Connection conex = dbConn.conectarBD();
+                    PreparedStatement stta = conex.prepareStatement(sttm);
+                    ResultSet res = stta.executeQuery(sttm)){
+                if (res.next()) {
+                   paciRegrear = new Paciente(res.getString("id_paciente"), 
+                                                res.getString("nombre_paciente"), 
+                                                res.getString("apellido_paciente"), 
+                                                res.getString("apMaterno_paciente"), 
+                                                res.getString("sexo_paciente"), 
+                                                res.getDate  ("fechaNacimiento_paciente"),
+                                                res.getString("curp_paciente"),
+                                                res.getInt   ("edad_paciente"), 
+                                                res.getString("telefono_paciente"), 
+                                                res.getString("correo_paciente")); 
+                }
+            } catch (SQLException ex) {
+               logger.log(Level.SEVERE, null, ex);
+            }
+            return paciRegrear;
+        }
+        
+    }
+    
+    /**
+     * calse que carga solo el nombre del paciente
+     */
+    public class cargaNombrePacienteTask extends DBTask<String> {
+        String idAs;
+        /**
+         * constructor lleno de clase
+         * @param idPaciente 
+         */
+        public cargaNombrePacienteTask(String idPaciente) {
+            idAs = idPaciente;
+        }
+        
+        @Override
+        protected String call() throws Exception {
+            String paciRegrear = null;
+            String sttm = "SELECT id_paciente,  nombre_paciente, \n" +
+                       " apellido_paciente,  apMaterno_paciente\n" +
+                        "FROM Paciente WHERE id_paciente = '"+idAs+"'"; 
+            try (   Connection conex = dbConn.conectarBD();
+                    PreparedStatement stta = conex.prepareStatement(sttm);
+                    ResultSet res = stta.executeQuery(sttm)){
+                if (res.next()) {
+                   paciRegrear = String.format("%s %s %s", res.getString("nombre_paciente"), 
+                                                res.getString("apellido_paciente"), 
+                                                res.getString("apMaterno_paciente")); 
+                }
+            } catch (SQLException ex) {
+               logger.log(Level.SEVERE, null, ex);
+            }
+            return paciRegrear;
+        }
+        
     }
     
     /**
@@ -341,7 +435,11 @@ public class Paciente {
      */
     public Paciente() {
     }
-
+ 
+/********************************************************************************************************/
+    //Seters and geters
+    
+    
     public String getId_paciente() {
         return id_paciente;
     }

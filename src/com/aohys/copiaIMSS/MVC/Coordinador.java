@@ -19,6 +19,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -27,6 +29,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -94,9 +97,20 @@ public class Coordinador extends Application {
             stage.setMaximized(false);
             // Muesta la escena,
             stage.show();
+            
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent t) {
+                    Platform.exit();
+                    System.exit(0);
+                }
+            });
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
+         
     }
     
     /**
@@ -128,6 +142,8 @@ public class Coordinador extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
+       
     }
     
     /**

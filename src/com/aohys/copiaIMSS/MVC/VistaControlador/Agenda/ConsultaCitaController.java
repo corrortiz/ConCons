@@ -10,11 +10,14 @@ package com.aohys.copiaIMSS.MVC.VistaControlador.Agenda;
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.Cita;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.DiasFestivos;
+import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.DiasFestivos.listaDiasFestivosTask;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.diasConsulta;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.horario;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.peridoVacaMedico;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
+import com.aohys.copiaIMSS.MVC.Modelo.Usuario.cargaListaMedTask;
+import com.aohys.copiaIMSS.MVC.Modelo.Usuario.listaEspeciTask;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
@@ -75,8 +78,7 @@ public class ConsultaCitaController implements Initializable {
     horario horaio = new horario();
     Cita cita = new Cita();
     Paciente paci = new Paciente();
-    //private ExecutorService dbExeccutor;
-    private ExecutorService dbExeccutor;
+    
     //integers que representan dias
     int lunes = 0;
     int martes = 0;
@@ -93,13 +95,11 @@ public class ConsultaCitaController implements Initializable {
     public void transmisor(AgendaCitasController cordi, PrincipalController princi) {
         this.cordi = cordi;
         this.princi = princi;
-        try(Connection conex = dbConn.conectarBD()) {
-            cargaComboBoxs(conex);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        
+        
     }
-    
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
     /**
      * metodo para pedir un hilo antes de una llamada a la bd
      */
@@ -127,18 +127,37 @@ public class ConsultaCitaController implements Initializable {
     ObservableList<peridoVacaMedico> listPeridoMedicos = FXCollections.observableArrayList();
     ObservableList<DiasFestivos> listDiasFest = FXCollections.observableArrayList();
     ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
+    ObservableList<Usuario> listaServ = FXCollections.observableArrayList();
     ObservableList<Cita> listaCitasMedicos = FXCollections.observableArrayList();
     /**
      * crea y da formato a los combobox servicio y medico
-     * @param conex 
      */
-    public void cargaComboBoxs(Connection conex){
-        formatoComboBox();
-        listaMed.clear();
-        listaMed.addAll(usa.cargaListaMed(conex));
+    public void cargaComboBoxs(){
+        cargaListaMedicos();
         cbbMedico.setItems(listaMed);
-        cbbServicio.setItems(usa.listaEspeci(conex));
-        revisaSiesMedicoYselecciona();
+        cbbServicio.setItems(listaServ);
+        formatoComboBox();
+        
+    }
+    
+    /**
+     * cale que sirve para cargar la lista de medicos y de especialidades
+     */
+    private void cargaListaMedicos(){
+        cargaListaMedTask ttas = usa.new cargaListaMedTask();
+        ttas.setOnSucceeded(evento->{
+            listaMed.clear();
+            listaMed.addAll(ttas.getValue());
+            revisaSiesMedicoYselecciona();
+        });
+        dbExeccutor.submit(ttas);
+        
+        listaEspeciTask lisTask = usa.new listaEspeciTask();
+        lisTask.setOnSucceeded(evento->{
+            listaServ.clear();
+            listaServ.addAll(lisTask.getValue());
+        });
+        dbExeccutor.submit(lisTask);
     }
     
     /**
@@ -152,6 +171,7 @@ public class ConsultaCitaController implements Initializable {
         for (String string : listaId) {
             if (string.equals(IngresoController.usua.getId_medico())) {
                 cbbMedico.setValue(IngresoController.usua);
+                dpFechaConsulta.setValue(LocalDate.now());
             }
         }
     }
@@ -222,36 +242,53 @@ public class ConsultaCitaController implements Initializable {
         
         cbbServicio.valueProperty().addListener((ss,v,n)->{
             if (n!=null) {
-                try(Connection conex = dbConn.conectarBD()) {
-                    cbbMedico.setItems(usa.cargaListaMedEspecialidad(conex,n.getEspecialidad_medico()));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                listaMedicosSegunEspecialidad(n.getEspecialidad_medico());
             }
         });
         
         cbbMedico.valueProperty().addListener((variable,v,n)->{
             if (n!=null) {
-                try(Connection conex = dbConn.conectarBD()) {
-                    //Dias de consulta
-                    listaDiasConsulta.clear();
-                    listaDiasConsulta.addAll(diasConsulta.listaDiasConsultaMedico(conex, n.getId_medico()));
-                    //Perido de vacaciones
-                    listPeridoMedicos.clear();
-                    listPeridoMedicos.addAll((periVacaMedico.listaPeridoVacacional(conex, n.getId_medico())));
-                    limpiaCuadros();
-                    datePickerFormato(n);
-                    usuario = n;
-                    formatoLabel();
-                    tvCitas.getItems().clear();
-                    nombreMedico(n);
-                    dpFechaConsulta.setValue(LocalDate.now());
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                listasDeDiasMed(n.getId_medico(), n);
             }
-            
         });
+    }
+    
+    /**
+     * lista de consulta de medico mas dias de vacaciones junto con formato de date picker
+     * @param idMedico 
+     */
+    private void listasDeDiasMed(String idMedico, Usuario usuarioDate){
+        diasConsulta.listaDiasConsultaMedicoTask taskUno = diasConsulta.new listaDiasConsultaMedicoTask(idMedico);
+        taskUno.setOnSucceeded(evento->{
+            listaDiasConsulta.clear();
+            listaDiasConsulta.addAll(taskUno.getValue());
+        });
+        dbExeccutor.submit(taskUno);
+        
+        peridoVacaMedico.listaPeridoVacacionalTask taskDos = periVacaMedico.new listaPeridoVacacionalTask(idMedico);
+        taskDos.setOnSucceeded(evento->{
+            listPeridoMedicos.clear();
+            listPeridoMedicos.addAll(taskDos.getValue());
+            limpiaCuadros();
+            datePickerFormato(usuarioDate);
+            usuario = usuarioDate;
+            nombreMedico(usuarioDate);
+        });
+        
+        dbExeccutor.submit(taskDos);
+    }
+    
+    /**
+     * cambia la lista de medicos segun su especialidad
+     * @param especialidad 
+     */
+    private void listaMedicosSegunEspecialidad(String especialidad){
+        Usuario.cargaListaMedEspecialidadTask task = usa.new cargaListaMedEspecialidadTask(especialidad);
+        task.setOnSucceeded(evento->{
+            listaMed.clear();
+            listaMed.addAll(task.getValue());
+        });
+        dbExeccutor.submit(task);
     }
     
     /**
@@ -263,70 +300,67 @@ public class ConsultaCitaController implements Initializable {
             @Override
             public void updateItem(LocalDate item, boolean empty){
                 super.updateItem(item, empty);
-                try(Connection conex = dbConn.conectarBD()) {
-                    if (usuario != null) {
-                    confirDiasConsulta(usuario, conex);
-                    //dias validos de consulta
-                    Integer entero = item.getDayOfWeek().getValue();
-                    if (entero.equals(lunes)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(martes)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(miercoles)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(jueves)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(viernes)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(sabado)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }else if (entero.equals(domingo)) {
-                        setStyle("-fx-background-color: #ffc0cb;");
-                        setDisable(true);
-                    }
-                    
-                        //perido de vacaciones
-                        for(peridoVacaMedico per : listPeridoMedicos){
-                             if (item.isAfter(per.getInicia_pvm().toLocalDate())
-                                 && item.isBefore(per.getTermina_pvm().toLocalDate())){
-                                 setStyle("-fx-background-color: #ffc0cb;");
-                                 setDisable(true);
-                             }
-                             if (item.equals(per.getInicia_pvm().toLocalDate())
-                                     ||item.equals(per.getTermina_pvm().toLocalDate())) {
-                                 setStyle("-fx-background-color: #ffc0cb;");
-                                 setDisable(true);
-                             }
-                         }
-                     }
-                    //cancela los dias festivos
-                    listDiasFest = diasFestivos.listaDiasFestivos(conex);
-                    for(DiasFestivos diafes: listDiasFest){
-                        if (diafes.getFecha_DiasFes().toLocalDate().equals(item)) {
-                            setStyle("-fx-background-color: #ffc0cb;");
-                            setDisable(true);
-                        }
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
+
+            if (usuario != null) {
+                confirDiasConsulta();
+                //dias validos de consulta
+                Integer entero = item.getDayOfWeek().getValue();
+                if (entero.equals(lunes)) {
+                    setStyle("-fx-background-color: #ffc0cb;");
+                    setDisable(true);
+                }else if (entero.equals(martes)) {
+                    setStyle("-fx-background-color: #ffc0cb;");
+                    setDisable(true);
+                }else if (entero.equals(miercoles)) {
+                    setStyle("-fx-background-color: #ffc0cb;");
+                    setDisable(true);
+                }else if (entero.equals(jueves)) {
+                    setStyle("-fx-background-color: #ffc0cb;");
+                    setDisable(true);
+                }else if (entero.equals(viernes)) {
+                    setStyle("-fx-background-color: #ffc0cb;");
+                    setDisable(true);
+                }else if (entero.equals(sabado)) {
+                    setStyle("-fx-background-color: #ffc0cb;");
+                    setDisable(true);
+                }else if (entero.equals(domingo)) {
+                    setStyle("-fx-background-color: #ffc0cb;");
+                    setDisable(true);
                 }
-                
+
+                    //perido de vacaciones
+                for(peridoVacaMedico per : listPeridoMedicos){
+                     if (item.isAfter(per.getInicia_pvm().toLocalDate())
+                         && item.isBefore(per.getTermina_pvm().toLocalDate())){
+                         setStyle("-fx-background-color: #ffc0cb;");
+                         setDisable(true);
+                     }
+                     if (item.equals(per.getInicia_pvm().toLocalDate())
+                             ||item.equals(per.getTermina_pvm().toLocalDate())) {
+                         setStyle("-fx-background-color: #ffc0cb;");
+                         setDisable(true);
+                     }
+                 }
+            }
+
+            for(DiasFestivos diafes: listDiasFest){
+                if (diafes.getFecha_DiasFes().toLocalDate().equals(item)) {
+                    setStyle("-fx-background-color: #ffc0cb;");
+                    setDisable(true);
+                }
+            }
             }
         };
+        
         dpFechaConsulta.setDayCellFactory(dayCellFactory);
         
         dpFechaConsulta.valueProperty().addListener((variable,v,n)->{
             if (n != null) {
-                fecha(n);
-                actualizaTablaTask(Date.valueOf(n), this.usuario.getId_medico());
-                //formatoTablaCitas(conex, n);  
-                formatoLabel();
+                if (cbbMedico.getValue()!= null) {
+                    fecha(n);
+                    actualizaTablaTask(Date.valueOf(n), cbbMedico.getValue().getId_medico());
+                    formatoLabel();
+                }
             }
         });
     }
@@ -334,36 +368,14 @@ public class ConsultaCitaController implements Initializable {
     /**
      * le da valor a los dias de consulta para despues distingir
      */
-    private void confirDiasConsulta(Usuario usariossss, Connection conex){
-        diasConsulta dConsulta = diasConsulta.unSoloDiasConsultaMedico(conex, usariossss.getId_medico());    
-        if (dConsulta.getLunes_c()) {
-            lunes = 0;
-        }else
-            lunes = 1;
-        if (dConsulta.getMartes_c()) {
-            martes = 0;
-        }else
-            martes = 2;
-        if (dConsulta.getMiercoles_c()) {
-            miercoles = 0;
-        }else
-            miercoles = 3;
-        if (dConsulta.getJueves_c()) {
-            jueves = 0;
-        }else
-            jueves = 4;
-        if (dConsulta.getViernes_c()) {
-            viernes = 0;
-        }else
-            viernes = 5;
-        if (dConsulta.getSabado_c()) {
-            sabado = 0;
-        }else
-            sabado = 6;
-        if (dConsulta.getDomingo_c()) {
-            domingo = 0;
-        }else
-            domingo = 7;
+    private void confirDiasConsulta(){
+        lunes = listaDiasConsulta.contains(1)?0:1;
+        martes = listaDiasConsulta.contains(2)?0:2;
+        miercoles = listaDiasConsulta.contains(3)?0:3;
+        jueves = listaDiasConsulta.contains(4)?0:4;
+        viernes = listaDiasConsulta.contains(5)?0:5;
+        sabado = listaDiasConsulta.contains(6)?0:6;
+        domingo = listaDiasConsulta.contains(7)?0:7;
     }
     
     
@@ -397,17 +409,7 @@ public class ConsultaCitaController implements Initializable {
      */
     public void formatoTablaCitas(){
         colHoraCita.setCellValueFactory(new PropertyValueFactory<>  ("hora_cit"));
-        colNombre.setCellValueFactory(cellData -> {
-            Cita cita = cellData.getValue();
-            Paciente p = new Paciente();
-            try(Connection conexInterna = dbConn.conectarBD()) {
-                p = paci.cargaSoloUno(cita.getId_Paciente(), conexInterna);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            String regresaColumna = p.getNombre_paciente()+" "+p.getApellido_paciente()+" "+p.getApMaterno_paciente();
-            return new ReadOnlyStringWrapper(regresaColumna);
-        });
+        formatoColumnaNombreHiloSeguro(colNombre);
         tvCitas.setItems(listaCitasMedicos);
         
         tvCitas.getSelectionModel().selectedItemProperty().addListener((valor,v,n)->{
@@ -429,6 +431,30 @@ public class ConsultaCitaController implements Initializable {
                     .subtract(colHoraCita.widthProperty())
                     .subtract(2)  // a border stroke?
                  );
+    }
+    
+    /**
+     * le da formato a la columna de pacientes respetando hilos
+     * @param tc 
+     */
+    private void formatoColumnaNombreHiloSeguro(TableColumn<Cita, String> tc){
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                tc.setCellValueFactory(cellData -> {
+                    Cita cita = cellData.getValue();
+                    Paciente p = new Paciente();
+                    try(Connection conexInterna = dbConn.conectarBD()) {
+                        p = paci.cargaSoloUno(cita.getId_Paciente(), conexInterna);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    String regresaColumna = p.getNombre_paciente()+" "+p.getApellido_paciente()+" "+p.getApMaterno_paciente();
+                    return new ReadOnlyStringWrapper(regresaColumna);
+                });
+            }
+        };
+        dbExeccutor.submit(task);
     }
     
     //FXML de arriba
@@ -512,12 +538,27 @@ public class ConsultaCitaController implements Initializable {
      * @param idMed 
      */
     private void actualizaTablaTask(Date fecha, String idMed){
-        Cita.cargaCitasFechaUsuarioTask actTask = cita.new cargaCitasFechaUsuarioTask(fecha, idMed);
-        actTask.setOnSucceeded(evento->{
-            listaCitasMedicos.clear();
-            listaCitasMedicos.addAll(actTask.getValue());
+        if (fecha!=null) {
+            Cita.cargaCitasFechaUsuarioTask actTask = cita.new cargaCitasFechaUsuarioTask(fecha, idMed);
+            actTask.setOnSucceeded(evento->{
+                listaCitasMedicos.clear();
+                listaCitasMedicos.addAll(actTask.getValue());
+            });
+            dbExeccutor.submit(actTask);
+        }
+        
+    }
+    
+    /**
+     * actualiza la lista de los dias festivos 
+     */
+    private void actualizaListadiasFestivos(){
+        listaDiasFestivosTask task = diasFestivos.new listaDiasFestivosTask();
+        task.setOnSucceeded(evento->{
+            listDiasFest.clear();
+            listDiasFest.addAll(task.getValue());
         });
-        dbExeccutor.submit(actTask);
+        dbExeccutor.submit(task);
     }
     
     /**
@@ -525,6 +566,12 @@ public class ConsultaCitaController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //ejecutor de servicios
+        ejecutorDeServicio();
+        //carga comboboxes
+        cargaComboBoxs();
+        //carga la lista de dias festivos
+        actualizaListadiasFestivos();
         //Carga formato de datePicker
         datePickerFormato(null);
         //formato de fecha
@@ -535,8 +582,9 @@ public class ConsultaCitaController implements Initializable {
         escuchaDobleclik();
         //formato de la tabla
         formatoTablaCitas();
-        //ejecutor de servicios
-        ejecutorDeServicio();
+        //CARGA EL DIA DE HOY
+        dpFechaConsulta.setValue(LocalDate.now());
+        
     }   
     
 }

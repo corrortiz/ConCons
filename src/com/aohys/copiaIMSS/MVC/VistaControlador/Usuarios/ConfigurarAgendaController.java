@@ -15,6 +15,7 @@ import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.peridoVacaMedico;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
@@ -23,12 +24,16 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -82,12 +87,24 @@ public class ConfigurarAgendaController implements Initializable {
         try(Connection conex = dbConn.conectarBD()) {
             horsss = horario.cargaSoloUno(usuario.getId_medico(), conex);
             disssConsss = diasConsulta.unSoloDiasConsultaMedico(conex, usuario.getId_medico());
-            tablaPeridoVacaciones(conex);
+            actualizaListaPeriodoVacacional(usuario.getId_medico());
             tablaDiaLibre(conex);
             cargaComponentes(conex);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
     }
     
     //Variables de actualizacion
@@ -128,6 +145,7 @@ public class ConfigurarAgendaController implements Initializable {
     ObservableList<Integer> listaMinutos = FXCollections.observableArrayList();
     ObservableList<CheckBox> listaChecbox = FXCollections.observableArrayList();
     ObservableList<diaLibre> listDiLibres = FXCollections.observableArrayList();
+    ObservableList<peridoVacaMedico> listPeridoVaca = FXCollections.observableArrayList();
     
     //Boleand
     private BooleanProperty lunes = new SimpleBooleanProperty(false);
@@ -385,13 +403,30 @@ public class ConfigurarAgendaController implements Initializable {
     
     /**
      * actualiza la tabla de perido de vacaciones
-     * @param conex 
      */
-    private void tablaPeridoVacaciones(Connection conex){
+    private void formatoTablaPeridoVacaciones(){
         colInicio.setCellValueFactory (new PropertyValueFactory<>  ("inicia_pvm"));
         colTermino.setCellValueFactory(new PropertyValueFactory<>  ("termina_pvm"));
         
-        tvPeriodoVacaMedico.setItems(peVacaMedico.listaPeridoVacacional(conex, usuario.getId_medico()));
+        tvPeriodoVacaMedico.setItems(listPeridoVaca);
+    }
+    
+    /**
+     * actualiza la lista de periodos vacionales
+     * @param idMedico 
+     */
+    private void actualizaListaPeriodoVacacional(String idMedico){
+        peridoVacaMedico.listaPeridoVacacionalTask taskDos = peVacaMedico.new listaPeridoVacacionalTask(idMedico);
+        taskDos.setOnSucceeded(evento->{
+            listPeridoVaca.clear();
+            listPeridoVaca.addAll(taskDos.getValue());
+        });
+        
+        /*tvPeriodoVacaMedico.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(taskDos.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));*/
+        
+        dbExeccutor.submit(taskDos);
     }
    
     /**
@@ -406,7 +441,7 @@ public class ConfigurarAgendaController implements Initializable {
                 aux.informacionUs("Se borro el periodo vacacional", "Se borro el periodo vacacional", 
                         String.format("El periodo vacacional del %s al %s fue borrado exitosamente de la base de datos", 
                                 pvMedicoBorrar.getInicia_pvm(), pvMedicoBorrar.getInicia_pvm()));
-                tablaPeridoVacaciones(conex);
+                listPeridoVaca.remove(pvMedicoBorrar);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -490,7 +525,7 @@ public class ConfigurarAgendaController implements Initializable {
         bttPeridoVacaMedico.setOnAction(evento->{
             try(Connection conex = dbConn.conectarBD()) {
                 guardaPeridoVacaciones(conex);
-                tablaPeridoVacaciones(conex);
+                actualizaListaPeriodoVacacional(usuario.getId_medico());
                 aux.informacionUs("Periodo vacacional guardado", "Periodo vacacional guardado", 
                         String.format("El periodo vacacional del %s al %s fue agregado exitosamente de la base de datos", 
                             dpInicioVaca.getValue(), dpTerminoVaca.getValue()));
@@ -520,6 +555,10 @@ public class ConfigurarAgendaController implements Initializable {
         formatoDatePicker();
         //formato choicebocex
         formatoChoiceBoxes();
+        //ejecutor de servicios
+        ejecutorDeServicio();
+        //agrega formato de tabla periodo vacacional
+        formatoTablaPeridoVacaciones();
     }    
     
 }

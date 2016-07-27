@@ -8,16 +8,22 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
+import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -34,7 +40,10 @@ public class diasConsulta {
     private BooleanProperty sabado_c;
     private BooleanProperty domingo_c;
     private StringProperty id_medico;
-
+    //Variables de clase
+    private static final Logger logger = Logger.getLogger(diasConsulta.class.getName());
+    Vitro dbConn = new Vitro();
+    Auxiliar aux = new Auxiliar();
     /**
      * Constructor lleno de la clase dias de consulta
      * @param id_diasConsul
@@ -65,7 +74,15 @@ public class diasConsulta {
      */
     public diasConsulta() {
     }
-
+    /**
+     * clase astracta de task
+     * @param <T> 
+     */
+    abstract class DBTask<T> extends Task<T> {
+        DBTask() {
+          setOnFailed(t -> logger.log(Level.SEVERE, null, getException()));
+        }
+    }
     /**
      * agrega a la base de datos los dias que da consulta el medico seleccionado 
      * @param id_diasConsul
@@ -152,55 +169,58 @@ public class diasConsulta {
     }
     
     /**
-     * regresa lista de dias que trabaja o no el medico
-     * @param conex
-     * @param idUs
-     * @return 
+     * clase que regresa lista de dias que trabaja o no el medico
      */
-    public ObservableList<Integer> listaDiasConsultaMedico(Connection conex, String idUs){
-        ObservableList<Integer> listadiasConsulta = FXCollections.observableArrayList();
-        diasConsulta diasConsul = null;
-        String sql ="SELECT id_diasConsul, lunes_c,\n"+
-                    "martes_c, miercoles_c, jueves_c, viernes_c, sabado_c, domingo_c, id_medico\n"+
-                    "FROM diasconsulta WHERE id_medico = '"+idUs+"';";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
-            if (res.next()) {
-                diasConsul = new diasConsulta(  res.getString ("id_diasConsul"),
-                                                res.getBoolean("lunes_c"),
-                                                res.getBoolean("martes_c"),
-                                                res.getBoolean("miercoles_c"),
-                                                res.getBoolean("jueves_c"),
-                                                res.getBoolean("viernes_c"),
-                                                res.getBoolean("sabado_c"),
-                                                res.getBoolean("domingo_c"),
-                                                res.getString ("id_medico"));
-            }
-            if (diasConsul.getLunes_c()) {
-                listadiasConsulta.add(1);
-            }
-            if (diasConsul.getMartes_c()) {
-                listadiasConsulta.add(2);
-            }
-            if (diasConsul.getMiercoles_c()) {
-                listadiasConsulta.add(3);
-            }
-            if (diasConsul.getJueves_c()) {
-                listadiasConsulta.add(4);
-            }
-            if (diasConsul.getViernes_c()) {
-                listadiasConsulta.add(5);
-            }
-            if (diasConsul.getSabado_c()) {
-                listadiasConsulta.add(6);
-            }
-            if (diasConsul.getDomingo_c()) {
-                listadiasConsulta.add(7);
-            }
-        }catch (SQLException ex) {
-            ex.printStackTrace();
+    public class listaDiasConsultaMedicoTask extends DBTask<ObservableList<Integer>> {
+        String idUs;
+
+        /**
+         * constructor de clase 
+         * @param idUs 
+         */
+        public listaDiasConsultaMedicoTask(String idUs) {
+            this.idUs = idUs;
         }
-        return listadiasConsulta;
+        
+        @Override
+        protected ObservableList<Integer> call() throws Exception {
+            ObservableList<Integer> listadiasConsulta = FXCollections.observableArrayList();
+            String sql ="SELECT id_diasConsul, lunes_c,\n"+
+                        "martes_c, miercoles_c, jueves_c, viernes_c, sabado_c, domingo_c, id_medico\n"+
+                        "FROM diasconsulta WHERE id_medico = '"+idUs+"';";
+            try(Connection conex = dbConn.conectarBD();
+                PreparedStatement stta = conex.prepareStatement(sql);
+                ResultSet res = stta.executeQuery()) {
+                if (res.next()) {
+                    if (res.getBoolean("lunes_c")) {
+                        listadiasConsulta.add(1);
+                    }
+                    if (res.getBoolean("martes_c")) {
+                        listadiasConsulta.add(2);
+                    }
+                    if (res.getBoolean("miercoles_c")) {
+                        listadiasConsulta.add(3);
+                    }
+                    if (res.getBoolean("jueves_c")) {
+                        listadiasConsulta.add(4);
+                    }
+                    if (res.getBoolean("viernes_c")) {
+                        listadiasConsulta.add(5);
+                    }
+                    if (res.getBoolean("sabado_c")) {
+                        listadiasConsulta.add(6);
+                    }
+                    if (res.getBoolean("domingo_c")) {
+                        listadiasConsulta.add(7);
+                    }
+                }
+                
+            }catch (SQLException ex) {
+                logger.log(Level.SEVERE, sql, ex);
+            }
+            return listadiasConsulta;
+        }
+        
     }
     
     /**

@@ -8,6 +8,8 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
+import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,12 +17,15 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -33,7 +38,19 @@ public class horario {
     private Time sale_horario;
     private IntegerProperty duacion_consul;
     private StringProperty id_medico;
-
+    //Variables de clase
+    private static final Logger logger = Logger.getLogger(peridoVacaMedico.class.getName());
+    Vitro dbConn = new Vitro();
+    Auxiliar aux = new Auxiliar();
+    /**
+     * clase astracta de task
+     * @param <T> 
+     */
+    abstract class DBTask<T> extends Task<T> {
+        DBTask() {
+          setOnFailed(t -> logger.log(Level.SEVERE, null, getException()));
+        }
+    }
     /**
      * Constructor lleno de la clase horario de medico
      * @param id_horario
@@ -147,7 +164,7 @@ public class horario {
     }
     
     /**
-     * 
+     * ragr
      * @param idCit
      * @param conex
      * @return 
@@ -173,6 +190,46 @@ public class horario {
             ex.printStackTrace();
         }
         return horario;
+    }
+    
+    /**
+     * regresa una lista de horarios disponibles para agendar
+     */
+    public class listaHorarioDisponibleTask extends DBTask<ObservableList<LocalTime>> {
+        String idCit;
+        /**
+         * constructor lleno
+         * @param idCit 
+         */
+        public listaHorarioDisponibleTask(String idCit) {
+            this.idCit = idCit;
+        }
+        
+        @Override
+        protected ObservableList<LocalTime> call() throws Exception {
+           ObservableList<LocalTime> horario = FXCollections.observableArrayList();
+            String sttm = "SELECT entra_horario,\n"+
+                          "sale_horario, duacion_consul\n" +
+                          "FROM horario WHERE id_medico = '"+idCit+"';";
+            try(Connection conex = dbConn.conectarBD();
+                PreparedStatement stta = conex.prepareStatement(sttm);
+                ResultSet res = stta.executeQuery(); ) {
+                if (res.next()) {
+                    LocalTime entrada = res.getTime ("entra_horario").toLocalTime();
+                    LocalTime salida = res.getTime ("sale_horario").toLocalTime();
+                    long tiempor = ChronoUnit.HOURS.between(entrada, salida);
+                    int periodos = (int) ((60 / res.getInt("duacion_consul"))*tiempor);
+                    for (int i = 0; i < periodos; i++) {
+                        LocalTime agregar = entrada.plusMinutes(res.getInt("duacion_consul")*i);
+                        horario.add(agregar);
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return horario;
+        }
+        
     }
     
     
