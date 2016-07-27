@@ -37,6 +37,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+
+
 /**
  * FXML Controller class
  *
@@ -99,6 +101,7 @@ public class CancelaCitasController implements Initializable {
     //Botones borrado
     @FXML private Button bttAceptar;
     @FXML private Button bttNuevaCancelacion;
+    
     //Labals de abajo
     @FXML private Label lbMedico;
     @FXML private Label lbEspecialidad;
@@ -148,7 +151,6 @@ public class CancelaCitasController implements Initializable {
     public void borraCita(Connection conex){
         cita.borrarCita(cita.getId_cit(), conex);
         listaCitasMedicos.remove(cita);
-        //formatoTablaCitas(conex, paciente.getId_paciente());
     }
     
     /**
@@ -187,6 +189,11 @@ public class CancelaCitasController implements Initializable {
         lbPrimeraVez.setText("");
     }
    
+    /**
+     * carga los datos de la lebel de informacion de la cita
+     * @param cit
+     * @param conex 
+     */
     public void cargaDatosLabels(Cita cit, Connection conex){
         if (cit!=null) {
             Usuario usuarioLabel = usa.CargaSoloUno(cit.getId_Usuario(), conex);
@@ -216,6 +223,9 @@ public class CancelaCitasController implements Initializable {
         actTask.setOnSucceeded(evento->{
             listaCitasMedicos.clear();
             listaCitasMedicos.addAll(actTask.getValue());
+            for (Cita listaCitasMedico : listaCitasMedicos) {
+                System.out.println(listaCitasMedico.getHora_cit()+listaCitasMedico.getId_Paciente());
+            }
         });
         dbExeccutor.submit(actTask);
     }

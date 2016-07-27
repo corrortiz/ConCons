@@ -63,6 +63,7 @@ public class Coordinador extends Application {
             this.primaryStage.centerOnScreen();
             //Lanza login
             entrarUsuario();
+            
         }
 
     /**
@@ -97,7 +98,6 @@ public class Coordinador extends Application {
             stage.setMaximized(false);
             // Muesta la escena,
             stage.show();
-            
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent t) {
