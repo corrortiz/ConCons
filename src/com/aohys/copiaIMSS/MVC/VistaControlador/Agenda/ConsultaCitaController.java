@@ -359,6 +359,7 @@ public class ConsultaCitaController implements Initializable {
                 if (cbbMedico.getValue()!= null) {
                     fecha(n);
                     actualizaTablaTask(Date.valueOf(n), cbbMedico.getValue().getId_medico());
+                    System.err.println(listaCitasMedicos);
                     formatoLabel();
                 }
             }
@@ -543,6 +544,9 @@ public class ConsultaCitaController implements Initializable {
             actTask.setOnSucceeded(evento->{
                 listaCitasMedicos.clear();
                 listaCitasMedicos.addAll(actTask.getValue());
+                for (Cita integer : listaCitasMedicos) {
+                    System.err.println(integer.getHora_cit()+" "+integer.getId_Paciente());
+                }
             });
             dbExeccutor.submit(actTask);
         }
