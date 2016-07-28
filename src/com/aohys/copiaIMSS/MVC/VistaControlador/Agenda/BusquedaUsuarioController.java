@@ -208,7 +208,8 @@ public class BusquedaUsuarioController implements Initializable {
         limpiart();
         
         //toltip
-        aux.toolTip(txtNombre, "La tecla (ESP) + el botón buscar se obtiene una lista completa de pacientes");
+        aux.toolTipSuperior(txtNombre, 
+                "Al presionar la barra espaciadora(ESP) + el botón buscar se obtiene una lista completa de pacientes");
     }    
     
     /**
@@ -338,9 +339,9 @@ public class BusquedaUsuarioController implements Initializable {
         datePickerFormatoPrimerTap();
         
         //toltip
-        aux.toolTip(txttelefono_paciente, "Campo opcional");
-        aux.toolTip(txtcorreo_paciente, "Campo opcional");
-        aux.toolTip(txtapMaterno_paciente, "Campo opcional");
+        aux.toolTipSuperior(txttelefono_paciente, "Campo opcional");
+        aux.toolTipSuperior(txtcorreo_paciente, "Campo opcional");
+        aux.toolTipSuperior(txtapMaterno_paciente, "Campo opcional");
         
         //label
         txtid_paciente.setText(aux.generaID());

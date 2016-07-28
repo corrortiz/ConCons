@@ -200,7 +200,8 @@ public class ListaPacienteController implements Initializable {
         limpiart();
         
         //toltip
-        aux.toolTip(txtNombre, "La tecla (ESC) + el botón buscar se obtiene una lista completa de pacientes");
+        aux.toolTipSuperior(txtNombre, 
+                "Al presionar la barra espaciadora(ESP) + el botón buscar se obtiene una lista completa de pacientes");
     }    
     
     /**

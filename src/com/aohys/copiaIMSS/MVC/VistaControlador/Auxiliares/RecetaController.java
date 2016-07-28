@@ -183,10 +183,10 @@ public class RecetaController implements Initializable {
         txtDura.setTextFormatter(new TextFormatter(aux.formato(3, 3)));
         
         
-        aux.toolTip(txtAdicionales, "campo opcional");
-        aux.toolTip(txtIdicaciones, "campo numérico");
-        aux.toolTip(txtIntervalo, "campo numérico");
-        aux.toolTip(txtDura, "campo numérico");
+        aux.toolTipSuperior(txtAdicionales, "campo opcional");
+        aux.toolTipSuperior(txtIdicaciones, "campo numérico");
+        aux.toolTipSuperior(txtIntervalo, "campo numérico");
+        aux.toolTipSuperior(txtDura, "campo numérico");
     }
     
     /**

@@ -154,7 +154,7 @@ public class RayosXController implements Initializable {
      */
     private void formatoDeText(){
         txaIndicaciones.setTextFormatter(new TextFormatter (aux.formato(900, 4)));
-        aux.toolTip(txaIndicaciones, "campo opcional");
+        aux.toolTipSuperior(txaIndicaciones, "campo opcional");
     }
     
     /**

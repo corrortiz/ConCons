@@ -559,7 +559,7 @@ public class NuevaCitaController implements Initializable {
      */
     private void formatoBottnesInferiores(){
         bttNuevaCit.setOnAction(evento->{
-            princi.lanzaCitas(1);
+            princi.lanzaCitas(0);
         });
         
         bttNuevaCitPac.setOnAction(evento->{

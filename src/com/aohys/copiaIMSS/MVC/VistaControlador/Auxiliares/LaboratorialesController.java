@@ -179,8 +179,8 @@ public class LaboratorialesController implements Initializable {
         otroExamen.setTextFormatter(new TextFormatter(aux.formato(500, 4)));
         otroCultivo.setTextFormatter(new TextFormatter(aux.formato(500, 4)));
         
-        aux.toolTip(otroExamen, "campo opcional");
-        aux.toolTip(otroCultivo, "campo opcional");
+        aux.toolTipSuperior(otroExamen, "campo opcional");
+        aux.toolTipSuperior(otroCultivo, "campo opcional");
     }
     
     /**

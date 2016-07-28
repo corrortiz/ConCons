@@ -157,8 +157,8 @@ public class AdiccionesController implements Initializable {
     private void formatoTexfields(){
         txtEdadIncio.setTextFormatter(new TextFormatter (aux.formato(3, 3)));
         txtEdadFinal.setTextFormatter(new TextFormatter (aux.formato(3, 3)));
-        aux.toolTip(txtEdadIncio, "campo numérico");
-        aux.toolTip(txtEdadFinal, "campo numérico");
+        aux.toolTipSuperior(txtEdadIncio, "campo numérico");
+        aux.toolTipSuperior(txtEdadFinal, "campo numérico");
     }
     
     /**

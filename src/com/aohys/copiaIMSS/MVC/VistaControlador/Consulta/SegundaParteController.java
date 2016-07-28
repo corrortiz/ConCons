@@ -200,8 +200,8 @@ public class SegundaParteController implements Initializable {
     private void formatoDeText(){
         txtComplemento.setTextFormatter(new TextFormatter(aux.formato(500, 4)));
         txaHigieDiete.setTextFormatter(new TextFormatter(aux.formato(500, 4)));
-        aux.toolTip(lbNombre, "campo opcional");
-        aux.toolTip(txaHigieDiete, "campo opcional");
+        aux.toolTipSuperior(txtComplemento, "campo opcional");
+        aux.toolTipSuperior(txaHigieDiete, "campo opcional");
         
         txaHigieDiete.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override

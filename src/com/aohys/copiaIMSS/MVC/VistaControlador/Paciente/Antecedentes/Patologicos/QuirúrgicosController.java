@@ -165,7 +165,7 @@ public class QuirúrgicosController implements Initializable {
      */
     private void formatoTexfields(){
         txtEdad.setTextFormatter(new TextFormatter (aux.formato(3, 3)));
-        aux.toolTip(txtEdad, "campo numérico");
+        aux.toolTipSuperior(txtEdad, "campo numérico");
     }
     
     /**

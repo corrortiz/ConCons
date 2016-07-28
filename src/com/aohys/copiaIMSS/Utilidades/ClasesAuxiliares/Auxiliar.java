@@ -212,6 +212,31 @@ public class Auxiliar {
         }); 
     }
     
+    /**
+     * crea un toltip del nodo en el lado superior 
+     * @param node
+     * @param contenido 
+     */
+    public void toolTipSuperior(Node node, String contenido){
+        Tooltip tp = new Tooltip(contenido);
+        tp.setWrapText(true);
+        
+        node.focusedProperty().addListener((observable, oldValue, newValue)->{
+            if (newValue) {
+                Bounds boundsInScreen = node.localToScreen(node.getBoundsInLocal());
+                tp.show(  node,
+                            boundsInScreen.getMinX(), //
+                            boundsInScreen.getMinY()-65f);
+                
+            }else
+                tp.hide();
+        }); 
+    }
+    
+    
+    
+    
+    
     
     /**
      * Alerta Error
