@@ -29,6 +29,7 @@ import com.aohys.copiaIMSS.MVC.VistaControlador.Resultados.ResRayController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Usuarios.ListaUsuariosController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import com.aohys.copiaIMSS.Utilidades.Reportes.HistorialPDF;
+import com.aohys.rehabSys.Utilidades.ClasesAuxiliares.Efectos;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -49,6 +50,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
@@ -208,7 +210,40 @@ public class PrincipalController implements Initializable {
             popOver.show(bttAndministracion);
         });
         
+        formatoIngresoUsuario();
     }    
+    /**
+     * formato de tipo de pacientes
+     */
+    private void formatoIngresoUsuario(){
+        switch (IngresoController.usua.getTipo_medico()){
+            case "Asistente":
+                desactivaEscondeNodo(bttAndministracion);
+                desactivaEscondeNodo(bttResumen);
+                desactivaEscondeNodo(splAuxiliares);
+                desactivaEscondeNodo(splAtencionIntegral);
+                desactivaEscondeNodo(splResultados);
+               break;
+            case "Laboratorio":
+                desactivaEscondeNodo(bttAndministracion);
+                desactivaEscondeNodo(bttResumen);
+                desactivaEscondeNodo(splAuxiliares);
+                desactivaEscondeNodo(splAtencionIntegral);
+                desactivaEscondeNodo(splAgendaCitas);
+                lanzaListaPacientes();
+                break;
+        }
+    }
+    
+    /**
+     * clase que activa y esconde los botones que no se usa
+     * @param node 
+     */
+    private void desactivaEscondeNodo(Node node){
+        node.setDisable(true);
+        node.opacityProperty().bind(new Efectos().bindgAModo(node));
+        System.err.println(node.getId());
+    }
     
     /**
      * recibe paciente para usuar
