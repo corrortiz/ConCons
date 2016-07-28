@@ -391,7 +391,8 @@ public class Usuario{
             boolean concuerdan = false;
             boolean hayusuario = false;
             String sttm = "SELECT id_medico FROM Medico;";
-            String cont = "SELECT contraseña_medico FROM Medico WHERE id_medico ='"+usuario+"';";
+            String cont = "SELECT contraseña_medico, nombre_medico, apellido_medico, apMaterno_medico \n"
+                    + "FROM Medico WHERE id_medico ='"+usuario+"';";
             try(PreparedStatement stta = conex.prepareStatement(sttm);
                   ResultSet rest = stta.executeQuery()) {
                 while (rest.next()) {
@@ -404,7 +405,10 @@ public class Usuario{
                                 if (rest2.next()) {
                                     if (contra.equals(rest2.getString("contraseña_medico"))) {
                                         aux.informacionUs("Bienvenido",String.format("Bienvenido %s", usuario), 
-                                                String.format("Bienvenido %s", usuario));
+                                                String.format("Bienvenido %s %s %s", 
+                                                        rest2.getString("nombre_medico"),
+                                                        rest2.getString("apellido_medico"),
+                                                        rest2.getString("apMaterno_medico")));
                                         concuerdan = true;
                                 }else
                                     aux.alertaError("La contraseña no concuerda", 
