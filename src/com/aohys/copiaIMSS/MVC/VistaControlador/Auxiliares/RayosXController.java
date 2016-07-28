@@ -10,11 +10,15 @@ package com.aohys.copiaIMSS.MVC.VistaControlador.Auxiliares;
 import com.aohys.copiaIMSS.BaseDatos.ListaProcedimientosRayos;
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Diagnostico;
+import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Diagnostico.listaDiagnosticosMasSanoTask;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.Modelo.Rayos;
+import com.aohys.copiaIMSS.MVC.Modelo.Rayos.agregaProcedimientoTask;
+import com.aohys.copiaIMSS.MVC.Modelo.Rayos.listaRayosPacienteTask;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
 import com.aohys.copiaIMSS.Utilidades.Reportes.EstudioPDF;
 import java.net.URL;
 import java.sql.Connection;
@@ -23,6 +27,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -62,14 +69,20 @@ public class RayosXController implements Initializable {
         this.paci = paci;
         // carga los componentes top
         cargaTop();
-        try(Connection conex = dbConn.conectarBD()) {
-            formatoComboboxes(conex);
-            actualizaTabla(conex);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        
+        
     }
-
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
+    }
     //Variables a que utiliza el controlador
     Auxiliar aux = new Auxiliar();
     AutoCompletionBinding<String> autoComplete;
@@ -97,6 +110,7 @@ public class RayosXController implements Initializable {
     @FXML private TableColumn<Rayos, String> colAgregar;
     //Lista para imprimir
     ObservableList<Rayos> listRayos = FXCollections.observableArrayList();
+    ObservableList<Diagnostico> listDiagnosticos = FXCollections.observableArrayList();
     
     //Imagenes Botones
     Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
@@ -130,12 +144,7 @@ public class RayosXController implements Initializable {
         
         bttAgregar.setOnAction(evento->{
             if (continuaSINO()) {
-               try(Connection conex = dbConn.conectarBD()) {
-                    guardarEstudio(conex);
-                    limpiaCuadros();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } 
+                guardaProcedimiento();
             }
         });
     }
@@ -151,9 +160,9 @@ public class RayosXController implements Initializable {
     /**
      * carga formato de los comboboxes
      */
-    private void formatoComboboxes(Connection conex){
+    private void formatoComboboxes(){
         aux.comboboxFiltro(cbbEstudio, listaProcedimientosRayos.cargaProcedimientos());
-            cbbDiagnostico.setItems(diag.listaDiagnosticosMasSano(conex, paci.getId_paciente()));
+            cbbDiagnostico.setItems(listDiagnosticos);
         cbbDiagnostico.setCellFactory((comboBox) -> {
             return new ListCell<Diagnostico>() {
                 @Override
@@ -186,6 +195,19 @@ public class RayosXController implements Initializable {
     }
     
     /**
+     * actualiza la lista de diagnosticos 
+     * @param idPaciente 
+     */
+    private void actualizaListadiagnosticoTask(String idPaciente){
+        listaDiagnosticosMasSanoTask task = diag.new listaDiagnosticosMasSanoTask(idPaciente);
+        task.setOnSucceeded(evento->{
+            listDiagnosticos.clear();
+            listDiagnosticos.addAll(task.getValue());
+        });
+        dbExeccutor.submit(task);
+    }
+    
+    /**
      * verifica que los campos esten llenos
      * @return 
      */
@@ -215,7 +237,7 @@ public class RayosXController implements Initializable {
      * actualiza la primera tabla
      * @param conex 
      */
-    private void actualizaTabla(Connection conex){
+    private void formatoTablaRayos(){
        
         //Dummy data para el boton
         colAgregar.setCellValueFactory(new PropertyValueFactory<> ("id_medico"));
@@ -254,12 +276,21 @@ public class RayosXController implements Initializable {
             };
             return cell;
         });
-        listRayos.addAll(rayos.listaRayosPaciente(conex, paci.getId_paciente()));
         tvRayos.setItems(listRayos);
-        
     }
     
-   
+    /**
+     * actualiza la lista de rayos que llena la tabla de rayos 
+     * @param idPaciente 
+     */
+    private void actualizaTablaRayos(String idPaciente){
+        listaRayosPacienteTask task = rayos.new listaRayosPacienteTask(idPaciente);
+        task.setOnSucceeded((evento)->{
+            listRayos.clear();
+            listRayos.addAll(task.getValue());
+        });
+        dbExeccutor.submit(task);
+    }
     
     /**
      * borra en el fxml el medicamento seleccionado
@@ -280,11 +311,11 @@ public class RayosXController implements Initializable {
         }
     }
     
+   
     /**
-     * guarda estudio
-     * @param conex 
+     * guarda el estudio 
      */
-    private void guardarEstudio(Connection conex){
+    private void guardaProcedimiento(){
         String id_rayos = aux.generaID();
         Date fecha_rayos = Date.valueOf(LocalDate.now());
         String diagnostico_rayos = cbbDiagnostico.getValue().getDiagnostico_diag();
@@ -292,13 +323,18 @@ public class RayosXController implements Initializable {
         String indicaciones_rayos = txaIndicaciones.getText();
         String id_usuario = paci.getId_paciente();
         String id_medico = IngresoController.usua.getId_medico();
-        
-        rayos.agregaProcedimiento(id_rayos, fecha_rayos, diagnostico_rayos, 
-                nombre_rayos, indicaciones_rayos, id_usuario, id_medico, conex);
-        
-        Rayos ray = new Rayos(id_rayos, fecha_rayos, diagnostico_rayos, nombre_rayos, 
+        agregaProcedimientoTask task = rayos.new agregaProcedimientoTask(id_rayos, fecha_rayos, 
+                diagnostico_rayos, nombre_rayos, indicaciones_rayos, id_usuario, id_medico);
+        task.setOnSucceeded(evento->{
+            Rayos ray = new Rayos(id_rayos, fecha_rayos, diagnostico_rayos, nombre_rayos, 
                 indicaciones_rayos, id_usuario, id_medico);
-        listRayos.add(ray);
+            listRayos.add(ray);
+            limpiaCuadros();
+            aux.informacionUs("El procedimiento ha sido agregado", 
+                        "El procedimiento ha sido agregado", 
+                        "El procedimiento ha sido agregado exitosamente de la base de datos");
+        });
+        dbExeccutor.submit(task);
     }
     
     /**
@@ -306,6 +342,12 @@ public class RayosXController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //Ejecutor de servicio
+        ejecutorDeServicio();
+        //formato combo
+        formatoComboboxes();
+        //formato tabla rayos
+        formatoTablaRayos();
         //formato botton guardar
         formatoBotones();
         //Le da formato a los imagenes
@@ -313,6 +355,9 @@ public class RayosXController implements Initializable {
         //formato de los texbox
         formatoDeText();
         //formato de los comboboxesz
-        //formatoComboboxes();
+        Platform.runLater(()->{
+            actualizaListadiagnosticoTask(paci.getId_paciente());
+            actualizaTablaRayos(paci.getId_paciente());
+        });
     } 
 }

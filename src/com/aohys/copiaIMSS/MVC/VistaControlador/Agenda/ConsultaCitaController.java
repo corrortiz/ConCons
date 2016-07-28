@@ -96,8 +96,7 @@ public class ConsultaCitaController implements Initializable {
     public void transmisor(AgendaCitasController cordi, PrincipalController princi) {
         this.cordi = cordi;
         this.princi = princi;
-        
-        
+       
     }
     //private ExecutorService dbExeccutor;
     private ExecutorService dbExeccutor;
@@ -149,7 +148,7 @@ public class ConsultaCitaController implements Initializable {
         ttas.setOnSucceeded(evento->{
             listaMed.clear();
             listaMed.addAll(ttas.getValue());
-            revisaSiesMedicoYselecciona();
+            
         });
         dbExeccutor.submit(ttas);
         
@@ -173,6 +172,7 @@ public class ConsultaCitaController implements Initializable {
             if (string.equals(IngresoController.usua.getId_medico())) {
                 cbbMedico.setValue(IngresoController.usua);
                 dpFechaConsulta.setValue(LocalDate.now());
+                actualizaTablaTask(Date.valueOf(LocalDate.now()), cbbMedico.getValue().getId_medico());
             }
         }
     }
@@ -270,10 +270,9 @@ public class ConsultaCitaController implements Initializable {
         taskDos.setOnSucceeded(evento->{
             listPeridoMedicos.clear();
             listPeridoMedicos.addAll(taskDos.getValue());
-            limpiaCuadros();
-            datePickerFormato(usuarioDate);
             usuario = usuarioDate;
             nombreMedico(usuarioDate);
+            datePickerFormato(usuarioDate);
         });
         
         dbExeccutor.submit(taskDos);
@@ -360,7 +359,6 @@ public class ConsultaCitaController implements Initializable {
                 if (cbbMedico.getValue()!= null) {
                     fecha(n);
                     actualizaTablaTask(Date.valueOf(n), cbbMedico.getValue().getId_medico());
-                    System.err.println(listaCitasMedicos);
                     formatoLabel();
                 }
             }
@@ -378,15 +376,6 @@ public class ConsultaCitaController implements Initializable {
         viernes = listaDiasConsulta.contains(5)?0:5;
         sabado = listaDiasConsulta.contains(6)?0:6;
         domingo = listaDiasConsulta.contains(7)?0:7;
-    }
-    
-    
-    
-    /**
-     * limpia el dp y el combobox cuando se cambia de medico
-     */
-    private void limpiaCuadros(){
-        dpFechaConsulta.setValue(null);
     }
     
     /**
@@ -566,19 +555,13 @@ public class ConsultaCitaController implements Initializable {
         dbExeccutor.submit(task);
     }
     
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        //ejecutor de servicios
+    private void cargarecursos(){
+          //ejecutor de servicios
         ejecutorDeServicio();
         //carga comboboxes
         cargaComboBoxs();
         //carga la lista de dias festivos
         actualizaListadiasFestivos();
-        //Carga formato de datePicker
-        datePickerFormato(null);
         //formato de fecha
         fecha(LocalDate.now());
         //formato labels
@@ -588,12 +571,18 @@ public class ConsultaCitaController implements Initializable {
         //formato de la tabla
         formatoTablaCitas();
         //CARGA EL DIA DE HOY
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-              dpFechaConsulta.setValue(LocalDate.now());
-            }
+        Platform.runLater(()->{
+            revisaSiesMedicoYselecciona();
         });
+        
+    }
+    
+    /**
+     * Initializes the controller class.
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+       cargarecursos();
     }   
     
 }

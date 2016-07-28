@@ -21,7 +21,7 @@ public class databaseThreadFactory implements ThreadFactory {
         @Override 
         public Thread newThread(Runnable runnable) {
           Thread thread = new Thread(runnable, "Database-Connection-" + poolNumber.getAndIncrement() + "-thread");
-          thread.setDaemon(false);
+          thread.setDaemon(true);
           return thread;
         }
 

@@ -21,8 +21,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
@@ -30,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -84,11 +83,7 @@ public class ResRayController implements Initializable {
         this.paci = paci;
         // carga los componentes top
         cargaTop();
-        try(Connection conex = dbConn.conectarBD()) {
-            actualizaTabla(conex);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+       
     }
 
     //Variables a que utiliza el controlador
@@ -143,7 +138,8 @@ public class ResRayController implements Initializable {
      * Carga componentes
      */
     public void cargaTop(){
-        String nombre = paci.getNombre_paciente()+" "+paci.getApellido_paciente()+" "+paci.getApMaterno_paciente();
+        String nombre = String.format("%s %s %s", 
+                paci.getNombre_paciente(), paci.getApellido_paciente(), paci.getApMaterno_paciente());
         lbNombre.setText(nombre);
     }    
     
@@ -190,7 +186,7 @@ public class ResRayController implements Initializable {
      * carga la tabla
      * @param conex 
      */
-    private void actualizaTabla(Connection conex){
+    private void formatotablaRayos(){
         colFecha.setCellValueFactory(cellData -> {
             Rayos p = cellData.getValue();
             LocalDate lol = p.getFecha_rayos().toLocalDate();
@@ -199,7 +195,7 @@ public class ResRayController implements Initializable {
             return new ReadOnlyStringWrapper(ageInYear);
         });
         
-        tvFechaLabo.setItems(ray.listaRayosPaciente(conex, paci.getId_paciente()));
+        tvFechaLabo.setItems(listRayos);
       
         tvFechaLabo.getSelectionModel().selectedItemProperty().addListener((observable,viejo,nuevo)->{
             actualizaLabels(nuevo);
@@ -295,14 +291,6 @@ public class ResRayController implements Initializable {
         dbProgresoInd.progressProperty().bind(
                 sub.progressProperty()
         );
-
-        sub.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-           @Override
-           public void handle(WorkerStateEvent t) {
-               
-           }
-        }
-        );
         
         anchorPane.getScene().getRoot().cursorProperty()
                 .bind(Bindings.when(sub.runningProperty())
@@ -394,17 +382,36 @@ public class ResRayController implements Initializable {
     }
     
     /**
+     * actualiza la lista de rayos que llena la tabla de rayos 
+     * @param idPaciente 
+     */
+    private void actualizaTablaRayos(String idPaciente){
+        Rayos.listaRayosPacienteTask task = ray.new listaRayosPacienteTask(idPaciente);
+        task.setOnSucceeded((evento)->{
+            listRayos.clear();
+            listRayos.addAll(task.getValue());
+        });
+        dbExeccutor.submit(task);
+    }
+    
+    /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //formato del ejecutor
+        ejecutorDeServicio();
         limpiaLabel();
         //formato botton guardar
         formatoBotones();
         //le carga el formato de las imagenes
         formatoImagen();
-        //formato del ejecutor
-        ejecutorDeServicio();
+        //Formato tabla rayos
+        formatotablaRayos();
+        //Actualiza la tabla al iniciar
+        Platform.runLater(()->{
+            actualizaTablaRayos(paci.getId_paciente());
+        });
     } 
     
    

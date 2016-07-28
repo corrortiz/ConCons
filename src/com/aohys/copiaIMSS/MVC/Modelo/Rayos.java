@@ -8,16 +8,21 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo;
 
+import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Diagnostico;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -31,9 +36,18 @@ public class Rayos {
     private StringProperty indicaciones_rayos;
     private StringProperty id_usuario;
     private StringProperty id_medico;
-
+    private static final Logger logger = Logger.getLogger(Diagnostico.class.getName());
+    Vitro dbConn = new Vitro();
     Auxiliar aux = new Auxiliar();
-    
+    /**
+     * clase astracta de task
+     * @param <T> 
+     */
+    abstract class DBTask<T> extends Task<T> {
+        DBTask() {
+          setOnFailed(t -> logger.log(Level.SEVERE, null, getException()));
+        }
+    }
     /**
      * constructor lleno de la clase rayos x
      * @param id_rayos
@@ -93,6 +107,67 @@ public class Rayos {
         }
     }
     
+    public class agregaProcedimientoTask extends DBTask<Void> {
+        String id_rayos; 
+        Date fecha_rayos; 
+        String diagnostico_rayos; 
+        String nombre_rayos; 
+        String indicaciones_rayos; 
+        String id_usuario; 
+        String id_medico;
+        /**
+         * constructor de clase
+         * @param id_rayos
+         * @param fecha_rayos
+         * @param diagnostico_rayos
+         * @param nombre_rayos
+         * @param indicaciones_rayos
+         * @param id_usuario
+         * @param id_medico 
+         */
+        public agregaProcedimientoTask(String id_rayos, Date fecha_rayos, String diagnostico_rayos, 
+                String nombre_rayos, String indicaciones_rayos, String id_usuario, String id_medico) {
+            this.id_rayos = id_rayos;
+            this.fecha_rayos = fecha_rayos;
+            this.diagnostico_rayos = diagnostico_rayos;
+            this.nombre_rayos = nombre_rayos;
+            this.indicaciones_rayos = indicaciones_rayos;
+            this.id_usuario = id_usuario;
+            this.id_medico = id_medico;
+        }
+        
+        @Override
+        protected Void call() throws Exception {
+            String sqlst =  "INSERT INTO `rayos`\n" +
+                            "(`id_rayos`,\n" +
+                            "`fecha_rayos`,\n" +
+                            "`diagnostico_rayos`,\n" +
+                            "`nombre_rayos`,\n" +
+                            "`indicaciones_rayos`,\n" +
+                            "`is_usuario`,\n" +
+                            "`id_medico`)\n" +
+                        "VALUES (?,?,?,?,?,?,?)";
+            try(Connection conex = dbConn.conectarBD();
+                    PreparedStatement sttm = conex.prepareStatement(sqlst)) {
+                conex.setAutoCommit(false);
+                sttm.setString  (1,id_rayos);
+                sttm.setDate    (2,fecha_rayos);
+                sttm.setString  (3,diagnostico_rayos);
+                sttm.setString  (4,nombre_rayos);
+                sttm.setString  (5,indicaciones_rayos);
+                sttm.setString  (6,id_usuario);
+                sttm.setString  (7,id_medico);
+                sttm.addBatch();
+                sttm.executeBatch();
+                conex.commit();
+                
+            } catch (SQLException ex) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+            return null;
+        }
+    }
+    
     /**
      * carga solo el procedimiento seleccionado
      * @param idProce
@@ -127,40 +202,48 @@ public class Rayos {
         return somametropia;
     }
 
+    
     /**
-     * carga la lista de imgenes del paciente
-     * @param conex
-     * @param idPaciente
-     * @return 
+     * carga lista de imagenes de pacientes 
      */
-    public ObservableList<Rayos> listaRayosPaciente(Connection conex, String idPaciente){
-        ObservableList<Rayos> listaRayos = FXCollections.observableArrayList();
-        String sql = "SELECT `rayos`.`id_rayos`,\n" +
-                    "    `rayos`.`fecha_rayos`,\n" +
-                    "    `rayos`.`diagnostico_rayos`,\n" +
-                    "    `rayos`.`nombre_rayos`,\n" +
-                    "    `rayos`.`indicaciones_rayos`,\n" +
-                    "    `rayos`.`is_usuario`,\n" +
-                    "    `rayos`.`id_medico`\n" +
-                    "FROM `rayos` WHERE is_usuario = '"+idPaciente+"'\n"+
-                    "ORDER BY fecha_rayos ASC;";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
-            while (res.next()) {
-                listaRayos.add(new Rayos( 
-                                    res.getString  ("id_rayos"),
-                                    res.getDate    ("fecha_rayos"),
-                                    res.getString  ("diagnostico_rayos"),
-                                    res.getString  ("nombre_rayos"),
-                                    res.getString  ("indicaciones_rayos"),
-                                    res.getString  ("is_usuario"),
-                                    res.getString  ("id_medico")));
-               }
-           } catch (SQLException ex) {
-               ex.printStackTrace();
-           }
-        return listaRayos;
-    }    
+    public class listaRayosPacienteTask extends DBTask<ObservableList<Rayos>> {
+         String idPaciente;
+
+        public listaRayosPacienteTask(String idPaciente) {
+            this.idPaciente = idPaciente;
+        }
+         
+        @Override
+        protected ObservableList<Rayos> call() throws Exception {
+            ObservableList<Rayos> listaRayos = FXCollections.observableArrayList();
+            String sql = "SELECT `rayos`.`id_rayos`,\n" +
+                        "    `rayos`.`fecha_rayos`,\n" +
+                        "    `rayos`.`diagnostico_rayos`,\n" +
+                        "    `rayos`.`nombre_rayos`,\n" +
+                        "    `rayos`.`indicaciones_rayos`,\n" +
+                        "    `rayos`.`is_usuario`,\n" +
+                        "    `rayos`.`id_medico`\n" +
+                        "FROM `rayos` WHERE is_usuario = '"+idPaciente+"'\n"+
+                        "ORDER BY fecha_rayos ASC;";
+            try(Connection conex = dbConn.conectarBD();
+                PreparedStatement stta = conex.prepareStatement(sql);
+                ResultSet res = stta.executeQuery()) {
+                while (res.next()) {
+                    listaRayos.add(new Rayos( 
+                                        res.getString  ("id_rayos"),
+                                        res.getDate    ("fecha_rayos"),
+                                        res.getString  ("diagnostico_rayos"),
+                                        res.getString  ("nombre_rayos"),
+                                        res.getString  ("indicaciones_rayos"),
+                                        res.getString  ("is_usuario"),
+                                        res.getString  ("id_medico")));
+                   }
+               } catch (SQLException ex) {
+                   ex.printStackTrace();
+            }
+            return listaRayos;
+        }
+     }
     
     /**
      * carga una lista de rayos pedidos ese dia 

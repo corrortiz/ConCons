@@ -26,10 +26,6 @@ import javafx.concurrent.Task;
  */
 
 public class Paciente {
-    
-    //Coneccion Base de datos
-    Vitro conn = new Vitro();
-    
     //Varibles de contol
     Paciente pacienteUnico;
     //Variables de clase

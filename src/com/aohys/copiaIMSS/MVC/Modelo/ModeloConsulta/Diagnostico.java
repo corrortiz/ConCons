@@ -9,27 +9,42 @@ package com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta;
  */
 
 
+import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 
 /**
  * @author Alejandro Ortiz Corro
  */
 
 public class Diagnostico {
+    private static final Logger logger = Logger.getLogger(Diagnostico.class.getName());
+    Vitro dbConn = new Vitro();
+    Auxiliar aux = new Auxiliar();
+    /**
+     * clase astracta de task
+     * @param <T> 
+     */
+    abstract class DBTask<T> extends Task<T> {
+        DBTask() {
+          setOnFailed(t -> logger.log(Level.SEVERE, null, getException()));
+        }
+    }
     private StringProperty id_diag;
     private StringProperty diagnostico_diag;
     private StringProperty complemento_diag;
     private StringProperty id_cons;
-    //Auxiliares
-    Auxiliar aux = new Auxiliar();
+    
 
     /**
      * constructor lleno
@@ -165,6 +180,54 @@ public class Diagnostico {
                ex.printStackTrace();
            }
         return listaDiagnostico;
+    }
+    
+    /**
+     * clase que regresa una lista de diagnosticos y persona sana
+     */
+    public class listaDiagnosticosMasSanoTask extends DBTask<ObservableList<Diagnostico>> {
+        String idPaciente;
+
+        public listaDiagnosticosMasSanoTask(String idPaciente) {
+            this.idPaciente = idPaciente;
+        }
+        
+        @Override
+        protected ObservableList<Diagnostico> call() throws Exception {
+           ObservableList<Diagnostico> listaDiagnostico = FXCollections.observableArrayList();
+            String sql = "SELECT a.id_diag,\n" +
+                        "a.diagnostico_diag,\n" +
+                        "a.complemento_diag,\n" +
+                        "a.id_cons, b.id_paciente\n" +
+                        "FROM diagnostico a\n" +
+                        "INNER JOIN consulta b\n" +
+                        "ON a.id_cons = b.id_cons\n" +
+                        "WHERE b.id_paciente = '"+idPaciente+"';";
+            try(Connection conex = dbConn.conectarBD();
+                    PreparedStatement stta = conex.prepareStatement(sql);
+                  ResultSet res = stta.executeQuery()) {
+                while (res.next()) {
+                    listaDiagnostico.add(new Diagnostico( 
+                                        res.getString("id_diag"), 
+                                        res.getString("diagnostico_diag"), 
+                                        res.getString("complemento_diag"), 
+                                        res.getString("id_cons")));
+                   }
+               } catch (SQLException ex) {
+                   ex.printStackTrace();
+               }
+            int cont = 0;
+            for (Diagnostico diagnostico : listaDiagnostico) {
+                if (diagnostico.getDiagnostico_diag().equals("PERSONA SANA")) {
+                    cont++;
+                }
+            }
+            if (cont == 0) {
+                listaDiagnostico.add(new Diagnostico("1", "PERSONA SANA", "1234", "12345"));
+            }
+            return listaDiagnostico;
+        }
+        
     }
     
     /**
