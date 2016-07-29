@@ -461,8 +461,8 @@ public class PersonalesController implements Initializable {
         txtFrecuencia.setTextFormatter  (new TextFormatter (aux.formato (3, 3)));
         txtParejas.setTextFormatter     (new TextFormatter (aux.formato (3, 3)));
         //Toltips
-        aux.toolTip(txtFrecuencia, "campo numérico");
-        aux.toolTip(txtParejas, "campo numérico");
+        aux.toolTipSuperior(txtFrecuencia, "campo numérico");
+        aux.toolTipSuperior(txtParejas, "campo numérico");
     }
     
     public boolean continuaSINO(){

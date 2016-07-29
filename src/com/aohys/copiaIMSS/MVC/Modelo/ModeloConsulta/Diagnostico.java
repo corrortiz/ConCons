@@ -158,7 +158,6 @@ public class Diagnostico {
      */
     public ObservableList<Diagnostico> listaDiagnosticosMasSano(Connection conex, String idPaciente){
         ObservableList<Diagnostico> listaDiagnostico = FXCollections.observableArrayList();
-        listaDiagnostico.add(new Diagnostico("1", "PERSONA SANA", "1234", "12345"));
         String sql = "SELECT a.id_diag,\n" +
                     "a.diagnostico_diag,\n" +
                     "a.complemento_diag,\n" +
@@ -179,6 +178,17 @@ public class Diagnostico {
            } catch (SQLException ex) {
                ex.printStackTrace();
            }
+        
+         int cont = 0;
+            for (Diagnostico diagnostico : listaDiagnostico) {
+                if (diagnostico.getDiagnostico_diag().equals("PERSONA SANA")) {
+                    cont++;
+                }
+            }
+            if (cont == 0) {
+                listaDiagnostico.add(new Diagnostico("1", "PERSONA SANA", "1234", "12345"));
+            }
+        
         return listaDiagnostico;
     }
     
@@ -242,7 +252,6 @@ public class Diagnostico {
                     "FROM diagnostico a\n" +
                     "INNER JOIN consulta b ON a.id_cons = b.id_cons\n" +
                     "WHERE b.id_medico = '"+idMedico+"';";
-        listaDxFrec.add("PERSONA SANA");
         try(PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
             while (res.next()) {
@@ -251,6 +260,16 @@ public class Diagnostico {
            } catch (SQLException ex) {
                ex.printStackTrace();
            }
+        int conunt = 0;
+        for (String string : listaDxFrec) {
+            if (string.equals("PERSONA SANA")) {
+                conunt++;
+            }
+        }
+        if (conunt == 0) {
+            listaDxFrec.add("PERSONA SANA");
+        }
+        
         return listaDxFrec;
     }
     

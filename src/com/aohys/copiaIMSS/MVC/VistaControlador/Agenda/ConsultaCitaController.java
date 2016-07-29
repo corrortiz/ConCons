@@ -43,6 +43,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
@@ -50,9 +51,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeTableRow;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import static javafx.scene.input.KeyCode.R;
+import javafx.scene.layout.Region;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import static javax.management.Query.lt;
 
 /**
  * FXML Controller class
@@ -579,6 +585,8 @@ public class ConsultaCitaController implements Initializable {
         });
         
     }
+    
+    
     
     /**
      * Initializes the controller class.

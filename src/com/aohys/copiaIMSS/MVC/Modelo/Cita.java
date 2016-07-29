@@ -196,7 +196,7 @@ public class Cita {
             String sql ="SELECT id_cit, fecha_cit,\n" +
                     "hora_cit, primVis_cit, id_medico, id_Paciente\n" +
                     "FROM Cita WHERE id_Paciente = '"+idUs+"'\n" +
-                    "AND fecha_cit <= '"+dia+"'\n" +
+                    "AND fecha_cit >= '"+dia+"'\n" +
                     "ORDER BY fecha_cit DESC;";
             try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
