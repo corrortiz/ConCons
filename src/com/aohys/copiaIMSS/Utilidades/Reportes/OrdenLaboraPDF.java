@@ -81,7 +81,7 @@ public class OrdenLaboraPDF {
             Document document = new Document(Constants.A4, hMargin, hMargin,
                     5f, vMargin);
             
-            String outputFileName = "Laboratoriales/"+aux.generaID()+".pdf";
+            String outputFileName = System.getenv("AppData")+"/AO Hys/Laboratoriales/"+aux.generaID()+".pdf";
             
             ImageElement image = 
                     new ImageElement("src/com/aohys/copiaIMSS/Utilidades/Imagenes/LogoSuperior.png");

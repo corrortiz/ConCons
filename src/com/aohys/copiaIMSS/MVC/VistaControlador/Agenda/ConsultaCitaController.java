@@ -440,7 +440,10 @@ public class ConsultaCitaController implements Initializable {
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                    String regresaColumna = p.getNombre_paciente()+" "+p.getApellido_paciente()+" "+p.getApMaterno_paciente();
+                    String regresaColumna = "";
+                    if (p!=null) {
+                        regresaColumna = p.getNombre_paciente()+" "+p.getApellido_paciente()+" "+p.getApMaterno_paciente();
+                    }
                     return new ReadOnlyStringWrapper(regresaColumna);
                 });
             }

@@ -118,7 +118,7 @@ public class HistorialPDF {
             Document document = new Document(Constants.A4, hMargin, hMargin,
                     5f, vMargin);
             
-            String outputFileName = "Historiales/"+aux.generaID()+".pdf";
+            String outputFileName = System.getenv("AppData")+"/AO Hys/Historiales/"+aux.generaID()+".pdf";
             
             ImageElement image = 
                     new ImageElement("src/com/aohys/copiaIMSS/Utilidades/Imagenes/LogoSuperior.png");

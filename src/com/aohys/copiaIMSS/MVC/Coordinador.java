@@ -12,6 +12,7 @@ package com.aohys.copiaIMSS.MVC;
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,6 +31,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.swing.filechooser.FileSystemView;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -63,7 +65,8 @@ public class Coordinador extends Application {
             this.primaryStage.centerOnScreen();
             //Lanza login
             entrarUsuario();
-            
+           
+            creaDirectorios();
         }
 
     /**
@@ -73,6 +76,14 @@ public class Coordinador extends Application {
         public static void main(String[] args) {
             launch(args);
         }
+        
+    private void creaDirectorios(){
+        new File(System.getenv("AppData")+"/AO Hys/Estudios").mkdirs();
+        new File(System.getenv("AppData")+"/AO Hys/Historiales").mkdirs();
+        new File(System.getenv("AppData")+"/AO Hys/Laboratoriales").mkdirs();
+        new File(System.getenv("AppData")+"/AO Hys/NotasMedicas").mkdirs();
+        new File(System.getenv("AppData")+"/AO Hys/Recetas").mkdirs();
+    }
         
     /**
     *Lanza escena login

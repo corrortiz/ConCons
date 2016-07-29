@@ -19,13 +19,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.ObservableList;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import rst.pdfbox.layout.elements.Document;
@@ -79,7 +76,7 @@ public class MedicamentosPDF {
             
             Document document = new Document(a5_landscape);
             
-            String outputFileName = "Recetas/"+aux.generaID()+".pdf";
+            String outputFileName = System.getenv("AppData")+"/AO Hys/Recetas/"+aux.generaID()+".pdf";
             Paragraph paragraph = new Paragraph();
             ImageElement image = 
                     new ImageElement("src/com/aohys/copiaIMSS/Utilidades/Imagenes/LogoSuperior.png");
