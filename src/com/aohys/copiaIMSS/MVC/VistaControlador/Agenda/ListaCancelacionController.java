@@ -29,6 +29,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -207,12 +208,33 @@ public class ListaCancelacionController implements Initializable {
         }
     }
     
+       /**
+     * le da formato a los cuadros de texto
+     */
+    private void formatoCuadrosBusqueda(){
+        presionaEnterAccion(txtNombre);
+        presionaEnterAccion(txtCURP);
+    }
+    /**
+     * le da formato a key enter para buscar 
+     * @param textField 
+     */
+    private void presionaEnterAccion(TextField textField){
+        textField.setOnKeyPressed(evento->{
+            if (evento.getCode() == KeyCode.ENTER) {
+                buscar();
+            }
+        });
+    }
+    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         initializePrimerTab();
+        //Formato de texfield de busqueda
+        formatoCuadrosBusqueda();
     }    
     
 }

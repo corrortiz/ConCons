@@ -8,7 +8,6 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo;
 
-import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Tratamiento;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.Date;
@@ -455,7 +454,8 @@ public class Laboratorial {
                         "`fecha_lab`,\n" +
                         "`id_paciente`"+
                       "FROM laboratorial WHERE id_paciente = '"+idPaciente+"'"
-                +     "AND fecha_lab = '"+dia+"';";
+                +     "AND fecha_lab = '"+dia+"'\n"
+                +     "ORDER BY fecha_lab DESC;";
         try(PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
             while (res.next()) {

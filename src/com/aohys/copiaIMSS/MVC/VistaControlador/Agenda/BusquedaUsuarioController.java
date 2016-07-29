@@ -8,12 +8,9 @@
 package com.aohys.copiaIMSS.MVC.VistaControlador.Agenda;
 
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
-import com.aohys.copiaIMSS.MVC.Coordinador;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
-import static com.aohys.copiaIMSS.MVC.VistaControlador.Agenda.AgendaCitasController.cordi;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
-import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
@@ -25,7 +22,6 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -42,7 +38,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -127,7 +123,25 @@ public class BusquedaUsuarioController implements Initializable {
             .subtract(colCURP.widthProperty())
             .subtract(5) // a border stroke?
         );
-
+    }
+    
+    /**
+     * le da formato a los cuadros de texto
+     */
+    private void formatoCuadrosBusqueda(){
+        presionaEnterAccion(txtNombre);
+        presionaEnterAccion(txtCURP);
+    }
+    /**
+     * le da formato a key enter para buscar 
+     * @param textField 
+     */
+    private void presionaEnterAccion(TextField textField){
+        textField.setOnKeyPressed(evento->{
+            if (evento.getCode() == KeyCode.ENTER) {
+                buscar();
+            }
+        });
     }
     
     /**
@@ -210,6 +224,9 @@ public class BusquedaUsuarioController implements Initializable {
         //toltip
         aux.toolTipSuperior(txtNombre, 
                 "Al presionar la barra espaciadora(ESP) + el botón buscar se obtiene una lista completa de pacientes");
+        
+        //Formato de texfield de busqueda
+        formatoCuadrosBusqueda();
     }    
     
     /**

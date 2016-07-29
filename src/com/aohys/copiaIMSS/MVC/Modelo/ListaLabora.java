@@ -44,7 +44,7 @@ public class ListaLabora {
         ObservableList<ListaLabora> lista = FXCollections.observableArrayList();
         String sql ="SELECT id_lab, id_paciente,fecha_lab\n"+
                     "FROM laboratorial WHERE id_paciente = '"+idPaci+"'\n"+
-                    "ORDER BY fecha_lab ASC;";
+                    "ORDER BY fecha_lab DESC;";
         try(PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
             while (res.next()) {

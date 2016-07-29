@@ -39,6 +39,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
@@ -176,6 +177,25 @@ public class ListaPacienteController implements Initializable {
         }
     }
     
+       /**
+     * le da formato a los cuadros de texto
+     */
+    private void formatoCuadrosBusqueda(){
+        presionaEnterAccion(txtNombre);
+        presionaEnterAccion(txtCURP);
+    }
+    /**
+     * le da formato a key enter para buscar 
+     * @param textField 
+     */
+    private void presionaEnterAccion(TextField textField){
+        textField.setOnKeyPressed(evento->{
+            if (evento.getCode() == KeyCode.ENTER) {
+                buscar();
+            }
+        });
+    }
+    
     /**
      * Initializes the controller class.
      * @param url
@@ -202,6 +222,9 @@ public class ListaPacienteController implements Initializable {
         //toltip
         aux.toolTipSuperior(txtNombre, 
                 "Al presionar la barra espaciadora(ESP) + el botón buscar se obtiene una lista completa de pacientes");
+        //Formato de texfield de busqueda
+        formatoCuadrosBusqueda();
+    
     }    
     
     /**

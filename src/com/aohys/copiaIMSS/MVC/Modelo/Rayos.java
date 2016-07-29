@@ -226,7 +226,7 @@ public class Rayos {
                         "    `rayos`.`is_usuario`,\n" +
                         "    `rayos`.`id_medico`\n" +
                         "FROM `rayos` WHERE is_usuario = '"+idPaciente+"'\n"+
-                        "ORDER BY fecha_rayos ASC;";
+                        "ORDER BY fecha_rayos DESC;";
             try(Connection conex = dbSingle.conectarBDSingleConnection();
                 PreparedStatement stta = conex.prepareStatement(sql);
                 ResultSet res = stta.executeQuery()) {
