@@ -11,6 +11,7 @@ package com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
@@ -285,51 +286,24 @@ public class Auxiliar {
      * @return 
      */
     public String edadConMes(Date edad) {
-        LocalDate start = edad.toLocalDate();
-        String años;
-        LocalDate end = LocalDate.now();
-        int entre = end.getYear() - start.getYear();
-        LocalDate endr;
-        if (entre == 1) {
-            endr = edad.toLocalDate().plusYears(1);
-        }else
-            endr = start.plusYears(entre-1);
-        long years = ChronoUnit.YEARS.between(start, end);
-        long dias = ChronoUnit.DAYS.between(start, end);
-        long meses =  ChronoUnit.MONTHS.between(start, end);
-        long entreCumple =  ChronoUnit.MONTHS.between(endr, end);
-        if (years < 0 || meses < 0 || dias < 0) {
-            años = "Fecha Invalida";
-        }else if (years == 0) {
+        int años;
+        int meses;
+        int dias;
+        String edadMesDias;
+        años = Period.between(edad.toLocalDate(), LocalDate.now()).getYears();
+        meses = Period.between(edad.toLocalDate().minusYears(1), LocalDate.now()).getMonths();
+        dias = Period.between(edad.toLocalDate(), LocalDate.now()).getDays();
+        if (años == 0) {
             if (meses == 0) {
-                if (dias > 31) {
-                    años = "1 Mes";
-                }else
-                    años = Long.toString(dias)+" Dias";
-            }else if (meses == 1) {
-                años = Long.toString(meses)+" Mes";
+                edadMesDias = String.format("%d dia(s)", dias);
             }else
-                años = Long.toString(meses)+" Meses";
+                edadMesDias = String.format("%d mes(es) con %d dia(s)",meses, dias);
+        }else if (meses == 0){
+            edadMesDias = String.format("%d año(s)", años);
         }else
-            if (years == 1) {
-                if(entreCumple == 0){
-                    años = "1 año";
-                }else
-                    if (entreCumple == 1) {
-                        años = "1 año "+Long.toString(entreCumple)+" mes";
-                    }else
-                        años = "1 año "+Long.toString(entreCumple)+" meses";
-            }else{
-                if (entreCumple == 12) {
-                    años = Long.toString(years)+ " años";
-                }else
-                    if (entreCumple == 1) {
-                        años = Long.toString(years)+ " años " +Long.toString(entreCumple)+" mes";
-                    }else
-                        años = Long.toString(years)+ " años " +Long.toString(entreCumple)+" meses";
-            }
+            edadMesDias = String.format("%d año(s) con %d mes(es)", años, meses);
                 
-        return años;
+        return edadMesDias;
     }
     
    
