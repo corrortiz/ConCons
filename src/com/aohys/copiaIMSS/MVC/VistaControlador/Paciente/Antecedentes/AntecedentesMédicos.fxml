@@ -15,32 +15,32 @@
          <children>
             <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                <tabs>
-                  <Tab text="Médicos">
+                  <Tab fx:id="tbMedico" text="Médicos">
                      <content>
                         <StackPane fx:id="stkMedico" />
                      </content>
                   </Tab>
-                  <Tab text="Quirúrgicos">
+                  <Tab fx:id="tbQuir" text="Quirúrgicos">
                      <content>
                         <StackPane fx:id="stkQuir" />
                      </content>
                   </Tab>
-                  <Tab text="Traumáticos">
+                  <Tab fx:id="tbTrauma" text="Traumáticos">
                      <content>
                         <StackPane fx:id="stkTrauma" />
                      </content>
                   </Tab>
-                  <Tab text="Transfuncionales">
+                  <Tab fx:id="tbTransfu" text="Transfuncionales">
                      <content>
                         <StackPane fx:id="stkTransfu" />
                      </content>
                   </Tab>
-                  <Tab text="Alergias">
+                  <Tab fx:id="tbAlergias" text="Alergias">
                      <content>
                         <StackPane fx:id="stkAlergias" />
                      </content>
                   </Tab>
-                  <Tab text="Adicciones">
+                  <Tab fx:id="tbAdicciones" text="Adicciones">
                      <content>
                         <StackPane fx:id="stkAdicciones" />
                      </content>

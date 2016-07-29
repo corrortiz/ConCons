@@ -688,7 +688,7 @@ public class PrincipalController implements Initializable {
         
         mIPersoPato.setOnAction(evento->{
             if (pacienteAUsar != null) {
-                lanzaAntPatologico(0);
+                lanzaAntPatologico(1);
             }else
                 aux.alertaError("Selecciona un paciente", "Selecciona un paciente", 
                         "Es necesario haber seleccionado un paciente para poder entrar a esta sección");
