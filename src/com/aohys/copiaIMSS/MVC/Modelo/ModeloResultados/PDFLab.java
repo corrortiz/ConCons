@@ -8,6 +8,8 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados;
 
+import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
+import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.io.DataInputStream;
 import java.io.File;
@@ -19,6 +21,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.concurrent.Task;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -38,79 +43,115 @@ public class PDFLab {
     public PDFLab() {
     }
     
+    //Variables de clase
+    private static final Logger logger = Logger.getLogger(PDFLab.class.getName());
+    Vitro dbConn = new Vitro();
     Auxiliar aux = new Auxiliar();
+    MysqlConnectionSingle dbSingle = new MysqlConnectionSingle();
 
     /**
-     * agraga el PDF
-     * @param id_pdfLab
-     * @param pdf_pdfLab
-     * @param id_lab
-     * @param conex 
+     * clase astracta de task
+     * @param <T> 
      */
-    public void agregarPDF(String id_pdfLab, File pdf_pdfLab, String id_lab, Connection conex){
-        String sqlst =  "INSERT INTO `pdflab`\n" +
+    abstract class DBTask<T> extends Task<T> {
+        DBTask() {
+          setOnFailed(t -> logger.log(Level.SEVERE, null, getException()));
+        }
+    }
+    
+    /**
+     * clase que agrega pdf a la base de datos
+     */
+    public class agregarPDFTask extends DBTask<Void> {
+        String id_pdfLab; 
+        File pdf_pdfLab; 
+        String id_lab;
+        /**
+         * agrega pdf de resultados a la base de datos
+         * @param id_pdfLab
+         * @param pdf_pdfLab
+         * @param id_lab 
+         */
+        public agregarPDFTask(String id_pdfLab, File pdf_pdfLab, String id_lab) {
+            this.id_pdfLab = id_pdfLab;
+            this.pdf_pdfLab = pdf_pdfLab;
+            this.id_lab = id_lab;
+        }
+        
+        @Override
+        protected Void call() throws Exception {
+            String sqlst =  "INSERT INTO `pdflab`\n" +
                         "(`id_pdfLab`,\n" +
                         "`pdf_pdfLab`,\n" +
                         "`id_lab`)\n" +
                         "VALUES (?,?,?)";    
-        try (PreparedStatement sttm = conex.prepareStatement(sqlst)){
-            conex.setAutoCommit(false);
-            //Combierte a blob
-            byte[] pdfData = new byte[(int) pdf_pdfLab.length()];
-            DataInputStream dis = new DataInputStream(new FileInputStream(pdf_pdfLab));
-            dis.readFully(pdfData);
-            dis.close();
-            //Termina y envia
-            sttm.setString  (1, id_pdfLab);
-            sttm.setBytes   (2, pdfData);
-            sttm.setString  (3, id_lab);
-            sttm.addBatch();
-            sttm.executeBatch();
-            conex.commit();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            try (Connection conex = dbConn.conectarBD();
+                    PreparedStatement sttm = conex.prepareStatement(sqlst)){
+                conex.setAutoCommit(false);
+                //Combierte a blob
+                byte[] pdfData = new byte[(int) pdf_pdfLab.length()];
+                DataInputStream dis = new DataInputStream(new FileInputStream(pdf_pdfLab));
+                dis.readFully(pdfData);
+                dis.close();
+                //Termina y envia
+                sttm.setString  (1, id_pdfLab);
+                sttm.setBytes   (2, pdfData);
+                sttm.setString  (3, id_lab);
+                sttm.addBatch();
+                sttm.executeBatch();
+                conex.commit();
+            } catch (SQLException | IOException ex ) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+            return null;
         }
     }
     
-    
     /**
-     * carga solo uno
-     * @param dato
-     * @param conex
-     * @return 
+     * clase que solo carga un pdf seleccionado 
      */
-    public PDFLab cargaSolaUnResultado(String dato, Connection conex){
-        PDFLab im = null; 
-        String sqlSt = "SELECT `id_pdfLab`,\n" +
-                        "`pdf_pdfLab`,\n" +
-                        "`id_lab` \n"+
-                        "FROM pdflab\n" +
-                       "WHERE id_lab = '"+dato+"';";
-        try(PreparedStatement stta = conex.prepareStatement(sqlSt);
-            ResultSet res = stta.executeQuery()){
-            if (res.next()) {
-                byte[] data = res.getBytes("pdf_pdfLab");
-                String outputFileName = aux.generaID()+".pdf";
-                try (FileOutputStream fos = new FileOutputStream(outputFileName)) {
-                    fos.write(data);
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
+    public class cargaSolaUnResultadoTask extends DBTask<PDFLab> {
+        String dato;
+
+        public cargaSolaUnResultadoTask(String dato) {
+            this.dato = dato;
+        }
+        
+        @Override
+        protected PDFLab call() throws Exception {
+            PDFLab im = null; 
+            String sqlSt = "SELECT `id_pdfLab`,\n" +
+                            "`pdf_pdfLab`,\n" +
+                            "`id_lab` \n"+
+                            "FROM pdflab\n" +
+                           "WHERE id_lab = '"+dato+"';";
+            try(Connection conex = dbConn.conectarBD();
+                    PreparedStatement stta = conex.prepareStatement(sqlSt);
+                ResultSet res = stta.executeQuery()){
+                if (res.next()) {
+                    byte[] data = res.getBytes("pdf_pdfLab");
+                    String outputFileName = System.getenv("AppData")+"/AO Hys/Laboratoriales/"+aux.generaID()+".pdf";
+                    try (FileOutputStream fos = new FileOutputStream(outputFileName)) {
+                        fos.write(data);
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
+                    File pdf = new File(outputFileName);
+                    Files.write(pdf.toPath(), data);
+                    im = new PDFLab(  res.getString   ("id_pdfLab"),
+                                        pdf, 
+                                        res.getString   ("id_lab"));
                 }
-                File pdf = new File(outputFileName);
-                Files.write(pdf.toPath(), data);
-                im = new PDFLab(  res.getString   ("id_pdfLab"),
-                                    pdf, 
-                                    res.getString   ("id_lab"));
-            }
-       } catch (SQLException | IOException ex) {
-            ex.printStackTrace();
-       }
-    return im;
-   }
+           } catch (SQLException | IOException ex) {
+                ex.printStackTrace();
+           }
+        return im;
+        }
+        
+    }
     
-    
+    /**************************************/
+    //Setters and getters
     
     public String getId_pdfLab() {
         return id_pdfLab;

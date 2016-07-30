@@ -136,7 +136,7 @@ public class imagenrayos {
             try (   Connection conex = dbConn.conectarBD();
                     PreparedStatement sttm = conex.prepareStatement(sqlst)){
                 conex.setAutoCommit(false);
-                File imageFile = new File("test.png");
+                File imageFile = new File(System.getenv("AppData")+"/AO Hys/Estudios/test.png");
                 RenderedImage renderedImage = SwingFXUtils.fromFXImage(ima__imaRay, null);
                 ImageIO.write(renderedImage, "png", imageFile);
                 try(FileInputStream fis = new FileInputStream(imageFile)) {

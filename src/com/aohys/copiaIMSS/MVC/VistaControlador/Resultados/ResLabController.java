@@ -11,9 +11,13 @@ import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.Laboratorial;
 import com.aohys.copiaIMSS.MVC.Modelo.ListaLabora;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.PDFLab;
+import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.PDFLab.agregarPDFTask;
+import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.PDFLab.cargaSolaUnResultadoTask;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
+import com.aohys.rehabSys.Utilidades.ClasesAuxiliares.Efectos;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -23,20 +27,30 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 
 /**
@@ -63,6 +77,18 @@ public class ResLabController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        ejecutorDeServicio();
+    }
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
+      /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
     }
 
     //Variables a que utiliza el controlador
@@ -72,6 +98,8 @@ public class ResLabController implements Initializable {
     PDFLab pDFLab = new PDFLab();
     PDFLab compruevaPDFLab = null;
     ListaLabora compruevaListaLabora = null;
+    BooleanProperty mostarHyperLink = new SimpleBooleanProperty(true);
+    BooleanProperty mostarBottonAgregar = new SimpleBooleanProperty(true);
     //Conexion
     Vitro dbConn = new Vitro();
     
@@ -86,6 +114,8 @@ public class ResLabController implements Initializable {
     //Agregar resultados
     @FXML private Button bttAgregarResultados;
     @FXML private Hyperlink hlResultado;
+    @FXML private ProgressIndicator pgiSubidaPDF;
+    @FXML private AnchorPane anchorPane;
     
     private File pdf = null;
     //Imagenes Botones
@@ -109,11 +139,7 @@ public class ResLabController implements Initializable {
     private void formatoBotones(){
         bttAgregarResultados.setOnAction(evento->{
             if (compruevaListaLabora != null) {
-                //if (pdf != null) {
                     fileshowcer();
-                //}else
-                //    aux.alertaError("Requerimiento de estudios ya cuenta con resultados", "Requerimiento de estudios ya cuenta con resultados",
-                //            "El requerimiento de estudios ya cuenta con un archivo PFD donde se encuentran los resultados");
             }else
                 aux.alertaError("Selecciona un requerimiento de estudios", "Selecciona un requerimiento de estudios",
                         "Es necesario seleccionar un requerimiento de estudios para poder agregar los resultados");
@@ -124,6 +150,8 @@ public class ResLabController implements Initializable {
             habrePDF();
         });
         
+        pgiSubidaPDF.setVisible(false);
+        
         hlResultado.setGraphic(new ImageView(impresora));
         bttAgregarResultados.setGraphic(new ImageView(guardarA));
     }
@@ -132,7 +160,6 @@ public class ResLabController implements Initializable {
      * formato de los texbox
      */
     private void formatoDeText(TextField textField, String string){
-       // otroExamen.setTextFormatter(new TextFormatter(aux.formato(500, 4)));
         if (!string.equals("")) {
             textField.setDisable(true);
             textField.setText(string);
@@ -168,8 +195,7 @@ public class ResLabController implements Initializable {
      */
     private void seleccionaYSesactiva(CheckBox checkBox, boolean bool){
         if (bool) {
-            checkBox.setDisable(false);
-            checkBox.fire();
+            checkBox.setSelected(true);
             checkBox.setDisable(true);
             checkBox.setStyle("-fx-opacity: 1;");
         }else{
@@ -178,6 +204,8 @@ public class ResLabController implements Initializable {
             checkBox.setStyle("-fx-opacity: .1;");
         }
     }
+    
+  
     
     private void actualizaTabla(Connection conex){
         colFecha.setCellValueFactory(cellData -> {
@@ -190,12 +218,34 @@ public class ResLabController implements Initializable {
         tvFechaLabo.setItems(listaLabora.listaLab(conex, paci.getId_paciente()));
         
         tvFechaLabo.getSelectionModel().selectedItemProperty().addListener((observable,viejo,nuevo)->{
+            
+                cargarPDF(pgiSubidaPDF, nuevo.getId_lab(), nuevo);
+            
+        });
+    }
+    /**
+     * clase que carga un pdf 
+     * @param dbActividad
+     * @param dato
+     * @param nuevo 
+     */
+    public void cargarPDF(final ProgressIndicator dbActividad, String dato, ListaLabora nuevo) {
+        cargaSolaUnResultadoTask task = pDFLab.new cargaSolaUnResultadoTask(dato);
+        //Bindigs del indicador de progreso
+        dbActividad.visibleProperty().bind(
+                task.runningProperty()
+        );
+        dbActividad.progressProperty().bind(
+                task.progressProperty()
+        );
+        //Cuando termina
+        task.setOnSucceeded((WorkerStateEvent t) -> {
             try(Connection conexionInterna = dbConn.conectarBD()) {
                 Laboratorial lab = laboratorial.cargaSoloUno(nuevo.getId_lab(), conexionInterna);
                 compruevaListaLabora = nuevo;
-                compruevaPDFLab = pDFLab.cargaSolaUnResultado(nuevo.getId_lab(), conexionInterna);
+                compruevaPDFLab = task.getValue();
                 pdf = null;
-                if (compruevaPDFLab!=null) {
+                if (compruevaPDFLab!= null) {
                     pdf = compruevaPDFLab.getPdf_pdfLab();
                 }
                 cargarComponentes(lab);
@@ -204,7 +254,16 @@ public class ResLabController implements Initializable {
                 e.printStackTrace();
             }
         });
-    }
+        //Maouse en modo esperar
+        anchorPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(task.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+        //lanza el iris
+        dbExeccutor.submit(task);
+      }
+    
+    
+    
     
     /**
      * file showcer
@@ -220,12 +279,7 @@ public class ResLabController implements Initializable {
         pdf = fileChooser.showOpenDialog(null);
 
         if (pdf!=null) {
-            try(Connection conex = dbConn.conectarBD()) {
-                guardaPDF(conex);
-                formatoHiper();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }  
+            guardaPDF(pgiSubidaPDF);
         }
         
     }
@@ -234,30 +288,56 @@ public class ResLabController implements Initializable {
      * aparece y desapace botones
      */
     private void formatoHiper(){
-        hlResultado.setDisable(true);
+        creaBindindsParaMostrarOno(hlResultado, mostarHyperLink);
+        creaBindindsParaMostrarOno(bttAgregarResultados, mostarBottonAgregar);
         if (pdf!=null) {
-            hlResultado.setStyle("-fx-opacity: 1;");
-            hlResultado.setDisable(false);
-            bttAgregarResultados.setStyle("-fx-opacity: 0;");
-            bttAgregarResultados.setDisable(true);
+            mostarHyperLink.setValue(false);
+            mostarBottonAgregar.setValue(true);
         }else{
-            hlResultado.setStyle("-fx-opacity: 0;");
-            hlResultado.setDisable(true);
-            bttAgregarResultados.setStyle("-fx-opacity: 1;");
-            bttAgregarResultados.setDisable(false);
+            mostarHyperLink.setValue(true);
+            mostarBottonAgregar.setValue(false);
         }
     }
-
+    
     /**
-     * guarda pdf
-     * @param conex 
+     * metodo para crear bindis de mostrar o no mostrar el nodo
+     * @param node
+     * @param booleanProperty 
      */
-    private void guardaPDF(Connection conex){
+    private void creaBindindsParaMostrarOno(Node node, BooleanProperty booleanProperty){
+       node.disableProperty().bind(booleanProperty);
+       node.opacityProperty().bind(new Efectos().bindgAModo(node));
+    }
+
+    
+    /**
+     * agrega el pdf a la base de datos 
+     * @param dbActividad
+     * @param dato 
+     */
+    public void guardaPDF(final ProgressIndicator dbActividad) {
         String id_pdfLab = aux.generaID();
         File pdf_pdfLab = pdf;
         String id_lab = compruevaListaLabora.getId_lab();
-        pDFLab.agregarPDF(id_pdfLab, pdf_pdfLab, id_lab, conex);
-    }   
+        agregarPDFTask task = pDFLab.new agregarPDFTask(id_pdfLab, pdf_pdfLab, id_lab);
+        //Bindigs del indicador de progreso
+        dbActividad.visibleProperty().bind(
+                task.runningProperty()
+        );
+        dbActividad.progressProperty().bind(
+                task.progressProperty()
+        );
+        //Cuando termina
+        task.setOnSucceeded((WorkerStateEvent t) -> {
+            formatoHiper();
+        });
+        //Maouse en modo esperar
+        anchorPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(task.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+        //lanza el iris
+        dbExeccutor.submit(task);
+      }
     
     /**
      * abre el pdf seleccionado 
