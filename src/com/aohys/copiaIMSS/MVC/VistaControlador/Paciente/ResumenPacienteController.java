@@ -268,12 +268,12 @@ public class ResumenPacienteController implements Initializable {
             cordi.lanzaAntNoPatologico();
         });
         
-        tab(hlPadMedicos, 0);
-        tab(hlQuirugi, 1);
-        tab(hlTraumaticos, 2);
-        tab(hlTransfuncionales, 3);
-        tab(hlAlergias, 4);
-        tab(hlAdiciones, 5);
+        tab(hlPadMedicos, 1);
+        tab(hlQuirugi, 2);
+        tab(hlTraumaticos, 3);
+        tab(hlTransfuncionales, 4);
+        tab(hlAlergias, 5);
+        tab(hlAdiciones, 6);
         
         hlImprimir.setGraphic(new ImageView(impresora));
         

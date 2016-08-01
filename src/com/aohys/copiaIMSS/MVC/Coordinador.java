@@ -31,7 +31,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javax.swing.filechooser.FileSystemView;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -43,8 +42,7 @@ public class Coordinador extends Application {
         private Stage primaryStage;
         private BorderPane rootLayout;
         private AnchorPane anchor;
-        private double dragOffsetX;
-        private double dragOffsetY;
+ 
         PrincipalController controller = new PrincipalController();
     
     //Conexion
@@ -199,4 +197,5 @@ public class Coordinador extends Application {
         if (result.get() == ButtonType.OK){
         }
     }
+    
 }

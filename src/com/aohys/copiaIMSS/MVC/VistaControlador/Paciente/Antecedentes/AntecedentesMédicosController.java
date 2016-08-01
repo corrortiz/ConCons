@@ -40,6 +40,7 @@ public class AntecedentesMédicosController implements Initializable {
     //Variables de escena
     public static PrincipalController cordi;
     Auxiliar aux = new Auxiliar();
+    int donde;
     /**
      * Inicia la esecena 
      * @param cordi 
@@ -47,9 +48,8 @@ public class AntecedentesMédicosController implements Initializable {
      */
     public void transmisor(PrincipalController cordi, int donde) {
         AntecedentesMédicosController.cordi = cordi;
-        Platform.runLater(()->{
-            tabPane.getSelectionModel().select(donde);
-        });
+        this.donde = donde;
+        
     }
     
     //Stack pane de transacion
@@ -78,13 +78,18 @@ public class AntecedentesMédicosController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //Carga Los componentes de la tapPersonal
-        formatoStakPanes();
+        
         
         bttRegresar.setGraphic(new ImageView(aceptar));
         
         bttRegresar.setOnAction(evento->{
             cordi.lanzaHistoriaMedica(PrincipalController.pacienteAUsar);
+        });
+        
+        Platform.runLater(()->{
+            //Carga Los componentes de la tapPersonal
+            formatoStakPanes();
+            tabPane.getSelectionModel().select(donde);
         });
     }
 

@@ -15,6 +15,11 @@
          <children>
             <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                <tabs>
+                  <Tab closable="false" disable="true">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
+                  </Tab>
                   <Tab fx:id="tbMedico" text="Médicos">
                      <content>
                         <StackPane fx:id="stkMedico" />

@@ -126,24 +126,6 @@ public class MedicosController implements Initializable {
     }
     
     /**
-     * verifica los requisitos 
-     * @return 
-     */
-    private boolean continuaArriba(){
-        String errorMessage = "";
-        errorMessage += aux.verificaValufield(cbbDescripcion, "Cirugía");
-        errorMessage += aux.verificaValufield(cbbFrecuencia, "Tiempo de cirugía");
-        errorMessage += aux.verificaTexField(txtEdad, "Edad");
-        if (errorMessage.length() == 0 ) {
-            return true;
-        } else {
-            aux.alertaError("Campos  vacíos", "Agregue los siguientes campos:", 
-                    errorMessage);
-            return false;
-        }
-    }
-    
-    /**
      * formato de veces a la edad
     */
     private void formatoCombobox(){

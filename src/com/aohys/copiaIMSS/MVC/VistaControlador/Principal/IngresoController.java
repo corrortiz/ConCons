@@ -77,7 +77,7 @@ public class IngresoController implements Initializable {
     @FXML private PasswordField pswContraseña;
     @FXML private ImageView imageView;
     
-    Image img = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Imagenes/ingreso.png");
+    Image img = new Image("com/aohys/copiaIMSS/Utilidades/Imagenes/ingreso.png");
     
         
     /**
