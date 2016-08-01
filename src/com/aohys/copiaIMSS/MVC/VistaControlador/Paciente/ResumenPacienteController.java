@@ -89,10 +89,10 @@ public class ResumenPacienteController implements Initializable {
     Consulta consul = new Consulta();
     Usuario usa = new Usuario();
     Image img = 
-            new Image("file:src/com/aohys/copiaIMSS/Utilidades/Imagenes/cuadroResumen.png");
-    Image impresora = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
-    Image alerta = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/alarm.png");
-    Image bien = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/favorite.png");
+            new Image("com/aohys/copiaIMSS/Utilidades/Imagenes/cuadroResumen.png");
+    Image impresora = new Image("com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
+    Image alerta = new Image("com/aohys/copiaIMSS/Utilidades/Logos/alarm.png");
+    Image bien = new Image("com/aohys/copiaIMSS/Utilidades/Logos/favorite.png");
     //Variables de circulos
     antNoPato antNopato = new antNoPato();
     ant_Heredo_Familiar antHeredo_Familiar = new ant_Heredo_Familiar();

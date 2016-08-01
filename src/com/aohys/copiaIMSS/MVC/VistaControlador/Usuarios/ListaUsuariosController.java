@@ -94,7 +94,7 @@ public class ListaUsuariosController implements Initializable {
     @FXML private TextField txtFiltrar;
     @FXML private StackPane stackPane;
  
-    Image agregar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/add-user.png");
+    Image agregar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/add-user.png");
     /**
      * Inicia la tabla
      */

@@ -90,7 +90,7 @@ public class SomatometríaController implements Initializable {
     @FXML private Button    bttAceptar;
     //Actualizar si o no
     private boolean actulizar = false;
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
     /**
      * Carga componentes
      */
@@ -108,7 +108,7 @@ public class SomatometríaController implements Initializable {
      */
     private void formatoImagen(){
         Image image = new Image
-            ("file:src/com/aohys/copiaIMSS/Utilidades/Imagenes/davinci.gif");
+            ("com/aohys/copiaIMSS/Utilidades/Imagenes/davinci.gif");
         imageView.setImage(image);
         bttAceptar.setGraphic(new ImageView(guardar));
     }

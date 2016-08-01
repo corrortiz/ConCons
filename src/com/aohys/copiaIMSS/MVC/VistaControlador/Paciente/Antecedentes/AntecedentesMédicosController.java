@@ -70,7 +70,7 @@ public class AntecedentesMédicosController implements Initializable {
     @FXML private TabPane tabPane;
     
     @FXML private Button bttRegresar;
-    Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+    Image aceptar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     /**
      * Initializes the controller class.
      * @param url

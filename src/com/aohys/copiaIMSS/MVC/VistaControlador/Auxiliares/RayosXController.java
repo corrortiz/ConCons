@@ -113,9 +113,9 @@ public class RayosXController implements Initializable {
     ObservableList<Diagnostico> listDiagnosticos = FXCollections.observableArrayList();
     
     //Imagenes Botones
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
-    Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
-    Image imprimir = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image aceptar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+    Image imprimir = new Image("com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
     
     /**
      * Carga componentes

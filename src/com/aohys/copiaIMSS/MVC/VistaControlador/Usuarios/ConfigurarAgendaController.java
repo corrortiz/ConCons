@@ -56,8 +56,8 @@ public class ConfigurarAgendaController implements Initializable {
     //Variables de escena
     private ListaUsuariosController cordi;
     private PrincipalController princiCordi = new PrincipalController();
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
-    Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image aceptar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     //Conexion
     Vitro dbConn = new Vitro();
     

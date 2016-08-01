@@ -248,12 +248,12 @@ public class Auxiliar {
     public void alertaError(String cabeza, String Cabezota, String mensaje){
         Alert alert = new Alert(Alert.AlertType.ERROR);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("file:src/com/aohys/copiaIMSS/Utilidades/Imagenes/Minerva.jpg"));
+        stage.getIcons().add(new Image("com/aohys/copiaIMSS/Utilidades/Imagenes/Minerva.jpg"));
         alert.setTitle(cabeza);
         alert.setHeaderText(Cabezota);
         alert.setContentText(mensaje);
         DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add("file:src/com/aohys/copiaIMSS/Utilidades/CSSstyle/MantoEstelar.css");
+        dialogPane.getStylesheets().add("com/aohys/copiaIMSS/Utilidades/CSSstyle/MantoEstelar.css");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
         }
@@ -268,12 +268,12 @@ public class Auxiliar {
     public void informacionUs(String cabeza, String Cabezota, String mensaje){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("file:src/com/aohys/copiaIMSS/Utilidades/Imagenes/Minerva.jpg"));
+        stage.getIcons().add(new Image("com/aohys/copiaIMSS/Utilidades/Imagenes/Minerva.jpg"));
         alert.setTitle(cabeza);
         alert.setHeaderText(Cabezota);
         alert.setContentText(mensaje);
         DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add("file:src/com/aohys/copiaIMSS/Utilidades/CSSstyle/MantoEstelar.css");
+        dialogPane.getStylesheets().add("com/aohys/copiaIMSS/Utilidades/CSSstyle/MantoEstelar.css");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
         }

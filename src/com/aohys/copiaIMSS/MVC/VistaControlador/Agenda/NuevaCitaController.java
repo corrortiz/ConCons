@@ -160,8 +160,8 @@ public class NuevaCitaController implements Initializable {
     ObservableList<DiasFestivos> listDiasFest = FXCollections.observableArrayList();
     ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
     ObservableList<Usuario> listaServ = FXCollections.observableArrayList();
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
-    Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image aceptar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     ObservableList<LocalTime> listaHorasUsadas = FXCollections.observableArrayList();
     ObservableList<Cita> listaCitasMedicos = FXCollections.observableArrayList();
     ObservableList<LocalTime> listaHorasValidas = FXCollections.observableArrayList();

@@ -111,7 +111,7 @@ public class NotaMedicosController implements Initializable {
     private boolean actulizar = false;
     private String motivo;
     private String exploracion;
-    Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+    Image aceptar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     /**
      * Carga componentes
      */

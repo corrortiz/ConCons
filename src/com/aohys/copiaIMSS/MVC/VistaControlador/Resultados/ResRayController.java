@@ -117,13 +117,13 @@ public class ResRayController implements Initializable {
     
     //Imagenes Botones
     Image impresora = 
-        new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
+        new Image("com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
     Image guardar = 
-        new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/add-user.png");
+        new Image("com/aohys/copiaIMSS/Utilidades/Logos/add-user.png");
     Image salir = 
-        new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+        new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     Image Nohay = 
-        new Image("file:src/com/aohys/copiaIMSS/Utilidades/Imagenes/OncoVera.png");
+        new Image("com/aohys/copiaIMSS/Utilidades/Imagenes/OncoVera.png");
     
     /**
      * metodo para pedir un hilo antes de una llamada a la bd

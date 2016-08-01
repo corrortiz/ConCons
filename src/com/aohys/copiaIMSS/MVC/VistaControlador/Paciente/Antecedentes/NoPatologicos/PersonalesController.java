@@ -113,7 +113,7 @@ public class PersonalesController implements Initializable {
     private boolean actualizaSiNoMasAnte = false;
     private boolean actividadSiNo = false;
     private boolean escolaridadCompletaSiNo = true;
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
     /**
      * Carga componentes
      */

@@ -75,7 +75,7 @@ public class DiasFestivosController implements Initializable {
     ObservableList<DiasFestivos> listDiasFest = FXCollections.observableArrayList();
     //Guarda
     @FXML private Button bttGuardar;
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
     
     @FXML
     public void borrar(){

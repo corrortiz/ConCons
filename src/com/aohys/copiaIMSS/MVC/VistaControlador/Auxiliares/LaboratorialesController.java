@@ -134,8 +134,8 @@ public class LaboratorialesController implements Initializable {
     private boolean COPROPARASITOSCÓPICO;
     private boolean CULTIVOFARINGEO;
     
-    Image impresora = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
-    Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+    Image impresora = new Image("com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
+    Image aceptar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     ObservableList<Laboratorial> listaLaboDia = FXCollections.observableArrayList();
     /**
      * Carga componentes

@@ -109,8 +109,8 @@ public class HeredoFamiliaresController implements Initializable {
     private boolean finitoSiNo = false;
     private boolean DisfuncionSiNo = false;
     private boolean actualizaSiNoMasAnte = false;
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
-    Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image aceptar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     /**
      * Carga componentes
      */
@@ -127,35 +127,13 @@ public class HeredoFamiliaresController implements Initializable {
      * crea las listas de los combo box
      */
     public void creaListas(){
-        listaFamiliares.addAll("Abuela materna",
-                                "Abuela paterna",
-                                "Abuelo materno",
-                                "Abuelo paterno",
-                                "Cónyuge",
-                                "El paciente",
-                                "Hermana",
-                                "Hermano",
-                                "Hija",
-                                "Hijo",
-                                "Madre",
-                                "Ninguno",
-                                "Otro",
-                                "Padre",
-                                "Tía materna",
-                                "Tía paterna",
-                                "Tío materno",
-                                "Tío paterno");
+        listaFamiliares.addAll("Abuela materna", "Abuela paterna","Abuelo materno","Abuelo paterno","Cónyuge",
+                                "El paciente","Hermana","Hermano","Hija","Hijo","Madre","Ninguno","Otro",
+                                "Padre","Tía materna","Tía paterna","Tío materno","Tío paterno");
 
-        listaPadecimientos.addAll(  "Diabetes mellitus",
-                                    "Hipertensión Arterial",
-                                    "Tuberculosis Pulmonar",
-                                    "Obesidad",
-                                    "Neoplasias",
-                                    "Cardiopatías",
-                                    "Alergias",
-                                    "Tabaquismo",
-                                    "Dependencia a drogas o medicamentos",
-                                    "Malformaciones congénitas",
+        listaPadecimientos.addAll(  "Diabetes mellitus","Hipertensión Arterial","Tuberculosis Pulmonar",
+                                    "Obesidad","Neoplasias","Cardiopatías","Alergias","Tabaquismo",
+                                    "Dependencia a drogas o medicamentos","Malformaciones congénitas",
                                     "Sin antecedentes");
     }
     
@@ -360,6 +338,7 @@ public class HeredoFamiliaresController implements Initializable {
         masAnteHere.actualizaMasAnteHeredo(id_masHeredo, familiarResp_masHeredo, 
                 DisfuncionSiNo, id_paciente, conex, familiarInfor_masHeredo);
     }
+    
     /**
      * verifica los requisitos 
      * @return 
@@ -384,7 +363,7 @@ public class HeredoFamiliaresController implements Initializable {
     private boolean continuaSINOagregar(){
         String errorMessage = "";
         errorMessage += aux.verificaValufield(cbbPadecimeinto, "Padecimiento");
-        errorMessage += aux.verificaValufield(cbbFamPadeciente, "Familiares");
+        errorMessage += aux.verificaValufield(cbbFamPadeciente, "Familiar");
         if (errorMessage.length() == 0 ) {
             return true;
         } else {

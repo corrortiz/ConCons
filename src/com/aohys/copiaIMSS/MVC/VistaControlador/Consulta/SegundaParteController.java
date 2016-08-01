@@ -124,8 +124,8 @@ public class SegundaParteController implements Initializable {
     private String exploracion;
     private String id_cons;
     private boolean primeravez = false;
-    Image agregar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
-    Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+    Image agregar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image aceptar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     /**
      * Carga componentes
      */

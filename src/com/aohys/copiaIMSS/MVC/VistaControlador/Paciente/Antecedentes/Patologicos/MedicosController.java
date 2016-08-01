@@ -93,7 +93,7 @@ public class MedicosController implements Initializable {
     
     //Varaible de chechkBox
     private boolean actualizaSiNoMedico = false;
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
     
     /**
      * Carga componentes

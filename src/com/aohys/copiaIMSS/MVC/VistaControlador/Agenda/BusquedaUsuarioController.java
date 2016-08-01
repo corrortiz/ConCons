@@ -76,9 +76,9 @@ public class BusquedaUsuarioController implements Initializable {
     
     //ObserblaeList
     ObservableList<Paciente> listaTa = FXCollections.observableArrayList();
-    Image buscar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/busqueda.png");
-    Image agregar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/add-user.png");
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image buscar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/busqueda.png");
+    Image agregar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/add-user.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
     
 
     //FXML tabla

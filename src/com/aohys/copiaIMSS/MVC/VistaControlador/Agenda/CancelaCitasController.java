@@ -109,8 +109,8 @@ public class CancelaCitasController implements Initializable {
     @FXML private Label lbHora;
     @FXML private Label lbPrimeraVez;
     
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
-    Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image aceptar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     ObservableList<Cita> listaCitasMedicos = FXCollections.observableArrayList();
     /**
      * Carga los datos de la escena 

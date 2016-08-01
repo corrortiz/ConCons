@@ -59,7 +59,7 @@ public class Coordinador extends Application {
             this.primaryStage = primaryStage;
             this.primaryStage.setTitle("Login");
             this.primaryStage.getIcons().add(
-                    new Image("file:src/com/aohys/copiaIMSS/Utilidades/Imagenes/Minerva.jpg"));
+                    new Image("com/aohys/copiaIMSS/Utilidades/Imagenes/Minerva.jpg"));
             this.primaryStage.centerOnScreen();
             //Lanza login
             entrarUsuario();
@@ -95,7 +95,7 @@ public class Coordinador extends Application {
                     "VistaControlador/Principal/Principal.fxml"));
             stage.setTitle("Sistema De Control Y Organización De Consulta Médica");
             stage.getIcons().add(
-                    new Image("file:src/com/aohys/copiaIMSS/Utilidades/Imagenes/Minerva.jpg"));
+                    new Image("com/aohys/copiaIMSS/Utilidades/Imagenes/Minerva.jpg"));
             rootLayout = (BorderPane) loader.load();
             // Muestra la escena.
             Scene scene = new Scene(rootLayout);
@@ -189,7 +189,7 @@ public class Coordinador extends Application {
     public void AlertaError(String cabeza, String Cabezota, String mensaje){
         Alert alert = new Alert(Alert.AlertType.ERROR);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("file:src//HE//Utilidades//Iconos//Logo.png"));
+        stage.getIcons().add(new Image("/HE//Utilidades//Iconos//Logo.png"));
         alert.setTitle(cabeza);
         alert.setHeaderText(Cabezota);
         alert.setContentText(mensaje);

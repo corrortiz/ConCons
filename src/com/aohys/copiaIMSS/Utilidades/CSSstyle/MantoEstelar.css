@@ -340,7 +340,7 @@
     -fx-text-fill: black;
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 3, 0.0 , 0 , 1 );
     -fx-font: 12pt "verdena";
-    -fx-graphic: url('file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png');
+    -fx-graphic: url('com/aohys/copiaIMSS/Utilidades/Logos/tick.png');
     
 }
 

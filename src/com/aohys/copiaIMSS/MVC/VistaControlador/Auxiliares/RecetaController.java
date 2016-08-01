@@ -125,10 +125,10 @@ public class RecetaController implements Initializable {
     
     
     //Imagenes Botones
-    Image imprimir = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
-    Image agregar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/add-user.png");
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
-    Image aceptar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+    Image imprimir = new Image("com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
+    Image agregar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/add-user.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image aceptar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     
     /**
      * Carga componentes

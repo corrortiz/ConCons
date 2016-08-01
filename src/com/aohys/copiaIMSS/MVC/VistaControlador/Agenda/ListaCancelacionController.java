@@ -68,8 +68,8 @@ public class ListaCancelacionController implements Initializable {
     
     //ObserblaeList
     ObservableList<Paciente> listaTa = FXCollections.observableArrayList();
-    Image imag = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/busqueda.png");
-    Image agregar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/add-user.png");
+    Image imag = new Image("com/aohys/copiaIMSS/Utilidades/Logos/busqueda.png");
+    Image agregar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/add-user.png");
     //FXML tabla
     @FXML private TableView<Paciente> tbPaciente;
     @FXML private TableColumn<Paciente, String>  colCURP;

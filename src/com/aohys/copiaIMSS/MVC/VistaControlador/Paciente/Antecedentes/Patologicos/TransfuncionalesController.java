@@ -95,7 +95,7 @@ public class TransfuncionalesController implements Initializable {
     
     //Varaible de chechkBox
     private boolean reacionesSiNo = false;
-    Image guardar = new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+    Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
     
     /**
      * Carga componentes

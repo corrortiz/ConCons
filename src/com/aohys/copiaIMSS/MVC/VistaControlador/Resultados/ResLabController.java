@@ -120,11 +120,11 @@ public class ResLabController implements Initializable {
     private File pdf = null;
     //Imagenes Botones
     Image impresora = 
-        new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
+        new Image("com/aohys/copiaIMSS/Utilidades/Logos/printer.png");
     Image guardarA = 
-        new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
+        new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
     Image salir = 
-        new Image("file:src/com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
+        new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     /**
      * Carga componentes
      */
