@@ -20,11 +20,9 @@ import javafx.scene.control.Alert;
  */
 
 public class SQLite {
-    
     //Variables a utilizar
     private static final String DRIVER   =  "org.sqlite.JDBC";
-    private static final String JDBC_URL =  "jdbc:sqlite:"
-            + "src/com/aohys/copiaIMSS/BaseDatos/JoonOliver.db";
+    private static final String JDBC_URL =  "jdbc:sqlite:src/com/aohys/copiaIMSS/BaseDatos/JoonOliver.db";
     Connection coneccion;
     Alert alet = new Alert(Alert.AlertType.INFORMATION);
     

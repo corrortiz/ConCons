@@ -21,156 +21,154 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../../../Utilidades/CSSstyle/MantoEstelar.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.aohys.copiaIMSS.MVC.VistaControlador.Usuarios.ListaUsuariosController">
    <children>
       <VBox prefHeight="620.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <StackPane fx:id="stackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-               <children>
-                  <SplitPane dividerPositions="0.28297161936560933" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                    <items>
-                      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#limpiarTXT">
+            <SplitPane dividerPositions="0.28297161936560933" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+              <items>
+                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#limpiarTXT">
+                     <children>
+                        <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="594.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <GridPane prefHeight="618.0" prefWidth="379.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <Label text="Usuario" />
+                              <Label text="Nombre" GridPane.rowIndex="2" />
+                              <Label text="Apellido Paterno" GridPane.rowIndex="3" />
+                              <Label text="Apellido Materno" GridPane.rowIndex="4" />
+                              <Label text="Cedula Profecional" GridPane.rowIndex="5" />
+                              <TextField fx:id="txtusuario" alignment="CENTER" prefWidth="190.0" promptText="Usuario" GridPane.columnIndex="1" />
+                              <ComboBox fx:id="cbbTipo" prefHeight="30.0" prefWidth="190.0" promptText="Tipo" styleClass="comboCentro" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <TextField fx:id="txtnombre" alignment="CENTER" prefWidth="190.0" promptText="Nombre" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <TextField fx:id="txtpaterno" alignment="CENTER" prefWidth="190.0" promptText="Paterno" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <TextField fx:id="txtmaterno" alignment="CENTER" prefWidth="190.0" promptText="Materno" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <TextField fx:id="txtcedula" alignment="CENTER" prefWidth="190.0" promptText="Cedula" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <Label text="Telefono" GridPane.rowIndex="7" />
+                              <Label text="Correo" GridPane.rowIndex="8" />
+                              <TextField fx:id="txtespecilidad" alignment="CENTER" prefWidth="190.0" promptText="Especialidad" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <TextField fx:id="txttelefono" alignment="CENTER" prefWidth="190.0" promptText="Telefono" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <TextField fx:id="txtcorreo" alignment="CENTER" prefWidth="190.0" promptText="Correo" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <Label text="Contraseña" GridPane.rowIndex="9" />
+                              <Label text="Repetir Contraseña" GridPane.rowIndex="10" />
+                              <PasswordField fx:id="pswcontraseña" alignment="CENTER" prefWidth="190.0" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <Label text="Especialidad" GridPane.rowIndex="6" />
+                              <PasswordField fx:id="pswcontraseña2" alignment="CENTER" prefWidth="190.0" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <HBox alignment="CENTER" prefHeight="25.0" prefWidth="400.0" spacing="40.0" GridPane.columnSpan="2" GridPane.rowIndex="11">
                                  <children>
-                                    <Label text="Usuario" />
-                                    <Label text="Nombre" GridPane.rowIndex="2" />
-                                    <Label text="Apellido Paterno" GridPane.rowIndex="3" />
-                                    <Label text="Apellido Materno" GridPane.rowIndex="4" />
-                                    <Label text="Cedula Profecional" GridPane.rowIndex="5" />
-                                    <TextField fx:id="txtusuario" alignment="CENTER" prefWidth="190.0" promptText="Usuario" GridPane.columnIndex="1" />
-                                    <ComboBox fx:id="cbbTipo" prefHeight="30.0" prefWidth="190.0" promptText="Tipo" styleClass="comboCentro" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <TextField fx:id="txtnombre" alignment="CENTER" prefWidth="190.0" promptText="Nombre" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <TextField fx:id="txtpaterno" alignment="CENTER" prefWidth="190.0" promptText="Paterno" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <TextField fx:id="txtmaterno" alignment="CENTER" prefWidth="190.0" promptText="Materno" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                    <TextField fx:id="txtcedula" alignment="CENTER" prefWidth="190.0" promptText="Cedula" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                    <Label text="Telefono" GridPane.rowIndex="7" />
-                                    <Label text="Correo" GridPane.rowIndex="8" />
-                                    <TextField fx:id="txtespecilidad" alignment="CENTER" prefWidth="190.0" promptText="Especialidad" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                    <TextField fx:id="txttelefono" alignment="CENTER" prefWidth="190.0" promptText="Telefono" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                    <TextField fx:id="txtcorreo" alignment="CENTER" prefWidth="190.0" promptText="Correo" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                    <Label text="Contraseña" GridPane.rowIndex="9" />
-                                    <Label text="Repetir Contraseña" GridPane.rowIndex="10" />
-                                    <PasswordField fx:id="pswcontraseña" alignment="CENTER" prefWidth="190.0" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                                    <Label text="Especialidad" GridPane.rowIndex="6" />
-                                    <PasswordField fx:id="pswcontraseña2" alignment="CENTER" prefWidth="190.0" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                                    <HBox alignment="CENTER" prefHeight="25.0" prefWidth="400.0" spacing="40.0" GridPane.columnSpan="2" GridPane.rowIndex="11">
-                                       <children>
-                                          <Button fx:id="bttGuardar" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Agregar">
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                          </Button>
-                                       </children>
-                                    </HBox>
-                                    <Label text="Tipo" GridPane.rowIndex="1" />
-                                 </children>
-                                 <columnConstraints>
-                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="244.0" minWidth="10.0" prefWidth="174.0" />
-                                    <ColumnConstraints fillWidth="false" halignment="CENTER" hgrow="SOMETIMES" maxWidth="343.0" minWidth="10.0" prefWidth="226.0" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 </rowConstraints>
-                              </GridPane>
-                           </children>
-                        </AnchorPane>
-                        <BorderPane fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                           <center>
-                              <TableView fx:id="tablaMed" styleClass="tablachica" BorderPane.alignment="CENTER">
-                                 <columns>
-                                    <TableColumn fx:id="clmnNombre_medico" prefWidth="304.0" text="Nombre" />
-                                    <TableColumn fx:id="clmnCedulaProfecional_medico" prefWidth="137.0" text="Cedula" />
-                                    <TableColumn fx:id="clmnEspecialidad_medico" prefWidth="132.0" text="Especialidad" />
-                                    <TableColumn fx:id="clmnTelefono_medico" prefWidth="142.0" text="Telefono" />
-                                    <TableColumn fx:id="clmnCorreo_medico" prefWidth="205.0" text="Correo" />
-                                    <TableColumn fx:id="clmnTipo_medico" prefWidth="39.0" text="Tipo" />
-                                 </columns>
-                                 <columnResizePolicy>
-                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                 </columnResizePolicy>
-                                 <contextMenu>
-                                    <ContextMenu>
-                                       <items>
-                                          <Menu mnemonicParsing="false" text="Usuario">
-                                            <items>
-                                              <MenuItem mnemonicParsing="false" onAction="#borraUsuario" text="Borrar" />
-                                                <MenuItem mnemonicParsing="false" onAction="#modificaUsuario" text="Modificar" />
-                                                <SeparatorMenuItem mnemonicParsing="false" />
-                                                <MenuItem mnemonicParsing="false" onAction="#lanzaConfiguracionAgenda" text="Configuración de agenda" />
-                                            </items>
-                                          </Menu>
-                                       </items>
-                                    </ContextMenu>
-                                 </contextMenu>
-                              </TableView>
-                           </center>
-                           <top>
-                              <HBox alignment="CENTER_RIGHT" prefHeight="49.0" prefWidth="812.0" spacing="20.0" BorderPane.alignment="CENTER">
-                                 <children>
-                                    <Label styleClass="label-marcadore" text="Lista de usuarios" />
-                                    <TextField fx:id="txtFiltrar" prefHeight="25.0" prefWidth="204.0" promptText="Buscar">
-                                       <HBox.margin>
-                                          <Insets right="10.0" />
-                                       </HBox.margin>
-                                    </TextField>
+                                    <Button fx:id="bttGuardar" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Agregar">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Button>
                                  </children>
                               </HBox>
-                           </top>
-                           <bottom>
-                              <GridPane BorderPane.alignment="CENTER">
-                                <columnConstraints>
-                                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="155.0" minWidth="10.0" prefWidth="155.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="369.0" minWidth="10.0" prefWidth="288.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="269.0" minWidth="10.0" prefWidth="153.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="216.0" minWidth="10.0" prefWidth="216.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <Label text="Usuario:" />
-                                    <Label text="Tipo:" GridPane.rowIndex="1" />
-                                    <Label text="Nombre:" GridPane.rowIndex="2" />
-                                    <Label text="Cedula Profecional:" GridPane.rowIndex="3" />
-                                    <Label text="Especialidad:" GridPane.columnIndex="2" />
-                                    <Label text="Telefono:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                    <Label text="Correo:" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                                    <Label fx:id="lbtnombre" prefHeight="30.0" prefWidth="979.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-                                    <Label fx:id="lbusuario" prefHeight="30.0" prefWidth="804.0" GridPane.columnIndex="1" />
-                                    <Label fx:id="lbtTipo" prefHeight="30.0" prefWidth="961.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Label fx:id="lbtcedula" prefHeight="30.0" prefWidth="979.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <Label fx:id="lbtespecilidad" prefHeight="106.0" prefWidth="216.0" GridPane.columnIndex="3" />
-                                    <Label fx:id="lbttelefono" prefHeight="130.0" prefWidth="216.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                    <Label fx:id="lbtcorreo" prefHeight="155.0" prefWidth="216.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                 </children>
-                              </GridPane>
-                           </bottom>
-                        </BorderPane>
-                    </items>
-                  </SplitPane>
-               </children>
-            </StackPane>
-            <Pane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="30.0" VBox.vgrow="NEVER" />
+                              <Label text="Tipo" GridPane.rowIndex="1" />
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="244.0" minWidth="10.0" prefWidth="174.0" />
+                              <ColumnConstraints fillWidth="false" halignment="CENTER" hgrow="SOMETIMES" maxWidth="343.0" minWidth="10.0" prefWidth="226.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </AnchorPane>
+                  <BorderPane fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <center>
+                        <TableView fx:id="tablaMed" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="tablachica" BorderPane.alignment="CENTER">
+                           <columns>
+                              <TableColumn fx:id="clmnNombre_medico" prefWidth="304.0" text="Nombre" />
+                              <TableColumn fx:id="clmnCedulaProfecional_medico" prefWidth="137.0" text="Cedula" />
+                              <TableColumn fx:id="clmnEspecialidad_medico" prefWidth="132.0" text="Especialidad" />
+                              <TableColumn fx:id="clmnTelefono_medico" prefWidth="142.0" text="Telefono" />
+                              <TableColumn fx:id="clmnCorreo_medico" prefWidth="205.0" text="Correo" />
+                              <TableColumn fx:id="clmnTipo_medico" prefWidth="39.0" text="Tipo" />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <contextMenu>
+                              <ContextMenu>
+                                 <items>
+                                    <Menu mnemonicParsing="false" text="Usuario">
+                                      <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#borraUsuario" text="Borrar" />
+                                          <MenuItem mnemonicParsing="false" onAction="#modificaUsuario" text="Modificar" />
+                                          <SeparatorMenuItem mnemonicParsing="false" />
+                                          <MenuItem mnemonicParsing="false" onAction="#lanzaConfiguracionAgenda" text="Configuración de agenda" />
+                                      </items>
+                                    </Menu>
+                                 </items>
+                              </ContextMenu>
+                           </contextMenu>
+                        </TableView>
+                     </center>
+                     <top>
+                        <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Label styleClass="label-marcadore" text="Lista de usuarios" />
+                              <TextField fx:id="txtFiltrar" prefHeight="25.0" prefWidth="204.0" promptText="Buscar">
+                                 <HBox.margin>
+                                    <Insets right="10.0" />
+                                 </HBox.margin>
+                              </TextField>
+                           </children>
+                           <BorderPane.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </BorderPane.margin>
+                        </HBox>
+                     </top>
+                     <bottom>
+                        <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+                          <columnConstraints>
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="155.0" minWidth="10.0" prefWidth="155.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="369.0" minWidth="10.0" prefWidth="288.0" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="269.0" minWidth="10.0" prefWidth="153.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="216.0" minWidth="10.0" prefWidth="216.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="Usuario:" />
+                              <Label text="Tipo:" GridPane.rowIndex="1" />
+                              <Label text="Nombre:" GridPane.rowIndex="2" />
+                              <Label text="Cedula Profecional:" GridPane.rowIndex="3" />
+                              <Label text="Especialidad:" GridPane.columnIndex="2" />
+                              <Label text="Telefono:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              <Label text="Correo:" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                              <Label fx:id="lbtnombre" prefHeight="30.0" prefWidth="979.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                              <Label fx:id="lbusuario" prefHeight="30.0" prefWidth="804.0" GridPane.columnIndex="1" />
+                              <Label fx:id="lbtTipo" prefHeight="30.0" prefWidth="961.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="lbtcedula" prefHeight="30.0" prefWidth="979.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label fx:id="lbtespecilidad" prefHeight="106.0" prefWidth="216.0" GridPane.columnIndex="3" />
+                              <Label fx:id="lbttelefono" prefHeight="130.0" prefWidth="216.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                              <Label fx:id="lbtcorreo" prefHeight="155.0" prefWidth="216.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                           </children>
+                        </GridPane>
+                     </bottom>
+                  </BorderPane>
+              </items>
+            </SplitPane>
+            <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" VBox.vgrow="NEVER" />
          </children>
       </VBox>
    </children>
