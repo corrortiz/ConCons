@@ -8,6 +8,7 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
+import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
@@ -37,6 +38,7 @@ public class peridoVacaMedico {
     private static final Logger logger = Logger.getLogger(peridoVacaMedico.class.getName());
     Vitro dbConn = new Vitro();
     Auxiliar aux = new Auxiliar();
+    MysqlConnectionSingle singleDBConn = new MysqlConnectionSingle();
     /**
      * clase astracta de task
      * @param <T> 
@@ -114,7 +116,7 @@ public class peridoVacaMedico {
             String sql ="SELECT id_peridoVacaMedico, inicia_pvm,\n"+
                         "termina_pvm, id_medico\n" +
                         "FROM peridovacamedico WHERE id_medico = '"+idUs+"';";
-            try(Connection conex = dbConn.conectarBD();
+            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
                 PreparedStatement stta = conex.prepareStatement(sql);
                 ResultSet res = stta.executeQuery()) {
                 while (res.next()) {

@@ -26,6 +26,7 @@ import java.time.LocalTime;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -421,10 +422,6 @@ public class ConfigurarAgendaController implements Initializable {
             listPeridoVaca.clear();
             listPeridoVaca.addAll(taskDos.getValue());
         });
-        
-        /*tvPeriodoVacaMedico.getScene().getRoot().cursorProperty()
-                .bind(Bindings.when(taskDos.runningProperty())
-                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));*/
         
         dbExeccutor.submit(taskDos);
     }

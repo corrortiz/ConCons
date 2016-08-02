@@ -8,7 +8,6 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -18,9 +17,9 @@
 
 <AnchorPane id="AnchorPane" stylesheets="@../../../Utilidades/CSSstyle/MantoEstelar.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.aohys.copiaIMSS.MVC.VistaControlador.Paciente.ResumenPacienteController">
    <children>
-      <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="620.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <top>
-            <GridPane hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
+      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <GridPane hgap="5.0" minHeight="-Infinity" minWidth="-Infinity" vgap="5.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="253.0" minWidth="10.0" prefWidth="98.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="479.0" minWidth="10.0" prefWidth="435.0" />
@@ -59,17 +58,12 @@
                   <Label fx:id="lbEdad" prefHeight="17.0" prefWidth="383.0" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                   <Label fx:id="lbCURP" prefHeight="17.0" prefWidth="372.0" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                   <Label text="Sexo:" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                  <Label text="A.Médico:" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                  <Label minHeight="-Infinity" minWidth="-Infinity" text="A.Médico:" GridPane.columnIndex="4" GridPane.rowIndex="2" />
                   <Label fx:id="lbSexo" prefHeight="17.0" prefWidth="280.0" text="Label" GridPane.columnIndex="5" GridPane.rowIndex="1" />
                   <Label fx:id="lbIdMedico" prefHeight="17.0" prefWidth="303.0" text="Label" GridPane.columnIndex="5" GridPane.rowIndex="2" />
                </children>
-               <BorderPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </BorderPane.margin>
             </GridPane>
-         </top>
-         <center>
-            <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="5.0">
+            <GridPane hgap="5.0" minHeight="-Infinity" minWidth="-Infinity" vgap="5.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" maxWidth="367.0" minWidth="10.0" prefWidth="341.0" />
                 <ColumnConstraints hgrow="ALWAYS" maxWidth="430.0" minWidth="10.0" prefWidth="299.0" />
@@ -88,7 +82,7 @@
                <children>
                   <HBox GridPane.columnSpan="4">
                      <children>
-                        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="2142.0" style="-fx-background-color: #333300;">
+                        <AnchorPane style="-fx-background-color: #333300;" HBox.hgrow="ALWAYS">
                            <children>
                               <Label layoutX="-10.0" styleClass="label-cabezeMayor" text="Alertas" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="0.0">
                                  <font>
@@ -153,29 +147,35 @@
                      </GridPane.margin>
                   </Hyperlink>
                </children>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
             </GridPane>
-         </center>
-         <bottom>
-            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
+            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" VBox.vgrow="ALWAYS">
                <children>
                   <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane prefHeight="30.0" prefWidth="2142.0" style="-fx-background-color: #333300;" VBox.vgrow="ALWAYS">
+                        <HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS">
                            <children>
-                              <Label layoutX="-10.0" styleClass="label-cabezeMayor" text="Cronología" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="0.0">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Label>
+                              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #333300;" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label layoutX="-10.0" styleClass="label-cabezeMayor" text="Cronología" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="0.0">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
                            </children>
-                        </AnchorPane>
-                        <HBox alignment="CENTER" spacing="20.0">
+                        </HBox>
+                        <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0">
                            <children>
                               <Label text="Medico:" />
                               <ComboBox fx:id="cbbMedicos" prefHeight="31.0" prefWidth="587.0" promptText="- - SELECIONA - - ">
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin></ComboBox>
+                                 </HBox.margin>
+                              </ComboBox>
                            </children>
                         </HBox>
                         <TableView fx:id="tvConsulta" editable="true" VBox.vgrow="ALWAYS">
@@ -192,7 +192,7 @@
                   </VBox>
                </children>
             </AnchorPane>
-         </bottom>
-      </BorderPane>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>
