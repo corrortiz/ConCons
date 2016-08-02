@@ -90,6 +90,10 @@ public class AntecedentesMédicosController implements Initializable {
             //Carga Los componentes de la tapPersonal
             formatoStakPanes();
             tabPane.getSelectionModel().select(donde);
+            if (donde==1) {
+                tabPane.getSelectionModel().select(0);
+                tabPane.getSelectionModel().select(1);
+            }
         });
     }
 
