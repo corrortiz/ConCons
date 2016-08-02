@@ -89,7 +89,7 @@ public class BusquedaUsuarioController implements Initializable {
     //Filtro
     @FXML private TextField txtNombre;
     @FXML private TextField txtCURP;
-    @FXML private StackPane stackPane;
+   
     
     //FXML de arriba
     @FXML private Label lbNombre;

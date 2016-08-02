@@ -8,6 +8,7 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo;
 
+import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
@@ -159,14 +160,15 @@ public class Paciente {
      * @param conex
      * @return 
      */
-    public Paciente cargaSoloUno(String Dato, Connection conex){
+    public Paciente cargaSoloUno(String Dato){
         String sttm = "SELECT id_paciente,  nombre_paciente, \n" +
                        " apellido_paciente,  apMaterno_paciente, \n" +
                        " sexo_paciente,  fechaNacimiento_paciente, \n" +
                        " curp_paciente, edad_paciente, \n" +
                        " telefono_paciente, correo_paciente \n" +
                         "FROM Paciente WHERE id_paciente = '"+Dato+"'"; 
-        try (   PreparedStatement stta = conex.prepareStatement(sttm);
+        try (   Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+                PreparedStatement stta = conex.prepareStatement(sttm);
                 ResultSet res = stta.executeQuery(sttm)){
             if (res.next()) {
                pacienteUnico = new Paciente(res.getString("id_paciente"), 

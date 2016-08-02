@@ -30,7 +30,6 @@ import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -437,7 +436,6 @@ public class NuevaCitaController implements Initializable {
                     actualizaListasParaHoraValido(this.usuario.getId_medico(), Date.valueOf(n));
                     fecha(n);
                     actualizaTablaTask(Date.valueOf(n), this.usuario.getId_medico());
-                    System.err.println(listaCitasMedicos);
                 }else{
                     aux.alertaError("Es necesario seleccionar un medico", "Es necesario seleccionar un medico", 
                     "Para poder seleccionar una fecha es necesario seleccionar un medico");
@@ -541,12 +539,9 @@ public class NuevaCitaController implements Initializable {
                 tc.setCellValueFactory(cellData -> {
                     Cita cita = cellData.getValue();
                     Paciente p = new Paciente();
-                    try(Connection conexInterna = dbConn.conectarBD()) {
-                        p = paci.cargaSoloUno(cita.getId_Paciente(), conexInterna);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    String regresaColumna = p.getNombre_paciente()+" "+p.getApellido_paciente()+" "+p.getApMaterno_paciente();
+                    p = paci.cargaSoloUno(cita.getId_Paciente());
+                    String regresaColumna = String.format("%s %s %s", 
+                            p.getNombre_paciente(), p.getApellido_paciente(), p.getApMaterno_paciente());
                     return new ReadOnlyStringWrapper(regresaColumna);
                 });
             }
@@ -571,7 +566,6 @@ public class NuevaCitaController implements Initializable {
                     aux.informacionUs("La cita ha sido agendada",
                             "La cita ha sido agendada",
                             "La cita ha sido agregada a la base de datos exitosamente");
-                    System.err.println(listaCitasMedicos);
                 } catch (SQLException ex) {
                     Logger.getLogger(NuevaCitaController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -613,9 +607,6 @@ public class NuevaCitaController implements Initializable {
         actTask.setOnSucceeded(evento->{
             listaCitasMedicos.clear();
             listaCitasMedicos.addAll(actTask.getValue());
-            for (Cita integer : listaCitasMedicos) {
-                    System.err.println(integer.getHora_cit()+" "+integer.getId_Paciente());
-            }
         });
         dbExeccutor.submit(actTask);
       

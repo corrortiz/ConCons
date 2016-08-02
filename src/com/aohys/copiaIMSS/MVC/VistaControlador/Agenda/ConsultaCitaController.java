@@ -23,9 +23,7 @@ import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -43,7 +41,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
@@ -51,14 +48,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TreeTableRow;
-import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import static javafx.scene.input.KeyCode.R;
-import javafx.scene.layout.Region;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import static javax.management.Query.lt;
 
 /**
  * FXML Controller class
@@ -102,7 +94,7 @@ public class ConsultaCitaController implements Initializable {
     public void transmisor(AgendaCitasController cordi, PrincipalController princi) {
         this.cordi = cordi;
         this.princi = princi;
-       
+        cargarecursos();
     }
     //private ExecutorService dbExeccutor;
     private ExecutorService dbExeccutor;
@@ -154,7 +146,7 @@ public class ConsultaCitaController implements Initializable {
         ttas.setOnSucceeded(evento->{
             listaMed.clear();
             listaMed.addAll(ttas.getValue());
-            
+            revisaSiesMedicoYselecciona();
         });
         dbExeccutor.submit(ttas);
         
@@ -174,11 +166,12 @@ public class ConsultaCitaController implements Initializable {
         for (Usuario usar : listaMed) {
             listaId.add(usar.getId_medico());
         }
+        
         for (String string : listaId) {
             if (string.equals(IngresoController.usua.getId_medico())) {
                 cbbMedico.setValue(IngresoController.usua);
-                dpFechaConsulta.setValue(LocalDate.now());
                 actualizaTablaTask(Date.valueOf(LocalDate.now()), cbbMedico.getValue().getId_medico());
+                dpFechaConsulta.setValue(LocalDate.now());
             }
         }
     }
@@ -411,15 +404,11 @@ public class ConsultaCitaController implements Initializable {
         
         tvCitas.getSelectionModel().selectedItemProperty().addListener((valor,v,n)->{
              if (n!=null) {
-                try(Connection conexInternaA = dbConn.conectarBD()) {
-                    cargaDatosLabels(n, conexInternaA);
-                    Paciente pacienteDentroTabla = paci.cargaSoloUno(n.getId_Paciente(),conexInternaA);
-                    cargaDatos(pacienteDentroTabla);
-                    PrincipalController.recibePaciente(pacienteDentroTabla);
-                    cita = n;
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                cargaDatosLabels(n);
+                Paciente pacienteDentroTabla = paci.cargaSoloUno(n.getId_Paciente());
+                cargaDatos(pacienteDentroTabla);
+                PrincipalController.recibePaciente(pacienteDentroTabla);
+                cita = n;
              }
         });
          
@@ -441,14 +430,11 @@ public class ConsultaCitaController implements Initializable {
                 tc.setCellValueFactory(cellData -> {
                     Cita cita = cellData.getValue();
                     Paciente p = new Paciente();
-                    try(Connection conexInterna = dbConn.conectarBD()) {
-                        p = paci.cargaSoloUno(cita.getId_Paciente(), conexInterna);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+                    p = paci.cargaSoloUno(cita.getId_Paciente());
                     String regresaColumna = "";
                     if (p!=null) {
-                        regresaColumna = p.getNombre_paciente()+" "+p.getApellido_paciente()+" "+p.getApMaterno_paciente();
+                        regresaColumna = String.format("%s %s %s", 
+                                p.getNombre_paciente(), p.getApellido_paciente(), p.getApMaterno_paciente());
                     }
                     return new ReadOnlyStringWrapper(regresaColumna);
                 });
@@ -476,7 +462,8 @@ public class ConsultaCitaController implements Initializable {
      */
     public void cargaDatos(Paciente paci){
         if (paci != null) {
-            String nombre = paci.getNombre_paciente()+" "+paci.getApellido_paciente()+" "+paci.getApMaterno_paciente();
+            String nombre = String.format("%s %s %s", 
+                    paci.getNombre_paciente(), paci.getApellido_paciente(), paci.getApMaterno_paciente());
             lbNombre.setText(nombre);
             lbEdad.setText(aux.edadConMes(paci.getFechaNacimiento_paciente()));
             lbCURP.setText(paci.getCurp_paciente());
@@ -512,9 +499,13 @@ public class ConsultaCitaController implements Initializable {
         lbSexo.setText("");
     }
    
-    public void cargaDatosLabels(Cita cit, Connection conex){
+    /**
+     * carga los labels del paciente
+     * @param cit 
+     */
+    public void cargaDatosLabels(Cita cit){
         if (cit!=null) {
-            Usuario usuarioLabel = usa.CargaSoloUno(cit.getId_Usuario(), conex);
+            Usuario usuarioLabel = usa.CargaSoloUno(cit.getId_Usuario());
             String medico = String.format("%s %s %s", 
                     usuarioLabel.getNombre_medico(),usuarioLabel.getApellido_medico(), usuarioLabel.getApMaterno_medico());
             lbMedico.setText(medico);
@@ -543,9 +534,6 @@ public class ConsultaCitaController implements Initializable {
             actTask.setOnSucceeded(evento->{
                 listaCitasMedicos.clear();
                 listaCitasMedicos.addAll(actTask.getValue());
-                for (Cita integer : listaCitasMedicos) {
-                    System.err.println(integer.getHora_cit()+" "+integer.getId_Paciente());
-                }
             });
             dbExeccutor.submit(actTask);
         }
@@ -564,8 +552,11 @@ public class ConsultaCitaController implements Initializable {
         dbExeccutor.submit(task);
     }
     
+    /**
+     * metodo para cargar los recursos de la clase
+     */
     private void cargarecursos(){
-          //ejecutor de servicios
+        //ejecutor de servicios
         ejecutorDeServicio();
         //carga comboboxes
         cargaComboBoxs();
@@ -579,10 +570,12 @@ public class ConsultaCitaController implements Initializable {
         escuchaDobleclik();
         //formato de la tabla
         formatoTablaCitas();
-        //CARGA EL DIA DE HOY
-        Platform.runLater(()->{
-            revisaSiesMedicoYselecciona();
-        });
+        //formato tablas
+//        Platform.runLater(()->{
+//            //si es medico selecciona
+//            revisaSiesMedicoYselecciona();
+//        });
+        
         
     }
     
@@ -593,7 +586,7 @@ public class ConsultaCitaController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-       cargarecursos();
+       
     }   
     
 }

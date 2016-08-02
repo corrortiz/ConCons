@@ -77,7 +77,7 @@ public class ListaCancelacionController implements Initializable {
     //Filtro
     @FXML private TextField txtNombre;
     @FXML private TextField txtCURP;
-    @FXML private StackPane stackPane;
+  
     //FXML de arriba
     @FXML private Label lbNombre;
     @FXML private Label lbEdad;
@@ -95,7 +95,8 @@ public class ListaCancelacionController implements Initializable {
         colCURP.setCellValueFactory       (new PropertyValueFactory<>  ("curp_paciente"));
         colNombre.setCellValueFactory(cellData -> {
             Paciente p = cellData.getValue();
-            String regresaColumna = p.getNombre_paciente()+" "+p.getApellido_paciente()+" "+p.getApMaterno_paciente();
+            String regresaColumna = String.format("%s %s %s",
+                    p.getNombre_paciente(), p.getApellido_paciente(), p.getApMaterno_paciente());
             return new ReadOnlyStringWrapper(regresaColumna);
         });
         tbPaciente.setItems(resultadosBus);
@@ -144,7 +145,8 @@ public class ListaCancelacionController implements Initializable {
      */
     public void cargaDatos(Paciente paci){
         if (paci != null) {
-            String nombre = paci.getNombre_paciente()+" "+paci.getApellido_paciente()+" "+paci.getApMaterno_paciente();
+            String nombre = String.format("%s %s %s", 
+                    paci.getNombre_paciente(), paci.getApellido_paciente(), paci.getApMaterno_paciente());
             lbNombre.setText(nombre);
             lbEdad.setText(aux.edadConMes(paci.getFechaNacimiento_paciente()));
             lbCURP.setText(paci.getCurp_paciente());

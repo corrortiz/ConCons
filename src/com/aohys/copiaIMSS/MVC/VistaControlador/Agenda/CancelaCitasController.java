@@ -118,7 +118,8 @@ public class CancelaCitasController implements Initializable {
      */
     public void cargaDatos(Paciente paci){
         if (paci != null) {
-            String nombre = paci.getNombre_paciente()+" "+paci.getApellido_paciente()+" "+paci.getApMaterno_paciente();
+            String nombre = String.format("%s %s %s", 
+                    paci.getNombre_paciente(), paci.getApellido_paciente(), paci.getApMaterno_paciente());
             lbNombre.setText(nombre);
             lbEdad.setText(aux.edadConMes(paci.getFechaNacimiento_paciente()));
             lbCURP.setText(paci.getCurp_paciente());
@@ -135,12 +136,8 @@ public class CancelaCitasController implements Initializable {
         tvCitas.setItems(listaCitasMedicos);
         
         tvCitas.getSelectionModel().selectedItemProperty().addListener((valor,v,n)->{
-            try(Connection conexInterna = dbConn.conectarBD()) {
-                cargaDatosLabels(n, conexInterna);
-                cita = n;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            cargaDatosLabels(n);
+            cita = n;
         });
     }
     
@@ -192,11 +189,10 @@ public class CancelaCitasController implements Initializable {
     /**
      * carga los datos de la lebel de informacion de la cita
      * @param cit
-     * @param conex 
      */
-    public void cargaDatosLabels(Cita cit, Connection conex){
+    public void cargaDatosLabels(Cita cit){
         if (cit!=null) {
-            Usuario usuarioLabel = usa.CargaSoloUno(cit.getId_Usuario(), conex);
+            Usuario usuarioLabel = usa.CargaSoloUno(cit.getId_Usuario());
             String medico = String.format("%s %s %s", 
                     usuarioLabel.getNombre_medico(),usuarioLabel.getApellido_medico(), usuarioLabel.getApMaterno_medico());
             lbMedico.setText(medico);
@@ -223,9 +219,6 @@ public class CancelaCitasController implements Initializable {
         actTask.setOnSucceeded(evento->{
             listaCitasMedicos.clear();
             listaCitasMedicos.addAll(actTask.getValue());
-            for (Cita listaCitasMedico : listaCitasMedicos) {
-                System.out.println(listaCitasMedico.getHora_cit()+listaCitasMedico.getId_Paciente());
-            }
         });
         dbExeccutor.submit(actTask);
     }

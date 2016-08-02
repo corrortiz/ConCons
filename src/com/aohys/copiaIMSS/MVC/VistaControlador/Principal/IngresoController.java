@@ -63,11 +63,10 @@ public class IngresoController implements Initializable {
     
     /**
      * Regresa un medico
-     * @param conex
      * @return 
      */
-    public Usuario regresaMedico(Connection conex){
-        Usuario medicoR = med.CargaSoloUno(txtUSuario.getText(), conex);
+    public Usuario regresaMedico(){
+        Usuario medicoR = med.CargaSoloUno(txtUSuario.getText());
         return medicoR;
     }
     
@@ -107,7 +106,7 @@ public class IngresoController implements Initializable {
                 if (esValido()) {
                     try(Connection conex = dbConn.conectarBD()) {
                         if (med.verificarContraseña(txtUSuario.getText(), pswContraseña.getText(),conex)) {
-                            usua = regresaMedico(conex);
+                            usua = regresaMedico();
                             cordi.iniLogin();
                             stage.hide();
                         }

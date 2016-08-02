@@ -8,6 +8,7 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
+import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
@@ -111,7 +112,7 @@ public class DiasFestivos {
             String sql = "SELECT id_DiasFes, fecha_DiasFes \n" +
                         "FROM DiasFestivos\n"+
                         "ORDER BY fecha_DiasFes ASC;";
-            try(Connection conex = dbConn.conectarBD();
+            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
                 PreparedStatement stta = conex.prepareStatement(sql);
                  ResultSet res = stta.executeQuery()) {
                while (res.next()) {

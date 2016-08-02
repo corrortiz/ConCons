@@ -10,8 +10,10 @@ package com.aohys.copiaIMSS.MVC.Modelo;
 
 /* Java Bean
 * Clase: Medico  */
+import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.mysql.jdbc.MySQLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -192,7 +194,7 @@ public class Usuario{
                     "        especialidad_medico, telefono_medico,\n" +
                     "        correo_medico, tipo_medico\n" +
                     "FROM Medico WHERE tipo_medico = 'Medico';";
-            try(Connection conex = dbConn.conectarBD();
+            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
                     PreparedStatement stta = conex.prepareStatement(sql);
                   ResultSet res = stta.executeQuery()) {
                 while (res.next()) {
@@ -273,7 +275,7 @@ public class Usuario{
                         "correo_medico, tipo_medico\n" +
                         "FROM Medico WHERE tipo_medico = 'Medico' \n" +
                         "AND especialidad_medico = '"+dato+"';";
-            try(Connection conex = dbConn.conectarBD();
+            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
                 PreparedStatement stta = conex.prepareStatement(sql);
                 ResultSet res = stta.executeQuery()) {
                 while (res.next()) {
@@ -313,7 +315,7 @@ public class Usuario{
                         "correo_medico, tipo_medico\n" +
                         "FROM Medico WHERE tipo_medico = 'Medico'\n" +
                         "GROUP BY especialidad_medico;";
-            try(Connection conex = dbConn.conectarBD();
+            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
                     PreparedStatement stta = conex.prepareStatement(sql);
                   ResultSet res = stta.executeQuery()) {
                 while (res.next()) {
@@ -442,7 +444,7 @@ public class Usuario{
          * @param conex
          * @return Medico
          */
-        public Usuario CargaSoloUno(String Dato, Connection conex){
+        public Usuario CargaSoloUno(String Dato){
             String sttm = "SELECT  id_medico, contraseña_medico,\n" +
                             "        nombre_medico, apellido_medico,\n" +
                             "        apMaterno_medico, cedulaProfecional_medico,\n" +
@@ -450,7 +452,8 @@ public class Usuario{
                             "        correo_medico, tipo_medico\n" +
                             "        FROM Medico\n "+
                             "        WHERE id_medico = '"+Dato+"'";
-            try(PreparedStatement stta = conex.prepareStatement(sttm);
+            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+                    PreparedStatement stta = conex.prepareStatement(sttm);
                    ResultSet res = stta.executeQuery(); ) {
                 if (res.next()) {
                     medicoUnico = new Usuario(   res.getString("id_medico"), 
@@ -532,6 +535,10 @@ public class Usuario{
         return nombre_medico+" "+apellido_medico+" "+apMaterno_medico;
     }
         
+    
+    
+    /***************************************************************************************************/
+    
         /**
          * Setter, Getters y Propietis
          * @return 

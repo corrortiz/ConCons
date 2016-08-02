@@ -8,6 +8,7 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
+import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
@@ -164,35 +165,6 @@ public class horario {
     }
     
     /**
-     * ragr
-     * @param idCit
-     * @param conex
-     * @return 
-     */
-    public ObservableList<LocalTime> listaHorarioDisponible(String idCit, Connection conex){
-        ObservableList<LocalTime> horario = FXCollections.observableArrayList();
-        String sttm = "SELECT entra_horario,\n"+
-                      "sale_horario, duacion_consul\n" +
-                      "FROM horario WHERE id_medico = '"+idCit+"';";
-        try(PreparedStatement stta = conex.prepareStatement(sttm);
-               ResultSet res = stta.executeQuery(); ) {
-            if (res.next()) {
-                LocalTime entrada = res.getTime ("entra_horario").toLocalTime();
-                LocalTime salida = res.getTime ("sale_horario").toLocalTime();
-                long tiempor = ChronoUnit.HOURS.between(entrada, salida);
-                int periodos = (int) ((60 / res.getInt("duacion_consul"))*tiempor);
-                for (int i = 0; i < periodos; i++) {
-                    LocalTime agregar = entrada.plusMinutes(res.getInt("duacion_consul")*i);
-                    horario.add(agregar);
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return horario;
-    }
-    
-    /**
      * regresa una lista de horarios disponibles para agendar
      */
     public class listaHorarioDisponibleTask extends DBTask<ObservableList<LocalTime>> {
@@ -211,7 +183,7 @@ public class horario {
             String sttm = "SELECT entra_horario,\n"+
                           "sale_horario, duacion_consul\n" +
                           "FROM horario WHERE id_medico = '"+idCit+"';";
-            try(Connection conex = dbConn.conectarBD();
+            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
                 PreparedStatement stta = conex.prepareStatement(sttm);
                 ResultSet res = stta.executeQuery(); ) {
                 if (res.next()) {
