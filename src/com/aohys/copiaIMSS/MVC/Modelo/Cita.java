@@ -11,7 +11,6 @@ package com.aohys.copiaIMSS.MVC.Modelo;
 import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
-import com.mysql.jdbc.MySQLConnection;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -237,6 +236,27 @@ public class Cita {
             ex.printStackTrace();
         }
     }
+    
+    /**
+     * borra todas las citas del paciente
+     * @param idPaciente
+     * @param conex 
+     * @return  
+     */
+    public boolean borrarCitasPaciente(String idPaciente, Connection conex){
+        String sttm = "DELETE FROM Cita WHERE id_Paciente = '"+idPaciente+"'";    
+        try(PreparedStatement pttm = conex.prepareStatement(sttm)) {
+            conex.setAutoCommit(false);
+            pttm.addBatch();
+            pttm.executeBatch();
+            conex.commit();
+            return true;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+    
     
     /**
      * actualiza la cita seleccionada 

@@ -484,7 +484,7 @@ public class ListaPacienteController implements Initializable {
         Paciente paciente = tbPaciente.getSelectionModel().getSelectedItem();
         if (paciente != null) {
             try(Connection conex = dbConn.conectarBD()) {
-                pacc.BorrarPaciente(paciente.getId_paciente(), conex);
+                pacc.borrarPaciente(paciente.getId_paciente(), conex);
                 IniciaTabla(pacc.buscaCURP(conex, " "));
                 PrincipalController.pacienteAUsar = null;
                 PrincipalController.nombrePaciente.setValue(null);

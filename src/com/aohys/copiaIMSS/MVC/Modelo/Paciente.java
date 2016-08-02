@@ -140,17 +140,19 @@ public class Paciente {
      * @param Dato 
      * @param conex 
      */
-    public void BorrarPaciente(String Dato, Connection conex){
-        String sqlst = "DELETE FROM Paciente WHERE id_paciente = '"+Dato+"'";    
-        try (PreparedStatement sttm = conex.prepareStatement(sqlst)){
-            conex.setAutoCommit(false);
-            sttm.addBatch();
-            sttm.executeBatch();
-            conex.commit();
-            aux.informacionUs("Paciente borrado", "Paciente borrado", 
-                    "El paciente ha sido borrado de la base de datos de manera exitosa");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+    public void borrarPaciente(String Dato, Connection conex){
+        if (new Cita().borrarCitasPaciente(Dato, conex)) {
+            String sqlst = "DELETE FROM Paciente WHERE id_paciente = '"+Dato+"'";    
+            try (PreparedStatement sttm = conex.prepareStatement(sqlst)){
+                conex.setAutoCommit(false);
+                sttm.addBatch();
+                sttm.executeBatch();
+                conex.commit();
+                aux.informacionUs("Paciente borrado", "Paciente borrado", 
+                        "El paciente ha sido borrado de la base de datos de manera exitosa");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
     
