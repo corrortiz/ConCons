@@ -12,6 +12,7 @@ import com.aohys.copiaIMSS.MVC.Modelo.Laboratorial;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
 import com.aohys.copiaIMSS.Utilidades.Reportes.OrdenLaboraPDF;
 import java.net.URL;
 import java.sql.Connection;
@@ -19,17 +20,24 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * FXML Controller class
@@ -50,7 +58,21 @@ public class LaboratorialesController implements Initializable {
         this.paci = paci;
         // carga los componentes top
         cargaTop();
+        ejecutorDeServicio();
     }
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
+    }
+    @FXML private AnchorPane anchorPane;
+    
 
     //Variables a que utiliza el controlador
     Auxiliar aux = new Auxiliar();
@@ -60,7 +82,6 @@ public class LaboratorialesController implements Initializable {
     
     //FXML de arriba
     @FXML private Label lbNombre;
-    @FXML private Button bttImprimir;
     //FXMl de chechbox
     @FXML private CheckBox chbBIOMETRÍAHEMÁTICACOMPLETA;
     @FXML private CheckBox chbFORMULAROJA;
@@ -158,18 +179,15 @@ public class LaboratorialesController implements Initializable {
         bttAgregar.setOnAction(evento->{
             try(Connection conex = dbConn.conectarBD()) {
                 guardarLaborar(conex);
+                ImprimeLaborar();
                 cordi.lanzaHistoriaMedica(paci);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         });
-        
-        bttImprimir.setOnAction((evento)->{
-            ImprimeLaborar();
-        });
-        
-        bttImprimir.setGraphic(new ImageView(impresora));
-        bttAgregar.setGraphic(new ImageView(aceptar));
+      
+        bttAgregar.setContentDisplay(ContentDisplay.TOP);
+        bttAgregar.setGraphic(new ImageView(impresora));
     }
     
     /**
@@ -302,10 +320,30 @@ public class LaboratorialesController implements Initializable {
                 FACTORREUMATOIDE, ANTIESTRESTOLISINAS, REACIONESFEBRILES, VIHELISAWesternBlot, UROCULTIVO, 
                 COPROCULTIVO, COPRLÓGICO, COPROPARASITOSCÓPICO, CULTIVOFARINGEO, OTROEXAMEN, 
                 OTROCULTIVO, fecha_lab, id_paciente));
+        creaOrdenLavoratoiralPDF();
         
-        OrdenLaboraPDF orPDF = new OrdenLaboraPDF();
-        orPDF.pasoPrincipal(listaLaboDia);
     }
+    
+    /**
+     * crea el pdf de la orden laboratorial
+     */
+    private void creaOrdenLavoratoiralPDF(){
+       Task<Void> task = new Task<Void>() {
+           @Override
+           protected Void call() throws Exception {
+                OrdenLaboraPDF orPDF = new OrdenLaboraPDF();
+                orPDF.pasoPrincipal(listaLaboDia);
+                return null;
+           }
+       };
+        //Maouse en modo esperar
+        anchorPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(task.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+        
+        dbExeccutor.submit(task);
+    }
+    
     
     /**
      * verifica que los campos esten llenos

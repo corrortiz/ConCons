@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" stylesheets="@../../../Utilidades/CSSstyle/MantoEstelar.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.aohys.copiaIMSS.MVC.VistaControlador.Consulta.SegundaParteController">
+<AnchorPane id="AnchorPane" fx:id="anchorPane" stylesheets="@../../../Utilidades/CSSstyle/MantoEstelar.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.aohys.copiaIMSS.MVC.VistaControlador.Consulta.SegundaParteController">
    <children>
       <VBox prefHeight="620.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>

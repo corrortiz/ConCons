@@ -30,11 +30,14 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -47,6 +50,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 
@@ -69,8 +73,6 @@ public class RayosXController implements Initializable {
         this.paci = paci;
         // carga los componentes top
         cargaTop();
-        
-        
     }
     //private ExecutorService dbExeccutor;
     private ExecutorService dbExeccutor;
@@ -92,7 +94,7 @@ public class RayosXController implements Initializable {
     
     //Conexion
     Vitro dbConn = new Vitro();
-    
+    @FXML private AnchorPane anchorPane;
     //FXML de arriba
     @FXML private Label lbNombre;
     //Parte inferior
@@ -264,8 +266,7 @@ public class RayosXController implements Initializable {
                         Button ima = new Button("Imprimir estudio");
                         ima.setOnAction(evento->{
                             Rayos rec = getTableView().getItems().get(getIndex());
-                            EstudioPDF epdf = new EstudioPDF();
-                            epdf.pasoPrincipal(paci, rec);
+                            creaReporteEstudio(rec);
                         });
                         ima.setGraphic(new ImageView(imprimir));
                         this.setText(null);
@@ -277,6 +278,27 @@ public class RayosXController implements Initializable {
             return cell;
         });
         tvRayos.setItems(listRayos);
+    }
+    
+    /**
+     * crea el reporte de los rayo x
+     * @param rec 
+     */
+    private void creaReporteEstudio(Rayos rec){
+       Task<Void> task = new Task<Void>() {
+           @Override
+           protected Void call() throws Exception {
+                EstudioPDF epdf = new EstudioPDF();
+                epdf.pasoPrincipal(paci, rec);
+                return null;
+           }
+       };
+        //Maouse en modo esperar
+        anchorPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(task.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+        
+        dbExeccutor.submit(task);
     }
     
     /**

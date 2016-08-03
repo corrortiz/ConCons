@@ -14,6 +14,8 @@ import com.aohys.copiaIMSS.MVC.Modelo.Receta;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
+import com.aohys.copiaIMSS.Utilidades.Reportes.HistorialPDF;
 import com.aohys.copiaIMSS.Utilidades.Reportes.MedicamentosPDF;
 import java.net.URL;
 import java.sql.Connection;
@@ -24,11 +26,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -40,6 +47,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 
@@ -68,6 +76,18 @@ public class RecetaController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        ejecutorDeServicio();
+    }
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
     }
 
     //Variables a que utiliza el controlador
@@ -78,7 +98,7 @@ public class RecetaController implements Initializable {
     
     //Conexion
     Vitro dbConn = new Vitro();
-    
+    @FXML private AnchorPane anchorPane;
     //FXML de arriba
     @FXML private Label lbNombre;
     //Primera table
@@ -168,10 +188,29 @@ public class RecetaController implements Initializable {
         });
         
         bttImprimir.setOnAction(evento->{
-            MedicamentosPDF im = new MedicamentosPDF();
-            im.pasoPrincipal(paci, listDira);
+            creaPDFReceta();
         });
     }
+    /**
+     * metodo para crear receta en pdf
+     */
+    private void creaPDFReceta(){
+       Task<Void> task = new Task<Void>() {
+           @Override
+           protected Void call() throws Exception {
+                MedicamentosPDF im = new MedicamentosPDF();
+                im.pasoPrincipal(paci, listDira);
+                return null;
+           }
+       };
+        //Maouse en modo esperar
+        anchorPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(task.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+        
+        dbExeccutor.submit(task);
+    }
+    
     
     /**
      * formato de los texbox
@@ -390,10 +429,6 @@ public class RecetaController implements Initializable {
         listOriginal.addAll(listAnte);
         tvMedicPrevio.setItems(listAnte);
         
-        colAgregar.prefWidthProperty().bind(
-            tvMedelDia.widthProperty()
-            .subtract(colAgregar.widthProperty())
-        );
         
     }
     

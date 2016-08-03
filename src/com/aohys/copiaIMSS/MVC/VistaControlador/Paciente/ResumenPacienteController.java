@@ -20,9 +20,12 @@ import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.patoTransfucion;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.patoTraumaticos;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Diagnostico;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
+import com.aohys.copiaIMSS.MVC.Modelo.Rayos;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
+import com.aohys.copiaIMSS.Utilidades.Reportes.EstudioPDF;
 import com.aohys.copiaIMSS.Utilidades.Reportes.HistorialPDF;
 import com.aohys.copiaIMSS.Utilidades.Reportes.NotaAtencionPDF;
 import java.net.URL;
@@ -31,7 +34,10 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -39,6 +45,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
@@ -50,6 +57,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 
@@ -62,7 +70,17 @@ public class ResumenPacienteController implements Initializable {
 
     //Variables de escena
     private PrincipalController cordi;
-
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
+    }
     /**
      * Inicia la esecena 
      * @param cordi 
@@ -79,7 +97,8 @@ public class ResumenPacienteController implements Initializable {
                 formatoCirculos(conex);
             } catch (SQLException e) {
                 e.printStackTrace();
-            } 
+            }
+            ejecutorDeServicio();
         });
     }
 
@@ -112,7 +131,7 @@ public class ResumenPacienteController implements Initializable {
     @FXML private Label lbCURP;
     @FXML private Label lbSexo;
     @FXML private Label lbIdMedico;
-    
+    @FXML private AnchorPane anchorPane;
     //FXML enmedio
     @FXML private ImageView imageView;
     //Tabla consultas
@@ -186,8 +205,7 @@ public class ResumenPacienteController implements Initializable {
                         Button ima = new Button("Imprimir Nota");
                         ima.setOnAction(evento->{
                             Consulta rec = getTableView().getItems().get(getIndex());
-                            NotaAtencionPDF epdf = new NotaAtencionPDF();
-                            epdf.pasoPrincipal(rec);
+                            creaNotaMedicaPDF(rec);
                         });
                         ima.setGraphic(new ImageView(impresora));
                         this.setText(null);
@@ -203,6 +221,28 @@ public class ResumenPacienteController implements Initializable {
         cbbMedicos.setItems(usa.cargaListaMedResumen(conex));
         combo();
     }
+    
+    /**
+     * crea nota medica
+     * @param consul 
+     */
+    private void creaNotaMedicaPDF(Consulta consul){
+       Task<Void> task = new Task<Void>() {
+           @Override
+           protected Void call() throws Exception {
+                NotaAtencionPDF ant = new NotaAtencionPDF();
+                ant.pasoPrincipal(consul);
+                return null;
+           }
+       };
+        //Maouse en modo esperar
+        anchorPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(task.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+        
+        dbExeccutor.submit(task);
+    }
+    
     
     /**
      * Cambia la tabla dependiendo del medico
@@ -243,8 +283,7 @@ public class ResumenPacienteController implements Initializable {
                         Button ima = new Button("Imprimir Nota");
                         ima.setOnAction(evento->{
                             Consulta rec = getTableView().getItems().get(getIndex());
-                            NotaAtencionPDF epdf = new NotaAtencionPDF();
-                            epdf.pasoPrincipal(rec);
+                            creaNotaMedicaPDF(rec);
                         });
                         ima.setGraphic(new ImageView(impresora));
                         this.setText(null);
@@ -278,9 +317,27 @@ public class ResumenPacienteController implements Initializable {
         hlImprimir.setGraphic(new ImageView(impresora));
         
         hlImprimir.setOnAction(evento->{
-            HistorialPDF histo = new HistorialPDF();
-            histo.pasoPrincipal();
+            creaHisotiralPDF();
         });
+    }
+    /**
+     * crea el pdf del historial
+     */
+    private void creaHisotiralPDF(){
+       Task<Void> task = new Task<Void>() {
+           @Override
+           protected Void call() throws Exception {
+                HistorialPDF histo = new HistorialPDF();
+                histo.pasoPrincipal();
+                return null;
+           }
+       };
+        //Maouse en modo esperar
+        anchorPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(task.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+        
+        dbExeccutor.submit(task);
     }
     
     /**
@@ -379,8 +436,7 @@ public class ResumenPacienteController implements Initializable {
                     }
                     Platform.runLater(new Runnable(){
                         public void run(){
-                            NotaAtencionPDF napdf = new NotaAtencionPDF();
-                            napdf.pasoPrincipal(tvConsulta.getSelectionModel().getSelectedItem());
+                            creaNotaMedicaPDF(tvConsulta.getSelectionModel().getSelectedItem());
                         }
                     });
                     return null;

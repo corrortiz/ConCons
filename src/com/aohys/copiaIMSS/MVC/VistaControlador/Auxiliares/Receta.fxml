@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" stylesheets="@../../../Utilidades/CSSstyle/MantoEstelar.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.aohys.copiaIMSS.MVC.VistaControlador.Auxiliares.RecetaController">
+<AnchorPane id="AnchorPane" fx:id="anchorPane" stylesheets="@../../../Utilidades/CSSstyle/MantoEstelar.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.aohys.copiaIMSS.MVC.VistaControlador.Auxiliares.RecetaController">
    <children>
       <VBox prefHeight="620.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -76,22 +76,22 @@
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </VBox.margin>
             </HBox>
-            <TableView fx:id="tvMedicPrevio" styleClass="tablachica">
-              <columns>
-                <TableColumn fx:id="colFecha" maxWidth="193.0" minWidth="100.0" prefWidth="175.0" text="Fecha" />
-                <TableColumn fx:id="colMedicaPre" maxWidth="1.7976931348623157E308" minWidth="347.0" prefWidth="365.0" text="Medicamento" />
-                  <TableColumn fx:id="colMedicaViaAdm" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" text="Vía de administración" />
-                  <TableColumn fx:id="colMedicaIndica" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Indicaciones" />
-                  <TableColumn fx:id="colMedicaInter" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Intervalo" />
-                  <TableColumn fx:id="colMedicaDuracion" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Duaración" />
-                  <TableColumn fx:id="colAgregar" maxWidth="179.0" minWidth="150.0" prefWidth="179.0" />
-              </columns>
-               <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </VBox.margin>
+            <TableView fx:id="tvMedicPrevio" layoutX="15.0" layoutY="298.0" styleClass="tablachica">
+               <columns>
+                  <TableColumn fx:id="colFecha" prefWidth="75.0" text="Fecha" />
+                  <TableColumn fx:id="colMedicaPre" prefWidth="75.0" text="Medicamento" />
+                  <TableColumn fx:id="colMedicaViaAdm" prefWidth="75.0" text="Vía de administración" />
+                  <TableColumn fx:id="colMedicaIndica" prefWidth="75.0" text="Indicaciones" />
+                  <TableColumn fx:id="colMedicaInter" prefWidth="75.0" text="Intervalo" />
+                  <TableColumn fx:id="colMedicaDuracion" prefWidth="75.0" text="Duaración" />
+                  <TableColumn fx:id="colAgregar" prefWidth="75.0" />
+               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
             </TableView>
             <GridPane hgap="5.0" minHeight="-Infinity" vgap="10.0">
               <columnConstraints>

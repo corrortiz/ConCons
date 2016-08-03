@@ -28,6 +28,7 @@ import com.aohys.copiaIMSS.MVC.VistaControlador.Resultados.ResLabController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Resultados.ResRayController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Usuarios.ListaUsuariosController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
 import com.aohys.copiaIMSS.Utilidades.Reportes.HistorialPDF;
 import com.aohys.rehabSys.Utilidades.ClasesAuxiliares.Efectos;
 import java.io.IOException;
@@ -36,13 +37,17 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -50,6 +55,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -91,7 +97,17 @@ public class PrincipalController implements Initializable {
   
     //Base de datos
     Vitro dbConn = new Vitro();
-    
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
+    }
     /**
      * Inicia la esecena 
      * @param cordi
@@ -101,6 +117,7 @@ public class PrincipalController implements Initializable {
         this.cordi = cordi;
         this.stage = stage;
         binding();
+        ejecutorDeServicio();
     }
     
     //Variables de transicion 
@@ -773,12 +790,30 @@ public class PrincipalController implements Initializable {
         
         bttResumen.setOnAction(evento->{
             if (pacienteAUsar != null) {
-               HistorialPDF id = new HistorialPDF();
-               id.pasoPrincipal();
+               creaHisotiralPDF();
            }else
                aux.alertaError("Selecciona un paciente", "Selecciona un paciente", 
                        "Es necesario haber seleccionado un paciente para poder imprimir la historia medica");
         });
+    }
+    /**
+     * crea el pdf de la historia medica del paciente
+     */
+    private void creaHisotiralPDF(){
+       Task<Void> task = new Task<Void>() {
+           @Override
+           protected Void call() throws Exception {
+                HistorialPDF histo = new HistorialPDF();
+                histo.pasoPrincipal();
+                return null;
+           }
+       };
+        //Maouse en modo esperar
+        stackPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(task.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+        
+        dbExeccutor.submit(task);
     }
     
     /**

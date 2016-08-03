@@ -17,6 +17,8 @@ import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
+import com.aohys.copiaIMSS.Utilidades.Reportes.HistorialPDF;
 import com.aohys.copiaIMSS.Utilidades.Reportes.NotaAtencionPDF;
 import com.sun.javafx.scene.control.skin.TextAreaSkin;
 import com.sun.javafx.scene.control.skin.TextFieldSkin;
@@ -28,11 +30,16 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -49,6 +56,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 
@@ -76,6 +84,19 @@ public class SegundaParteController implements Initializable {
         id_cons = aux.generaID();
         // carga los componentes top
         cargaTop();
+        
+        ejecutorDeServicio();
+    }
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
     }
 
     //Variables a que utiliza el controlador
@@ -88,7 +109,7 @@ public class SegundaParteController implements Initializable {
     
     //Conexion
     Vitro dbConn = new Vitro();
-    
+    @FXML private AnchorPane anchorPane;
     //FXML de arriba
     @FXML private Label lbNombre;
     @FXML private Label lbEdad;
@@ -142,6 +163,29 @@ public class SegundaParteController implements Initializable {
     }
     
     /**
+     * crea nota medica del paciente
+     * @param conex 
+     */
+    private void creaNotaMedicaPDF(){
+       Task<Void> task = new Task<Void>() {
+           @Override
+           protected Void call() throws Exception {
+                try(Connection conex = dbConn.conectarBD()){
+                    NotaAtencionPDF ant = new NotaAtencionPDF();
+                    ant.pasoPrincipal(consulta.cargaSoloUno(id_cons, conex)); 
+                }
+                return null;
+           }
+       };
+        //Maouse en modo esperar
+        anchorPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(task.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+        
+        dbExeccutor.submit(task);
+    }
+    
+    /**
      * formato al botton de guardar
      */
     private void formatoBotones(){
@@ -151,8 +195,7 @@ public class SegundaParteController implements Initializable {
                 if(diagnostico.revisaDiagConsulta(id_cons, conex)){
                     guardaConsulta(conex);
                     cordi.lanzaHistoriaMedica(paci);
-                    NotaAtencionPDF ant = new NotaAtencionPDF();
-                    ant.pasoPrincipal(consulta.cargaSoloUno(id_cons, conex));
+                    creaNotaMedicaPDF();
                 }else{
                     aux.alertaError("Agrega un diagnostico", "Agrega un diagnostico", 
                             "Para poder guardar la nota medica es necesario por lo menos agregar un diagnostico ");

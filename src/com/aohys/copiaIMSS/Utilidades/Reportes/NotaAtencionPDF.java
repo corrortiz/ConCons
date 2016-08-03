@@ -244,7 +244,7 @@ public class NotaAtencionPDF {
             
             if (!listaTratamientos.isEmpty()) {
                 paragraph = new Paragraph();
-                paragraph.addMarkup("*Procedimientos(S)*", 
+                paragraph.addMarkup("*Procedimiento(s)*", 
                     12, BaseFont.Helvetica);
                 document.add(paragraph);
                 for (Tratamiento e : listaTratamientos) {

@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" stylesheets="@../../../Utilidades/CSSstyle/MantoEstelar.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.aohys.copiaIMSS.MVC.VistaControlador.Auxiliares.LaboratorialesController">
+<AnchorPane id="AnchorPane" fx:id="anchorPane" stylesheets="@../../../Utilidades/CSSstyle/MantoEstelar.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.aohys.copiaIMSS.MVC.VistaControlador.Auxiliares.LaboratorialesController">
    <children>
       <VBox prefHeight="620.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -336,11 +336,6 @@
                               <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
                            </VBox.margin>
                         </TextField>
-                        <Button fx:id="bttImprimir" layoutX="128.0" layoutY="420.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Imprimir">
-                           <VBox.margin>
-                              <Insets bottom="5.0" left="118.0" right="119.0" top="5.0" />
-                           </VBox.margin>
-                        </Button>
                         <Button fx:id="bttAgregar" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Agregar">
                            <VBox.margin>
                               <Insets bottom="20.0" left="118.0" right="119.0" top="20.0" />
