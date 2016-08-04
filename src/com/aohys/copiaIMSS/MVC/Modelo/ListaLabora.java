@@ -8,6 +8,7 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo;
 
+import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -40,12 +41,13 @@ public class ListaLabora {
      * @param idPaci
      * @return 
      */
-    public ObservableList<ListaLabora> listaLab(Connection conex, String idPaci){
+    public ObservableList<ListaLabora> listaLab(String idPaci){
         ObservableList<ListaLabora> lista = FXCollections.observableArrayList();
         String sql ="SELECT id_lab, id_paciente,fecha_lab\n"+
                     "FROM laboratorial WHERE id_paciente = '"+idPaci+"'\n"+
                     "ORDER BY fecha_lab DESC;";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
+        try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+                PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
             while (res.next()) {
                 lista.add(new ListaLabora(  res.getString ("id_lab"), 
