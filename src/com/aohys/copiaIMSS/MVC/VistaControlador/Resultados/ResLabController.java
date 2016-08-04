@@ -72,11 +72,7 @@ public class ResLabController implements Initializable {
         this.paci = paci;
         // carga los componentes top
         cargaTop();
-        try(Connection conex = dbConn.conectarBD()) {
-            actualizaTabla(conex);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        actualizaTabla();
         ejecutorDeServicio();
     }
     //private ExecutorService dbExeccutor;
@@ -207,7 +203,7 @@ public class ResLabController implements Initializable {
     
   
     
-    private void actualizaTabla(Connection conex){
+    private void actualizaTabla(){
         colFecha.setCellValueFactory(cellData -> {
             ListaLabora p = cellData.getValue();
             LocalDate lol = p.getFecha_lab().toLocalDate();
@@ -215,12 +211,10 @@ public class ResLabController implements Initializable {
             String ageInYear = lol.format(kkk);
             return new ReadOnlyStringWrapper(ageInYear);
         });
-        tvFechaLabo.setItems(listaLabora.listaLab(conex, paci.getId_paciente()));
+        tvFechaLabo.setItems(listaLabora.listaLab(paci.getId_paciente()));
         
         tvFechaLabo.getSelectionModel().selectedItemProperty().addListener((observable,viejo,nuevo)->{
-            
-                cargarPDF(pgiSubidaPDF, nuevo.getId_lab(), nuevo);
-            
+            cargarPDF(pgiSubidaPDF, nuevo.getId_lab(), nuevo);
         });
     }
     /**
