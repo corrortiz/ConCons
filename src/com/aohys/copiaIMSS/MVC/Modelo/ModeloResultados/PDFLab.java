@@ -125,7 +125,7 @@ public class PDFLab {
                             "`id_lab` \n"+
                             "FROM pdflab\n" +
                            "WHERE id_lab = '"+dato+"';";
-            try(Connection conex = dbConn.conectarBD();
+            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
                     PreparedStatement stta = conex.prepareStatement(sqlSt);
                 ResultSet res = stta.executeQuery()){
                 if (res.next()) {

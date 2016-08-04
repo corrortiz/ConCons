@@ -125,7 +125,8 @@ public class ResLabController implements Initializable {
      * Carga componentes
      */
     public void cargaTop(){
-        String nombre = paci.getNombre_paciente()+" "+paci.getApellido_paciente()+" "+paci.getApMaterno_paciente();
+        String nombre = String.format("%s %s %s", 
+                paci.getNombre_paciente(), paci.getApellido_paciente(), paci.getApMaterno_paciente());
         lbNombre.setText(nombre);
     }    
    
@@ -139,7 +140,6 @@ public class ResLabController implements Initializable {
             }else
                 aux.alertaError("Selecciona un requerimiento de estudios", "Selecciona un requerimiento de estudios",
                         "Es necesario seleccionar un requerimiento de estudios para poder agregar los resultados");
-            
         });
         
         hlResultado.setOnAction(evento->{
@@ -202,7 +202,9 @@ public class ResLabController implements Initializable {
     }
     
   
-    
+    /**
+     * actualiza la tabla de resultados
+     */
     private void actualizaTabla(){
         colFecha.setCellValueFactory(cellData -> {
             ListaLabora p = cellData.getValue();
