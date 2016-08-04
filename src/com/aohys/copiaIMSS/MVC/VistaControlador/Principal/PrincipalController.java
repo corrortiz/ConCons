@@ -887,7 +887,7 @@ public class PrincipalController implements Initializable {
     
     public void pupOver(){
         VBox vbox2 = new VBox(20);
-        vbox2.setPrefSize(200, 200);
+        vbox2.setPrefSize(300, 250);
         vbox2.getChildren().addAll(bttPopPaciente, bttPopUsuario,bttFestivos);
         vbox2.setAlignment(Pos.CENTER);
         bttPopPaciente.setPadding(new Insets(5));

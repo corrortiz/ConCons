@@ -66,8 +66,8 @@
             <GridPane hgap="5.0" minHeight="-Infinity" minWidth="-Infinity" vgap="5.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" maxWidth="367.0" minWidth="10.0" prefWidth="341.0" />
-                <ColumnConstraints hgrow="ALWAYS" maxWidth="430.0" minWidth="10.0" prefWidth="299.0" />
-                  <ColumnConstraints hgrow="ALWAYS" maxWidth="393.0" minWidth="10.0" prefWidth="350.0" />
+                <ColumnConstraints hgrow="ALWAYS" maxWidth="430.0" minWidth="10.0" prefWidth="400.0" />
+                  <ColumnConstraints hgrow="ALWAYS" maxWidth="393.0" minWidth="10.0" prefWidth="259.0" />
                   <ColumnConstraints hgrow="ALWAYS" maxWidth="195.0" minWidth="10.0" prefWidth="195.0" />
               </columnConstraints>
               <rowConstraints>
@@ -113,17 +113,17 @@
                         <Insets left="40.0" />
                      </GridPane.margin>
                   </Hyperlink>
-                  <Hyperlink fx:id="hlNoPatologicos" text="Antecedentes No Patológicos" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Hyperlink fx:id="hlNoPatologicos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Antecedentes No Patológicos" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets left="40.0" />
                      </GridPane.margin>
                   </Hyperlink>
-                  <Hyperlink fx:id="hlTransfuncionales" text="Antecedentes Transfusionales" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <Hyperlink fx:id="hlTransfuncionales" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Antecedentes Transfusionales" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets left="40.0" />
                      </GridPane.margin>
                   </Hyperlink>
-                  <Hyperlink fx:id="hlTraumaticos" text="Antecedentes Traumáticos" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <Hyperlink fx:id="hlTraumaticos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Antecedentes Traumáticos" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <GridPane.margin>
                         <Insets left="40.0" />
                      </GridPane.margin>
@@ -141,7 +141,7 @@
                         <Insets left="220.0" />
                      </GridPane.margin>
                   </Hyperlink>
-                  <Hyperlink fx:id="hlAdiciones" text="Adicciones" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <Hyperlink fx:id="hlAdiciones" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Adicciones" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <GridPane.margin>
                         <Insets left="40.0" />
                      </GridPane.margin>

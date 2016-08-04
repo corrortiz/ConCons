@@ -112,7 +112,7 @@
                   </HBox>
                   <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="6">
                      <children>
-                        <VBox alignment="CENTER_LEFT" prefHeight="289.0" prefWidth="165.0" spacing="20.0">
+                        <VBox alignment="CENTER_LEFT" prefHeight="289.0" prefWidth="204.0" spacing="20.0">
                            <children>
                               <Label text="Peso:" />
                               <Label text="Talla:" />

@@ -148,7 +148,6 @@ public class Usuario{
         
     /**
     * Realiza la carga de la lista medico
-    * @param conex
     * @return 
     */
     public ObservableList<Usuario> cargaTabla(){

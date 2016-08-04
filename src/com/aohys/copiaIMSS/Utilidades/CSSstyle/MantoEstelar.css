@@ -1,4 +1,7 @@
-
+@font-face {
+    font-family: Work Sans;
+    src: url('file:src/com/aohys/copiaIMSS/Utilidades/Fonts/WorkSans-Regular.ttf');
+}
 
 /**************************************************************************************/
 .menu{
@@ -9,13 +12,13 @@
 /**************************************************************************************/
 /*Labels*/
 .label{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
 }
 
 /**************************************************************************************/
 /*Botones*/
 .button{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-cursor: hand;
 }
 
@@ -25,7 +28,7 @@
 .split-menu-button .text-field,
 .split-menu-button > .list-cell,
 .split-menu-button > .arrow-button{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center-left;
     -fx-cursor: hand;
 }
@@ -36,7 +39,7 @@
 /*TexField y TextArea*/
 .text-field,
 .text-area{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-border-radius: 1;
     -fx-background-radius: 1;
     
@@ -51,7 +54,7 @@
 }
 
 .table-cell{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center-left;
     -fx-border-insets: 2 2 2 10;
     -fx-cursor: hand;
@@ -60,7 +63,7 @@
 
 .table-view .column-header,
 .table-view .filler{
-    -fx-font: 13pt "verdena"; 
+    -fx-font: 13pt "Work Sans"; 
     -fx-alignment: center;
     -fx-font-weight: bold;
     -fx-border-insets: 5 5 5 5;
@@ -69,7 +72,7 @@
 
 .table-view .column-header .label,
 .table-view .column-header-background{
-    -fx-font: 16pt "verdena"; 
+    -fx-font: 16pt "Work Sans"; 
     -fx-alignment: center;
     -fx-font-weight: bold;
     -fx-border-insets: 5 5 5 5;
@@ -85,24 +88,24 @@
 /**************************************************************************************/
 /*Radio Butons*/
 .radio-button{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-cursor: hand;
 }
 
 /**************************************************************************************/
 /*HiperLink*/
 .hyperlink{
-    -fx-font: 12pt "verdena";
+    -fx-font: 12pt "Work Sans";
     -fx-cursor: hand;
 }
 
 .hp{
-    -fx-font: 25pt "verdena";
+    -fx-font: 25pt "Work Sans";
     -fx-cursor: hand;
 }
 
 .hp:visited{
-    -fx-font: 25pt "verdena";
+    -fx-font: 25pt "Work Sans";
     -fx-text-fill: #039ED3;
     -fx-cursor: hand;
 }
@@ -134,30 +137,30 @@
 /**************************************************************************************/
 /*DatePicker*/
 .date-picker{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center;
     -fx-cursor: hand;
 }
 
 .date-picker .text-field{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center;
 }
 
 .date-picker-popup .label{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center;
     -fx-cursor: hand;
 }
 
 .date-picker-popup > * > .day-name-cell{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center;
     -fx-cursor: hand;
 }
 
 .date-picker-popup > * > .day-cell{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center;
     -fx-cursor: hand;
 }
@@ -166,12 +169,12 @@
 /*ComboBox*/
 .combo-box,
 .combo-box:editable{
-   -fx-font: 11pt "verdena";
+   -fx-font: 11pt "Work Sans";
    -fx-cursor: hand;
 }
 
 .combo-box .text-input{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center-left;
     -fx-font-weight: bold;
 }
@@ -185,7 +188,7 @@
 .combo-box:editable .text-field,
 .combo-box:editable > .list-cell,
 .combo-box-base:editable > .arrow-button {
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center-left;
 }
 
@@ -195,7 +198,7 @@
 .tab-pane > .tab-header-area > .headers-region > .tab:top,
 .tab-pane > .tab-header-area > .headers-region > .tab:left{
     -fx-pref-height: 40px;
-    -fx-font: 12pt "verdena";
+    -fx-font: 12pt "Work Sans";
     -fx-cursor: hand;
 }
 
@@ -203,13 +206,13 @@
 /**************************************************************************************/
 /*Contex Menu*/
 .context-menu{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center-left;
     -fx-cursor: hand;
 }
 
 .context-menu .label{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center-left;
     -fx-cursor: hand;
 }
@@ -218,7 +221,7 @@
 /**************************************************************************************/
 /*CheckBox*/
 .check-box{
-    -fx-font: 11pt "verdena";
+    -fx-font: 11pt "Work Sans";
     -fx-alignment: center-left;
     -fx-cursor: hand;
 }
@@ -270,12 +273,12 @@
 
 /**************************************************************************************/
 .label-marcadore{
-    -fx-font: 16pt "verdena";
+    -fx-font: 16pt "Work Sans";
     -fx-font-weight: bold;
 }
 /**************************************************************************************/
 .label-cabezeMayor{
-    -fx-font: 16pt "verdena";
+    -fx-font: 16pt "Work Sans";
     -fx-text-fill: white;
     -fx-font-weight: bold;
     
@@ -285,7 +288,7 @@
 /**************************************************************************************/
 /*Tooltip*/
 .tooltip{
-    -fx-font: 14pt "verdena";
+    -fx-font: 14pt "Work Sans";
     -fx-background-color: rgba(164, 164, 193, .5);
     -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.6) , 5, 0.3 , 10 , 10 );
 }
@@ -299,7 +302,7 @@
 }
 
 .tablachica .table-cell{
-    -fx-font: 10pt "verdena";
+    -fx-font: 10pt "Work Sans";
     -fx-alignment: center-left;
     -fx-border-insets: 0 0 0 10;
     -fx-cursor: hand;
@@ -308,7 +311,7 @@
 
 .tablachica .column-header,
 .tablachica .filler{
-    -fx-font: 10pt "verdena"; 
+    -fx-font: 10pt "Work Sans"; 
     -fx-alignment: center;
     -fx-font-weight: bold;
     -fx-border-insets: 0 0 0 10;
@@ -317,7 +320,7 @@
 
 .tablachica .column-header .label,
 .tablachica .column-header-background{
-    -fx-font: 12pt "verdena"; 
+    -fx-font: 12pt "Work Sans"; 
     -fx-alignment: center;
     -fx-font-weight: bold;
     -fx-border-insets: 1 1 1 1;
@@ -339,7 +342,7 @@
     -fx-background-insets: 0,4,4;
     -fx-text-fill: black;
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 3, 0.0 , 0 , 1 );
-    -fx-font: 12pt "verdena";
+    -fx-font: 12pt "Work Sans";
     -fx-graphic: url('com/aohys/copiaIMSS/Utilidades/Logos/tick.png');
     
 }
@@ -355,7 +358,7 @@
 }
 
 .dialog-pane .label {
-    -fx-font: 14pt "verdena";
+    -fx-font: 14pt "Work Sans";
     -fx-text-fill: white;
 }
 
@@ -364,7 +367,7 @@
 }
 
 .dialog-pane:header .header-panel .label {
-    -fx-font: 18pt "verdena";
+    -fx-font: 18pt "Work Sans";
    
 }
 
