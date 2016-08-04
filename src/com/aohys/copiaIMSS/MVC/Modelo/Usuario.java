@@ -13,7 +13,6 @@ package com.aohys.copiaIMSS.MVC.Modelo;
 import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
-import com.mysql.jdbc.MySQLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -152,7 +151,7 @@ public class Usuario{
     * @param conex
     * @return 
     */
-    public ObservableList<Usuario> cargaTabla(Connection conex){
+    public ObservableList<Usuario> cargaTabla(){
         ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
         String sql = "SELECT  id_medico, contraseña_medico,\n" +
                 "        nombre_medico, apellido_medico,\n" +
@@ -160,7 +159,8 @@ public class Usuario{
                 "        especialidad_medico, telefono_medico,\n" +
                 "        correo_medico, tipo_medico\n" +
                 "FROM Medico;";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
+        try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+                PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
             while (res.next()) {
                 listaMed.add(new Usuario( res.getString("id_medico"), 

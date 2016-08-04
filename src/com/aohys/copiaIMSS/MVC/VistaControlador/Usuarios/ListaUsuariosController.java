@@ -129,7 +129,7 @@ public class ListaUsuariosController implements Initializable {
             return new ReadOnlyStringWrapper(regresaColumna);
         });
         
-        tablaMed.setItems(usa.cargaTabla(conex));
+        tablaMed.setItems(usa.cargaTabla());
         listaMedicos = tablaMed.getItems();
         
         FilteredList<Usuario> filtro = new FilteredList<>(listaMedicos, cambio -> true);
