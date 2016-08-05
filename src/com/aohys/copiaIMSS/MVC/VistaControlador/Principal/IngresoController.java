@@ -18,14 +18,14 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.FadeTransition;
+import javafx.animation.PathTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.SequentialTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.VPos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -34,10 +34,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -64,27 +63,34 @@ public class IngresoController implements Initializable {
     public void pasoPrincipal(Coordinador cordi, Stage stage) {
         this.cordi = cordi;
         this.stage = stage;
-        jugantoTrans();
+        transisionButton();
     }
     
-    private void jugantoTrans(){
-        Text msg = new Text("JavaFX animation is cool!");
-        msg.setTextOrigin(VPos.TOP);
-        msg.setFont(Font.font(24));
-        vBox.getChildren().add(msg);
-        double sceneWidth = stage.getScene().getWidth();
-        double msgWidth = msg.getLayoutBounds().getWidth();
-        KeyValue initKeyValue =
-                new KeyValue(msg.translateXProperty(), sceneWidth);
-        KeyFrame initFrame = new KeyFrame(Duration.ZERO, initKeyValue);
-        KeyValue endKeyValue =
-                new KeyValue(msg.translateXProperty(), -1.0 * msgWidth);
-        KeyFrame endFrame = new KeyFrame(Duration.seconds(3), endKeyValue);
-        Timeline timeline = new Timeline(endFrame);
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.setAutoReverse(true);
-        timeline.setRate(3);
-        timeline.play();
+    private void transisionButton(){
+        ScaleTransition st = new ScaleTransition(Duration.seconds(1), bttAceptar);
+        st.setFromX(1.0);
+        st.setToX(1.20);
+        st.setFromY(1.0);
+        st.setToY(1.20);
+        st.setCycleCount(1);
+        
+        ScaleTransition salira = new ScaleTransition(Duration.seconds(1), bttAceptar);
+        salira.setFromX(1.20);
+        salira.setToX(1.0);
+        salira.setFromY(1.20);
+        salira.setToY(1.0);
+        salira.setCycleCount(1);
+        
+        st.setAutoReverse(false);
+        bttAceptar.setOnMouseEntered(envento->{
+            st.play();
+        });
+        
+        bttAceptar.setOnMouseExited(envento->{
+           salira.play();
+        });
+        
+        
     }
     
     
