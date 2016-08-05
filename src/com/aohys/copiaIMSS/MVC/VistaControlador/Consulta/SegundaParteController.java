@@ -18,7 +18,6 @@ import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
-import com.aohys.copiaIMSS.Utilidades.Reportes.HistorialPDF;
 import com.aohys.copiaIMSS.Utilidades.Reportes.NotaAtencionPDF;
 import com.sun.javafx.scene.control.skin.TextAreaSkin;
 import com.sun.javafx.scene.control.skin.TextFieldSkin;

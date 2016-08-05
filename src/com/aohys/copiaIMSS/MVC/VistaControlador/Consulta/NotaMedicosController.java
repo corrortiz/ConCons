@@ -12,15 +12,22 @@ import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.Modelo.Somametropia;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
+import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
+import com.aohys.copiaIMSS.Utilidades.Reportes.NotaAtencionPDF;
 import com.sun.javafx.scene.control.skin.TextAreaSkin;
 import com.sun.javafx.scene.control.skin.TextFieldSkin;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javafx.beans.binding.Bindings;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -31,6 +38,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * FXML Controller class
@@ -58,6 +66,18 @@ public class NotaMedicosController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        ejecutorDeServicio();
+    }
+    //private ExecutorService dbExeccutor;
+    private ExecutorService dbExeccutor;
+    /**
+     * metodo para pedir un hilo antes de una llamada a la bd
+     */
+    private void ejecutorDeServicio(){
+        dbExeccutor = Executors.newFixedThreadPool(
+            1, 
+            new databaseThreadFactory()
+        ); 
     }
 
     //Variables a que utiliza el controlador
@@ -78,7 +98,7 @@ public class NotaMedicosController implements Initializable {
     
     //Conexion
     Vitro dbConn = new Vitro();
-    
+    @FXML private AnchorPane anchorPane;
     //FXML de arriba
     @FXML private Label lbNombre;
     @FXML private Label lbEdad;
@@ -125,16 +145,17 @@ public class NotaMedicosController implements Initializable {
     }    
    
     /**
-     * formato de imagen
+     * metodo para el botton on action
      */
-    private void formatoImagen(){
-    }
-    
-    /**
-     * formato al botton de guardar
-     */
-    private void formatoBotones(){
-        bttAceptar.setOnAction(eventon->{
+    private void acetarContinuaORgresa(){
+        Task<Void> task = new Task<Void>() {
+           @Override
+           protected Void call() throws Exception {
+                return null;
+           }
+       };
+        
+        task.setOnSucceeded((evento)->{
             if (continuaSINO()) {
                 try(Connection conex = dbConn.conectarBD()) {
                     if (actulizar) {
@@ -148,6 +169,22 @@ public class NotaMedicosController implements Initializable {
                     e.printStackTrace();
                 }
             }
+        });
+        
+        //Maouse en modo esperar
+        anchorPane.getScene().getRoot().cursorProperty()
+                .bind(Bindings.when(task.runningProperty())
+                        .then(Cursor.WAIT).otherwise(Cursor.DEFAULT));
+        
+        dbExeccutor.submit(task);
+    }
+    
+    /**
+     * formato al botton de guardar
+     */
+    private void formatoBotones(){
+        bttAceptar.setOnAction(eventon->{
+            acetarContinuaORgresa();
         });
         bttAceptar.setGraphic(new ImageView(aceptar));
     }
@@ -448,8 +485,6 @@ public class NotaMedicosController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         //formato botton guardar
         formatoBotones();
-        //Le da formato a los imagenes
-        formatoImagen();
         //formato de los texbox
         formatoDeText();
         //Limpia labels

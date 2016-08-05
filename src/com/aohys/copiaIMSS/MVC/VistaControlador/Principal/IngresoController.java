@@ -18,10 +18,14 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.VPos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -30,7 +34,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * FXML Controller class
@@ -55,12 +64,34 @@ public class IngresoController implements Initializable {
     public void pasoPrincipal(Coordinador cordi, Stage stage) {
         this.cordi = cordi;
         this.stage = stage;
+        jugantoTrans();
     }
+    
+    private void jugantoTrans(){
+        Text msg = new Text("JavaFX animation is cool!");
+        msg.setTextOrigin(VPos.TOP);
+        msg.setFont(Font.font(24));
+        vBox.getChildren().add(msg);
+        double sceneWidth = stage.getScene().getWidth();
+        double msgWidth = msg.getLayoutBounds().getWidth();
+        KeyValue initKeyValue =
+                new KeyValue(msg.translateXProperty(), sceneWidth);
+        KeyFrame initFrame = new KeyFrame(Duration.ZERO, initKeyValue);
+        KeyValue endKeyValue =
+                new KeyValue(msg.translateXProperty(), -1.0 * msgWidth);
+        KeyFrame endFrame = new KeyFrame(Duration.seconds(3), endKeyValue);
+        Timeline timeline = new Timeline(endFrame);
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.setAutoReverse(true);
+        timeline.setRate(3);
+        timeline.play();
+    }
+    
     
     //Variables a utilizar
     Usuario med = new Usuario();
     Auxiliar aux = new Auxiliar();
-    
+    @FXML private VBox vBox;
     /**
      * Regresa un medico
      * @return 
