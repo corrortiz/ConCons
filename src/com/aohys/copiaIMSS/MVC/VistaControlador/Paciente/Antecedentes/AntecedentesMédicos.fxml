@@ -54,7 +54,7 @@
             </TabPane>
             <HBox alignment="TOP_RIGHT" minHeight="-Infinity" prefHeight="90.0">
                <children>
-                  <Button fx:id="bttRegresar" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Historia Médica">
+                  <Button fx:id="bttRegresar" mnemonicParsing="false" prefHeight="31.0" prefWidth="287.0" text="Historia Médica">
                      <HBox.margin>
                         <Insets right="40.0" top="10.0" />
                      </HBox.margin>
