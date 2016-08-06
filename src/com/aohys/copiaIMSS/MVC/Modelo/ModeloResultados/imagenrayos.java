@@ -8,8 +8,8 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados;
 
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -56,7 +56,7 @@ public class imagenrayos {
     
     //Variables de clase
     private static final Logger logger = Logger.getLogger(imagenrayos.class.getName());
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     Auxiliar aux = new Auxiliar();
     MysqlConnectionSingle dbSingle = new MysqlConnectionSingle();
 
@@ -91,7 +91,7 @@ public class imagenrayos {
                             "`id_rayos` \n"+
                             "FROM imagenrayos\n" +
                            "WHERE id_rayos = '"+dato+"';";
-            try(Connection conex = dbSingle.conectarBDSingleConnection();
+            try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sqlSt);
                 ResultSet res = stta.executeQuery()){
                 if (res.next()) {

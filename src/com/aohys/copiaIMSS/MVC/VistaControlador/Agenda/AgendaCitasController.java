@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Agenda;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Coordinador;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
@@ -90,7 +90,7 @@ public class AgendaCitasController implements Initializable {
     Auxiliar aux = new Auxiliar();
     
     //Conexion base de datos
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     
     /**

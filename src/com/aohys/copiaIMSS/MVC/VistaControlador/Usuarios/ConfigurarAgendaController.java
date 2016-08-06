@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Usuarios;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.diaLibre;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.diasConsulta;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.horario;
@@ -26,15 +26,12 @@ import java.time.LocalTime;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -60,7 +57,7 @@ public class ConfigurarAgendaController implements Initializable {
     Image guardar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/computing-cloud.png");
     Image aceptar = new Image("com/aohys/copiaIMSS/Utilidades/Logos/tick.png");
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     //Variables de controlador
     Auxiliar aux = new Auxiliar();

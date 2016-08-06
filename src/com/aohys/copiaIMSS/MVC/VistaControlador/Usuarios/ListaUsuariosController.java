@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Usuarios;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Coordinador;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
@@ -62,7 +62,7 @@ public class ListaUsuariosController implements Initializable {
     Auxiliar aux = new Auxiliar();
     
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     /**
      * Inicia la esecena 

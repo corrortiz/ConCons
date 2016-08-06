@@ -7,15 +7,14 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Auxiliares;
 
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.BaseDatos.ListaMedicamentos;
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.Modelo.Receta;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
-import com.aohys.copiaIMSS.Utilidades.Reportes.HistorialPDF;
 import com.aohys.copiaIMSS.Utilidades.Reportes.MedicamentosPDF;
 import java.net.URL;
 import java.sql.Connection;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -97,7 +97,7 @@ public class RecetaController implements Initializable {
     Receta receta = new Receta();
     
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     @FXML private AnchorPane anchorPane;
     //FXML de arriba
     @FXML private Label lbNombre;
@@ -154,7 +154,8 @@ public class RecetaController implements Initializable {
      * Carga componentes
      */
     public void cargaTop(){
-        String nombre = paci.getNombre_paciente()+" "+paci.getApellido_paciente()+" "+paci.getApMaterno_paciente();
+        String nombre = String.format("%s %s %s", 
+                paci.getNombre_paciente(), paci.getApellido_paciente(), paci.getApMaterno_paciente());
         lbNombre.setText(nombre);
     }    
    
@@ -217,7 +218,7 @@ public class RecetaController implements Initializable {
      */
     private void formatoDeText(){
         txtAdicionales.setTextFormatter(new TextFormatter(aux.formato(500, 4)));
-        txtIdicaciones.setTextFormatter(new TextFormatter(aux.formato(3, 3)));
+        txtIdicaciones.setTextFormatter(new TextFormatter(aux.formato(5, 3)));
         txtIntervalo.setTextFormatter(new TextFormatter(aux.formato(3, 3)));
         txtDura.setTextFormatter(new TextFormatter(aux.formato(3, 3)));
         
@@ -247,19 +248,33 @@ public class RecetaController implements Initializable {
         });
         
         cbbViaTipo.setItems(listaViaAdministracion);
+        Platform.runLater(()->{
+            formatoComboMedicamento();
+        });
         
-        formatoComboMedicamento();
     }
     
     /**
      * formato de los comboboxes
      */
     private void formatoComboMedicamento(){
-        cbbMedicamento.getItems().clear();
-        cbbMedicamento.setItems(listaMedicamentos.cargaListaMedNom());
-        cbbMedicamento.setEditable(true);
-        autoComplete = TextFields.bindAutoCompletion(cbbMedicamento.getEditor(), cbbMedicamento.getItems());
-        autoComplete.setPrefWidth(1200);
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                
+                return null;
+            }
+        };
+        
+        task.setOnSucceeded((evento)->{
+            cbbMedicamento.getItems().clear();
+            cbbMedicamento.setItems(listaMedicamentos.cargaListaMedNom());
+            cbbMedicamento.setEditable(true);
+            autoComplete = TextFields.bindAutoCompletion(cbbMedicamento.getEditor(), cbbMedicamento.getItems());
+            autoComplete.setPrefWidth(1200);
+        });
+        
+        dbExeccutor.submit(task);
     }
 
     /**

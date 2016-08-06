@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Principal;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Coordinador;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Agenda.AgendaCitasController;
@@ -96,7 +96,7 @@ public class PrincipalController implements Initializable {
     Button bttFestivos = new Button("Lista de días festivos ");
   
     //Base de datos
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     //private ExecutorService dbExeccutor;
     private ExecutorService dbExeccutor;
     /**

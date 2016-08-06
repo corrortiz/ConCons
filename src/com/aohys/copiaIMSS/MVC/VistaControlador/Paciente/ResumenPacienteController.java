@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Paciente;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.Consulta;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.antNoPato;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.ant_Heredo_Familiar;
@@ -20,12 +20,10 @@ import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.patoTransfucion;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.patoTraumaticos;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Diagnostico;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
-import com.aohys.copiaIMSS.MVC.Modelo.Rayos;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.databaseThreadFactory;
-import com.aohys.copiaIMSS.Utilidades.Reportes.EstudioPDF;
 import com.aohys.copiaIMSS.Utilidades.Reportes.HistorialPDF;
 import com.aohys.copiaIMSS.Utilidades.Reportes.NotaAtencionPDF;
 import java.net.URL;
@@ -123,7 +121,7 @@ public class ResumenPacienteController implements Initializable {
     patoTraumaticos pTraumaticos = new patoTraumaticos();
     masAnt_Heredo_Familiar masAnteHere = new masAnt_Heredo_Familiar();
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     //FXML de arriba
     @FXML private Label lbNombre;

@@ -9,7 +9,7 @@
 package com.aohys.copiaIMSS.Utilidades.Reportes;
 
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.Laboratorial;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController;
@@ -54,7 +54,7 @@ public class OrdenLaboraPDF {
     Laboratorial lab = new Laboratorial();
         
     //Conexion Base de datos
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     //Formato combobox
     ObservableList<Laboratorial> listaLaboDia = FXCollections.observableArrayList();
     ObservableList<String> listaLaboratorial = FXCollections.observableArrayList();

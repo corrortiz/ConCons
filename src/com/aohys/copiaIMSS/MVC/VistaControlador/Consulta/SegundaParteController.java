@@ -7,9 +7,9 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Consulta;
 
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.BaseDatos.ListaPadecimientos;
 import com.aohys.copiaIMSS.BaseDatos.ListaProcedimientos;
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.Consulta;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Diagnostico;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Tratamiento;
@@ -107,7 +107,7 @@ public class SegundaParteController implements Initializable {
     Consulta consulta = new Consulta();
     
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     @FXML private AnchorPane anchorPane;
     //FXML de arriba
     @FXML private Label lbNombre;

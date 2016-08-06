@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Resultados;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.Laboratorial;
 import com.aohys.copiaIMSS.MVC.Modelo.ListaLabora;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.PDFLab;
@@ -97,7 +97,7 @@ public class ResLabController implements Initializable {
     BooleanProperty mostarHyperLink = new SimpleBooleanProperty(true);
     BooleanProperty mostarBottonAgregar = new SimpleBooleanProperty(true);
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     //FXML de arriba
     @FXML private Label lbNombre;

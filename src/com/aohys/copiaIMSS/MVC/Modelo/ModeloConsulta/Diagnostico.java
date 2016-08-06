@@ -9,7 +9,7 @@ package com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta;
  */
 
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +29,7 @@ import javafx.concurrent.Task;
 
 public class Diagnostico {
     private static final Logger logger = Logger.getLogger(Diagnostico.class.getName());
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     Auxiliar aux = new Auxiliar();
     /**
      * clase astracta de task

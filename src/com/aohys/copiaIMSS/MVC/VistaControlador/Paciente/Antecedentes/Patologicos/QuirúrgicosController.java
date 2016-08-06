@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Paciente.Antecedentes.Patologicos;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.patoQuirugicos;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Paciente.Antecedentes.AntecedentesMédicosController;
@@ -67,7 +67,7 @@ public class QuirúrgicosController implements Initializable {
     patoQuirugicos pQuiruquicos = new patoQuirugicos();
     
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     //FXML de arriba
     @FXML private Label lbNombre;

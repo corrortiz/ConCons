@@ -7,8 +7,8 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Auxiliares;
 
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.BaseDatos.ListaProcedimientosRayos;
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Diagnostico;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Diagnostico.listaDiagnosticosMasSanoTask;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
@@ -93,7 +93,7 @@ public class RayosXController implements Initializable {
     Rayos rayos = new Rayos();
     
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     @FXML private AnchorPane anchorPane;
     //FXML de arriba
     @FXML private Label lbNombre;

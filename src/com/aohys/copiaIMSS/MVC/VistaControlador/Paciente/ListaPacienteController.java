@@ -8,7 +8,7 @@
 package com.aohys.copiaIMSS.MVC.VistaControlador.Paciente;
 
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
@@ -70,7 +70,7 @@ public class ListaPacienteController implements Initializable {
     Boolean udateNote = false;
     
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     //ObserblaeList
     ObservableList<Paciente> listaTa = FXCollections.observableArrayList();

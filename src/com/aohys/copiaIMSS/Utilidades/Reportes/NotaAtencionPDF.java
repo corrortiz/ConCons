@@ -9,7 +9,7 @@
 package com.aohys.copiaIMSS.Utilidades.Reportes;
 
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.Consulta;
 import com.aohys.copiaIMSS.MVC.Modelo.Laboratorial;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Diagnostico;
@@ -69,7 +69,7 @@ public class NotaAtencionPDF {
     Laboratorial lab = new Laboratorial();
         
     //Conexion Base de datos
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     //Formato combobox
     ObservableList<Diagnostico> listaDiagnos = FXCollections.observableArrayList();
     ObservableList<Tratamiento> listaTratamientos = FXCollections.observableArrayList();

@@ -8,7 +8,7 @@
 package com.aohys.copiaIMSS.MVC.VistaControlador.Resultados;
 
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.imagenrayos;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloResultados.imagenrayos.cargaUnaImagen;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
@@ -93,7 +93,7 @@ public class ResRayController implements Initializable {
     imagenrayos rayosVacio = null;
     Rayos rayosSeleccionados = null;
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     //FXML de arriba
     @FXML private Label lbNombre;

@@ -8,8 +8,8 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo;
 
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.Date;
@@ -44,7 +44,7 @@ public class Cita {
 
     //Variables de clase
     private static final Logger logger = Logger.getLogger(Cita.class.getName());
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     Auxiliar aux = new Auxiliar();
     
     /**
@@ -159,7 +159,7 @@ public class Cita {
                         "hora_cit, primVis_cit, id_medico, id_Paciente\n" +
                         "FROM Cita WHERE fecha_cit = '"+fecha+"' AND id_medico = '"+idUs+"'\n" +
                         "ORDER BY hora_cit ASC;";
-            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+            try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
                 ResultSet res = stta.executeQuery()) {
                 while (res.next()) {
@@ -199,7 +199,7 @@ public class Cita {
                     "FROM Cita WHERE id_Paciente = '"+idUs+"'\n" +
                     "AND fecha_cit >= '"+dia+"'\n" +
                     "ORDER BY fecha_cit DESC;";
-            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+            try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
                 ResultSet res = stta.executeQuery()) {
                 while (res.next()) {
@@ -347,7 +347,7 @@ public class Cita {
             String sql ="SELECT hora_cit\n"+
                         "FROM Cita WHERE fecha_cit = '"+fecha+"' AND id_medico = '"+idUs+"'\n" +
                         "ORDER BY hora_cit ASC;";
-            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+            try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
                 ResultSet res = stta.executeQuery()) {
                 while (res.next()) {

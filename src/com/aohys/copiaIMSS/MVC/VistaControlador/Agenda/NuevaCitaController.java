@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Agenda;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.Cita;
 import com.aohys.copiaIMSS.MVC.Modelo.Cita.agregaCitaCsl;
 import com.aohys.copiaIMSS.MVC.Modelo.Cita.cargaCitasFechaUsuarioTask;
@@ -80,7 +80,7 @@ public class NuevaCitaController implements Initializable {
     private PrincipalController princi;
 
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     //Variables de controlador
     private BooleanProperty primeraVez = new SimpleBooleanProperty(false);

@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Agenda;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.Cita;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.DiasFestivos;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.DiasFestivos.listaDiasFestivosTask;
@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -63,7 +62,7 @@ public class ConsultaCitaController implements Initializable {
     private PrincipalController princi;
 
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     //Variables de controlador
     private BooleanProperty primeraVez = new SimpleBooleanProperty(false);

@@ -8,8 +8,8 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,7 +41,7 @@ public class horario {
     private StringProperty id_medico;
     //Variables de clase
     private static final Logger logger = Logger.getLogger(peridoVacaMedico.class.getName());
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     Auxiliar aux = new Auxiliar();
     /**
      * clase astracta de task
@@ -183,7 +183,7 @@ public class horario {
             String sttm = "SELECT entra_horario,\n"+
                           "sale_horario, duacion_consul\n" +
                           "FROM horario WHERE id_medico = '"+idCit+"';";
-            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+            try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sttm);
                 ResultSet res = stta.executeQuery(); ) {
                 if (res.next()) {

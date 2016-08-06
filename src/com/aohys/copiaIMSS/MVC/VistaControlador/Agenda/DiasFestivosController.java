@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Agenda;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.DiasFestivos;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.DiasFestivos.listaDiasFestivosTask;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
@@ -45,7 +45,7 @@ public class DiasFestivosController implements Initializable {
     Auxiliar aux = new Auxiliar();
     
     //Base de datos
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     /**
      * Inicia la esecena 

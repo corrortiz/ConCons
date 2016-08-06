@@ -8,13 +8,12 @@
 
 package com.aohys.copiaIMSS.BaseDatos;
 
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.Alert;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import javax.sql.DataSource;
 
 /**

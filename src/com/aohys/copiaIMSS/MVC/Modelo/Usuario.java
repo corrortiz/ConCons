@@ -10,8 +10,8 @@ package com.aohys.copiaIMSS.MVC.Modelo;
 
 /* Java Bean
 * Clase: Medico  */
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,8 +19,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -33,7 +33,7 @@ public class Usuario{
     public Usuario medicoUnico;
     //Variables de clase
     private static final Logger logger = Logger.getLogger(Usuario.class.getName());
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     Auxiliar aux = new Auxiliar();
     
     /**
@@ -158,7 +158,7 @@ public class Usuario{
                 "        especialidad_medico, telefono_medico,\n" +
                 "        correo_medico, tipo_medico\n" +
                 "FROM Medico;";
-        try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+        try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
             while (res.next()) {
@@ -193,7 +193,7 @@ public class Usuario{
                     "        especialidad_medico, telefono_medico,\n" +
                     "        correo_medico, tipo_medico\n" +
                     "FROM Medico WHERE tipo_medico = 'Medico';";
-            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+            try(Connection conex = dbConn.conectarBD();
                     PreparedStatement stta = conex.prepareStatement(sql);
                   ResultSet res = stta.executeQuery()) {
                 while (res.next()) {
@@ -274,7 +274,7 @@ public class Usuario{
                         "correo_medico, tipo_medico\n" +
                         "FROM Medico WHERE tipo_medico = 'Medico' \n" +
                         "AND especialidad_medico = '"+dato+"';";
-            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+            try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
                 ResultSet res = stta.executeQuery()) {
                 while (res.next()) {
@@ -314,7 +314,7 @@ public class Usuario{
                         "correo_medico, tipo_medico\n" +
                         "FROM Medico WHERE tipo_medico = 'Medico'\n" +
                         "GROUP BY especialidad_medico;";
-            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+            try(Connection conex = dbConn.conectarBD();
                     PreparedStatement stta = conex.prepareStatement(sql);
                   ResultSet res = stta.executeQuery()) {
                 while (res.next()) {
@@ -451,7 +451,7 @@ public class Usuario{
                             "        correo_medico, tipo_medico\n" +
                             "        FROM Medico\n "+
                             "        WHERE id_medico = '"+Dato+"'";
-            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+            try(Connection conex = dbConn.conectarBD();
                     PreparedStatement stta = conex.prepareStatement(sttm);
                    ResultSet res = stta.executeQuery(); ) {
                 if (res.next()) {

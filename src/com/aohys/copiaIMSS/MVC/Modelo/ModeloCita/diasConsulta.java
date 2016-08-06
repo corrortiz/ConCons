@@ -8,8 +8,8 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,7 +42,7 @@ public class diasConsulta {
     private StringProperty id_medico;
     //Variables de clase
     private static final Logger logger = Logger.getLogger(diasConsulta.class.getName());
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     Auxiliar aux = new Auxiliar();
     /**
      * Constructor lleno de la clase dias de consulta
@@ -188,7 +188,7 @@ public class diasConsulta {
             String sql ="SELECT id_diasConsul, lunes_c,\n"+
                         "martes_c, miercoles_c, jueves_c, viernes_c, sabado_c, domingo_c, id_medico\n"+
                         "FROM diasconsulta WHERE id_medico = '"+idUs+"';";
-            try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+            try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
                 ResultSet res = stta.executeQuery()) {
                 if (res.next()) {

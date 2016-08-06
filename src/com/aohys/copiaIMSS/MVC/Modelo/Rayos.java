@@ -8,8 +8,8 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo;
 
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Diagnostico;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
@@ -38,7 +38,7 @@ public class Rayos {
     private StringProperty id_usuario;
     private StringProperty id_medico;
     private static final Logger logger = Logger.getLogger(Diagnostico.class.getName());
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     Auxiliar aux = new Auxiliar();
     MysqlConnectionSingle dbSingle = new MysqlConnectionSingle();
     /**
@@ -227,7 +227,7 @@ public class Rayos {
                         "    `rayos`.`id_medico`\n" +
                         "FROM `rayos` WHERE is_usuario = '"+idPaciente+"'\n"+
                         "ORDER BY fecha_rayos DESC;";
-            try(Connection conex = dbSingle.conectarBDSingleConnection();
+            try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
                 ResultSet res = stta.executeQuery()) {
                 while (res.next()) {

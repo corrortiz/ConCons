@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Paciente;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.Modelo.Somametropia;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
@@ -70,7 +70,7 @@ public class SomatometríaController implements Initializable {
     String id_paciente;
     
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     //FXML de arriba
     @FXML private Label lbNombre;

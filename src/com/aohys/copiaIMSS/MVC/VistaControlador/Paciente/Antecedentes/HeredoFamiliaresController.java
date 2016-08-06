@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Paciente.Antecedentes;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.ant_Heredo_Familiar;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.masAnt_Heredo_Familiar;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
@@ -74,7 +74,7 @@ public class HeredoFamiliaresController implements Initializable {
     masAnt_Heredo_Familiar ante;
     
     //Conexion
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     //FXML de arriba
     @FXML private Label lbNombre;

@@ -8,8 +8,8 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo;
 
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.Date;
@@ -31,7 +31,7 @@ public class Paciente {
     Paciente pacienteUnico;
     //Variables de clase
     private static final Logger logger = Logger.getLogger(Paciente.class.getName());
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     Auxiliar aux = new Auxiliar();
     /**
      * clase astracta de task
@@ -169,7 +169,7 @@ public class Paciente {
                        " curp_paciente, edad_paciente, \n" +
                        " telefono_paciente, correo_paciente \n" +
                         "FROM Paciente WHERE id_paciente = '"+Dato+"'"; 
-        try (   Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+        try (   Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sttm);
                 ResultSet res = stta.executeQuery(sttm)){
             if (res.next()) {

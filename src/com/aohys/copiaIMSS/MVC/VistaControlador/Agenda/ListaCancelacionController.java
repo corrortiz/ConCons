@@ -7,7 +7,7 @@
  */
 package com.aohys.copiaIMSS.MVC.VistaControlador.Agenda;
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
@@ -30,7 +30,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.StackPane;
 
 /**
  * FXML Controller class
@@ -57,7 +56,7 @@ public class ListaCancelacionController implements Initializable {
     Auxiliar aux = new Auxiliar();
     
     //Conexion base de datos
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     //Primer Panel
     //Variables a que utiliza el controlador

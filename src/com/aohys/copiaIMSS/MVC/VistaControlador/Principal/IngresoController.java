@@ -8,7 +8,7 @@
 package com.aohys.copiaIMSS.MVC.VistaControlador.Principal;
 
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Coordinador;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
@@ -18,10 +18,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
-import javafx.animation.FadeTransition;
-import javafx.animation.PathTransition;
 import javafx.animation.ScaleTransition;
-import javafx.animation.SequentialTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -35,8 +32,6 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -53,7 +48,7 @@ public class IngresoController implements Initializable {
     private Stage stage;
 
     //Base de datos
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     
     /**
      * Inicia la esecena 
@@ -69,15 +64,15 @@ public class IngresoController implements Initializable {
     private void transisionButton(){
         ScaleTransition st = new ScaleTransition(Duration.seconds(1), bttAceptar);
         st.setFromX(1.0);
-        st.setToX(1.20);
+        st.setToX(2.20);
         st.setFromY(1.0);
-        st.setToY(1.20);
+        st.setToY(2.20);
         st.setCycleCount(1);
         
         ScaleTransition salira = new ScaleTransition(Duration.seconds(1), bttAceptar);
-        salira.setFromX(1.20);
+        salira.setFromX(2.20);
         salira.setToX(1.0);
-        salira.setFromY(1.20);
+        salira.setFromY(2.20);
         salira.setToY(1.0);
         salira.setCycleCount(1);
         

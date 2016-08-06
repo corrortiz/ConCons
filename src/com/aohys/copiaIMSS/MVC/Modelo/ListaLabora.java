@@ -8,7 +8,7 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo;
 
-import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -35,6 +35,8 @@ public class ListaLabora {
     public ListaLabora() {
     }
     
+    Hikari dbConn = new Hikari();
+    
     /**
      * regresa una lista de laboratoriales para este paciente
      * @param conex
@@ -46,7 +48,7 @@ public class ListaLabora {
         String sql ="SELECT id_lab, id_paciente,fecha_lab\n"+
                     "FROM laboratorial WHERE id_paciente = '"+idPaci+"'\n"+
                     "ORDER BY fecha_lab DESC;";
-        try(Connection conex = new MysqlConnectionSingle().conectarBDSingleConnection();
+        try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
             while (res.next()) {

@@ -9,7 +9,7 @@
 package com.aohys.copiaIMSS.MVC;
 
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.IngresoController;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import java.io.File;
@@ -46,7 +46,7 @@ public class Coordinador extends Application {
         PrincipalController controller = new PrincipalController();
     
     //Conexion
-        Vitro dbConn = new Vitro();
+        Hikari dbConn = new Hikari();
         
     /**
      * Lanza la aplicacion

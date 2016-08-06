@@ -9,7 +9,7 @@
 package com.aohys.copiaIMSS.Utilidades.Reportes;
 
 
-import com.aohys.copiaIMSS.BaseDatos.Vitro;
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.antNoPato;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.ant_Heredo_Familiar;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.masAnt_Heredo_Familiar;
@@ -73,7 +73,7 @@ public class HistorialPDF {
     patoAdicciones pAdicciones = new patoAdicciones();
     
     //Conexion Base de datos
-    Vitro dbConn = new Vitro();
+    Hikari dbConn = new Hikari();
     //Formato combobox
     ObservableList<ant_Heredo_Familiar> listaPFamiliars = FXCollections.observableArrayList();
     ObservableList<patoMedicos> listaMedicos = FXCollections.observableArrayList();
