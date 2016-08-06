@@ -65,7 +65,7 @@
 .table-cell{
     -fx-font: 11pt "Work Sans";
     -fx-alignment: center-left;
-    -fx-border-insets: 2 2 2 10;
+    -fx-border-insets: 2 2 2 2;
     -fx-cursor: hand;
 }
 
@@ -323,7 +323,7 @@
     -fx-font: 10pt "Work Sans"; 
     -fx-alignment: center;
     -fx-font-weight: bold;
-    -fx-border-insets: 0 0 0 10;
+    -fx-border-insets: 1 1 1 1;
     -fx-cursor: hand;
 }
 

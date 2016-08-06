@@ -64,15 +64,15 @@ public class IngresoController implements Initializable {
     private void transisionButton(){
         ScaleTransition st = new ScaleTransition(Duration.seconds(1), bttAceptar);
         st.setFromX(1.0);
-        st.setToX(2.20);
+        st.setToX(1.20);
         st.setFromY(1.0);
-        st.setToY(2.20);
+        st.setToY(1.20);
         st.setCycleCount(1);
         
         ScaleTransition salira = new ScaleTransition(Duration.seconds(1), bttAceptar);
-        salira.setFromX(2.20);
+        salira.setFromX(1.20);
         salira.setToX(1.0);
-        salira.setFromY(2.20);
+        salira.setFromY(1.20);
         salira.setToY(1.0);
         salira.setCycleCount(1);
         
