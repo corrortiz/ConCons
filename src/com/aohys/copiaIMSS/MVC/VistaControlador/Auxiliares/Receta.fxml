@@ -151,7 +151,7 @@
                   </TextField>
                   <ComboBox fx:id="cbbViaTipo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText=":: Selecciona ::" GridPane.columnIndex="5" GridPane.rowIndex="2">
                      <GridPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="159.0" top="5.0" />
+                        <Insets bottom="5.0" left="5.0" right="50.0" top="5.0" />
                      </GridPane.margin>
                   </ComboBox>
                   <Label text="Intervalo:" GridPane.rowIndex="3">

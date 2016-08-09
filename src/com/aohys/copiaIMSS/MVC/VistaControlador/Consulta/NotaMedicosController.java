@@ -201,7 +201,7 @@ public class NotaMedicosController implements Initializable {
         txtRespiratoria.setTextFormatter(new TextFormatter (aux.formato(3, 3)));
         txtTemperatura.setTextFormatter(new TextFormatter (aux.formato(2, 3)));
         txtTemperatura.setTextFormatter(new TextFormatter (aux.formato(2, 3)));
-        txaExplora.setTextFormatter(new TextFormatter (aux.formato(400, 4)));
+        txaExplora.setTextFormatter(new TextFormatter (aux.formato(900, 4)));
         txaMotivo.setTextFormatter(new TextFormatter (aux.formato(1500, 4)));
         
         
