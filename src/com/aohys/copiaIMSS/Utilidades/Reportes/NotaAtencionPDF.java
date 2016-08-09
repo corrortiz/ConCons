@@ -31,10 +31,14 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.pdfbox.multipdf.Overlay;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import rst.pdfbox.layout.elements.Document;
@@ -109,36 +113,18 @@ public class NotaAtencionPDF {
             float vMargin = 70;
             
             Document document = new Document(Constants.A4, hMargin, hMargin,
-                    5f, vMargin);
+                    145f, 130f);
             
             String outputFileName = System.getenv("AppData")+"/AO Hys/NotasMedicas/"+aux.generaID()+".pdf";
             
-            ImageElement image = 
-                    new ImageElement("src/com/aohys/copiaIMSS/Utilidades/Imagenes/LogoSuperior.png");
-            image.setWidth(image.getWidth()/4);
-            image.setHeight(image.getHeight()/4);
-            document.add(image, new VerticalLayoutHint(Alignment.Left, 0, 0,
-                    0, 0, true));
-            
-            document.add(new VerticalSpacer(100));
-            
-            
+//            ImageElement image = 
+//                    new ImageElement("src/com/aohys/copiaIMSS/Utilidades/Imagenes/LogoSuperior.png");
+//            image.setWidth(image.getWidth()/4);
+//            image.setHeight(image.getHeight()/4);
+//            document.add(image, new VerticalLayoutHint(Alignment.Left, 0, 0,
+//                    0, 0, true));
             Paragraph paragraph = new Paragraph();
-            String lugarQ = "*Nota de Atención Médica*";
-            paragraph.addMarkup(lugarQ, 18, BaseFont.Helvetica);
-            document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
-                    0, 0));
-            
-            paragraph = new Paragraph();
-            String lugarSexoA;
-            if (consul.getPrimeraVez_cons()) {
-                lugarSexoA = "*Primera Vez*";
-            }else
-                lugarSexoA = "*Subsecuente*";
-            paragraph.addMarkup(lugarSexoA, 12, BaseFont.Helvetica);
-            document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
-                    0, 0));
-            
+            //document.add(new VerticalSpacer(100));
             
             paragraph = new Paragraph();
             LocalDate curDateTime = consul.getFecha_cons().toLocalDate();
@@ -158,6 +144,26 @@ public class NotaAtencionPDF {
                     BaseFont.Helvetica);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Right, 0, 0,
                     0, 0, true));
+            
+            document.add(new VerticalSpacer(80));
+            
+            paragraph = new Paragraph();
+            String lugarQ = "*Nota de Atención Médica*";
+            paragraph.addMarkup(lugarQ, 18, BaseFont.Helvetica);
+            document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
+                    0, 0));
+            
+            paragraph = new Paragraph();
+            String lugarSexoA;
+            if (consul.getPrimeraVez_cons()) {
+                lugarSexoA = "*Primera Vez*";
+            }else
+                lugarSexoA = "*Subsecuente*";
+            paragraph.addMarkup(lugarSexoA, 12, BaseFont.Helvetica);
+            document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
+                    0, 0));
+            
+            
 
             paragraph = new Paragraph();
             String lugar = "*Paciente*: "+String.format("%s %s %s", 
@@ -314,9 +320,9 @@ public class NotaAtencionPDF {
                 paragraph.addMarkup("*Estudios de laboratorio*", 
                     14, BaseFont.Helvetica);
                 document.add(paragraph);
-                for (Laboratorial laba : listaLaboDia) {
+                listaLaboDia.stream().forEach((laba) -> {
                     verificaLabora(laba);
-                }
+                });
                 if (!listaLaboratorial.isEmpty()) {
                     for (String str : listaLaboratorial) {
                         paragraph = new Paragraph();
@@ -338,7 +344,17 @@ public class NotaAtencionPDF {
                 @Override
                 public void afterPage(RenderContext renderContext)
                     throws IOException {
-                        String str = String.format("Medico: %s %s %s                                Firma:", 
+                        
+                        String firma = String.format("Firma ___________________________");
+                        TextFlow texflowFirma = TextFlowUtil.createTextFlow(firma, 11,
+                            PDType1Font.HELVETICA);
+                        float offsetFirma = renderContext.getDocument().getMarginLeft()
+                            + TextSequenceUtil.getOffset(texflowFirma,
+                                renderContext.getWidth(), Alignment.Left);
+                        texflowFirma.drawText(renderContext.getContentStream(), new Position(
+                            offsetFirma, 120), Alignment.Right);
+                    
+                        String str = String.format("Medico: %s %s %s", 
                                 IngresoController.usua.getNombre_medico(),IngresoController.usua.getApellido_medico(),
                                 IngresoController.usua.getApMaterno_medico());
                         TextFlow textSt = TextFlowUtil.createTextFlow(str, 11,
@@ -347,7 +363,7 @@ public class NotaAtencionPDF {
                             + TextSequenceUtil.getOffset(textSt,
                                 renderContext.getWidth(), Alignment.Left);
                         textSt.drawText(renderContext.getContentStream(), new Position(
-                            offsetS, 60), Alignment.Right);
+                            offsetS, 100), Alignment.Right);
 
 
                         String stra = String.format("Cedula: %s", 
@@ -358,7 +374,7 @@ public class NotaAtencionPDF {
                             + TextSequenceUtil.getOffset(textStA,
                                 renderContext.getWidth(), Alignment.Left);
                         textStA.drawText(renderContext.getContentStream(), new Position(
-                            offsetSA, 45), Alignment.Right);
+                            offsetSA, 80), Alignment.Right);
 
 
                         String content = String.format("Pagina %s",
@@ -372,17 +388,22 @@ public class NotaAtencionPDF {
                             offset, 20), Alignment.Right);
 
 
-                        PDImageXObject pdImage = PDImageXObject.createFromFile(
-                                "src/com/aohys/copiaIMSS/Utilidades/Imagenes/Direccion.png", renderContext.getPdDocument());
-                        renderContext.getContentStream().drawImage(pdImage, Constants.A5.getWidth()-(pdImage.getHeight()/5) , 10,  pdImage.getWidth()/6, pdImage.getHeight()/6);
+//                        PDImageXObject pdImage = PDImageXObject.createFromFile(
+//                                "src/com/aohys/copiaIMSS/Utilidades/Imagenes/Direccion.png", renderContext.getPdDocument());
+//                        renderContext.getContentStream().drawImage(pdImage, Constants.A5.getWidth()-(pdImage.getHeight()/5) , 10,  pdImage.getWidth()/6, pdImage.getHeight()/6);
                 }
             });
             
             final OutputStream outputStream = new FileOutputStream(outputFileName);
             document.save(outputStream);
             File file = new File(outputFileName);
-            Desktop dt = Desktop.getDesktop();
-            dt.open(file);
+            /*Desktop dt = Desktop.getDesktop();
+            dt.open(file)*/;
+            try {
+                creaFondo(file);
+            } catch (Exception ex) {
+                Logger.getLogger(NotaAtencionPDF.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
         } catch (IOException ex) {
             Logger.getLogger(NotaAtencionPDF.class.getName()).log(Level.SEVERE, null, ex);
@@ -447,8 +468,31 @@ public class NotaAtencionPDF {
             otroCul = true;
             agregarListaLab(lab.getOTROCULTIVO(),otroCul);
         }
+    }
+    
+    
+    public void creaFondo(File file) throws Exception{        
+        PDDocument realDoc = PDDocument.load(file);
+        //the above is the document you want to watermark
+        //for all the pages, you can add overlay guide, indicating watermark the original pages with the watermark document.
+
+        HashMap<Integer, String> overlayGuide = new HashMap<Integer, String>();
+        for(int i=0; i<realDoc.getNumberOfPages(); i++){
+            overlayGuide.put(i+1, "fondo.pdf");
+            //watermark.pdf is the document which is a one page PDF with your watermark image in it. 
+            //Notice here, you can skip pages from being watermarked.
+        }
+        Overlay overlay = new Overlay();
+        overlay.setInputPDF(realDoc);
+        overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
+        PDDocument otrDDocument = overlay.overlay(overlayGuide);
         
-        
+        final OutputStream outputStream = new FileOutputStream("prueva.pdf");
+        otrDDocument.save(outputStream);
+        File files = new File("prueva.pdf");
+        Desktop dt = Desktop.getDesktop();
+        dt.open(files);
         
     }
+
 }
