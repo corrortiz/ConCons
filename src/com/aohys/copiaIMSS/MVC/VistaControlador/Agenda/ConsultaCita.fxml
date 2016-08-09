@@ -257,9 +257,9 @@
                   </AnchorPane>
                   <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                      <children>
-                        <VBox layoutX="104.0" layoutY="138.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox layoutX="104.0" layoutY="138.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <HBox>
+                              <HBox layoutX="15.0" layoutY="15.0">
                                  <children>
                                     <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="3806.0" style="-fx-background-color: #333300;">
                                        <children>
@@ -268,7 +268,21 @@
                                                 <Font name="System Bold" size="18.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="lbNombreMedico" layoutX="54.0" layoutY="3.0" styleClass="label-cabezeMayor" text="Médico" AnchorPane.leftAnchor="40.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="3806.0" style="-fx-background-color: #333300;">
+                                       <children>
+                                          <Label fx:id="lbNombreMedico" layoutX="54.0" layoutY="3.0" styleClass="label-cabezeMayor" text="Médico" AnchorPane.leftAnchor="20.0" />
                                        </children>
                                     </AnchorPane>
                                  </children>
@@ -278,7 +292,7 @@
                               </HBox>
                               <Label fx:id="lbFecha" styleClass="label-marcadore" text="Fecha">
                                  <VBox.margin>
-                                    <Insets left="45.0" />
+                                    <Insets bottom="20.0" left="45.0" top="20.0" />
                                  </VBox.margin>
                               </Label>
                               <TableView fx:id="tvCitas" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1200.0" prefWidth="1200.0">
