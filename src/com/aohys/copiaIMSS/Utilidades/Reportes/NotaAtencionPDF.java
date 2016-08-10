@@ -40,9 +40,7 @@ import org.apache.pdfbox.multipdf.Overlay;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import rst.pdfbox.layout.elements.Document;
-import rst.pdfbox.layout.elements.ImageElement;
 import rst.pdfbox.layout.elements.Paragraph;
 import rst.pdfbox.layout.elements.VerticalSpacer;
 import rst.pdfbox.layout.elements.render.RenderContext;
@@ -113,18 +111,10 @@ public class NotaAtencionPDF {
             float vMargin = 70;
             
             Document document = new Document(Constants.A4, hMargin, hMargin,
-                    145f, 130f);
+                    100f, 130f);
             
             String outputFileName = System.getenv("AppData")+"/AO Hys/NotasMedicas/"+aux.generaID()+".pdf";
-            
-//            ImageElement image = 
-//                    new ImageElement("src/com/aohys/copiaIMSS/Utilidades/Imagenes/LogoSuperior.png");
-//            image.setWidth(image.getWidth()/4);
-//            image.setHeight(image.getHeight()/4);
-//            document.add(image, new VerticalLayoutHint(Alignment.Left, 0, 0,
-//                    0, 0, true));
             Paragraph paragraph = new Paragraph();
-            //document.add(new VerticalSpacer(100));
             
             paragraph = new Paragraph();
             LocalDate curDateTime = consul.getFecha_cons().toLocalDate();
@@ -163,8 +153,6 @@ public class NotaAtencionPDF {
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
-            
-
             paragraph = new Paragraph();
             String lugar = "*Paciente*: "+String.format("%s %s %s", 
                     paci.getNombre_paciente(), paci.getApellido_paciente(), paci.getApMaterno_paciente());
@@ -345,7 +333,7 @@ public class NotaAtencionPDF {
                 public void afterPage(RenderContext renderContext)
                     throws IOException {
                         
-                        String firma = String.format("Firma ___________________________");
+                        String firma = String.format("Firma:  ___________________________");
                         TextFlow texflowFirma = TextFlowUtil.createTextFlow(firma, 11,
                             PDType1Font.HELVETICA);
                         float offsetFirma = renderContext.getDocument().getMarginLeft()
@@ -375,33 +363,16 @@ public class NotaAtencionPDF {
                                 renderContext.getWidth(), Alignment.Left);
                         textStA.drawText(renderContext.getContentStream(), new Position(
                             offsetSA, 80), Alignment.Right);
-
-
-                        String content = String.format("Pagina %s",
-                            renderContext.getPageIndex() + 1);
-                        TextFlow text = TextFlowUtil.createTextFlow(content, 11,
-                            PDType1Font.HELVETICA);
-                        float offset = renderContext.getDocument().getMarginLeft()
-                            + TextSequenceUtil.getOffset(text,
-                                renderContext.getWidth(), Alignment.Left);
-                        text.drawText(renderContext.getContentStream(), new Position(
-                            offset, 20), Alignment.Right);
-
-
-//                        PDImageXObject pdImage = PDImageXObject.createFromFile(
-//                                "src/com/aohys/copiaIMSS/Utilidades/Imagenes/Direccion.png", renderContext.getPdDocument());
-//                        renderContext.getContentStream().drawImage(pdImage, Constants.A5.getWidth()-(pdImage.getHeight()/5) , 10,  pdImage.getWidth()/6, pdImage.getHeight()/6);
                 }
             });
             
             final OutputStream outputStream = new FileOutputStream(outputFileName);
             document.save(outputStream);
             File file = new File(outputFileName);
-            /*Desktop dt = Desktop.getDesktop();
-            dt.open(file)*/;
             try {
                 creaFondo(file);
             } catch (Exception ex) {
+                aux.alertaError("", "", "");
                 Logger.getLogger(NotaAtencionPDF.class.getName()).log(Level.SEVERE, null, ex);
             }
             
@@ -486,13 +457,16 @@ public class NotaAtencionPDF {
         overlay.setInputPDF(realDoc);
         overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
         PDDocument otrDDocument = overlay.overlay(overlayGuide);
-        
-        final OutputStream outputStream = new FileOutputStream("prueva.pdf");
-        otrDDocument.save(outputStream);
-        File files = new File("prueva.pdf");
+        String outputFileName = System.getenv("AppData")+"/AO Hys/NotasMedicas/"+aux.generaID()+".pdf";
+        try(final OutputStream outputStream = 
+                new FileOutputStream(outputFileName);) {
+            otrDDocument.save(outputStream);
+        } catch (Exception e) {
+            Logger.getLogger(NotaAtencionPDF.class.getName()).log(Level.SEVERE, null, e);
+        }
+        File files = new File(outputFileName);
         Desktop dt = Desktop.getDesktop();
         dt.open(files);
-        
     }
 
 }

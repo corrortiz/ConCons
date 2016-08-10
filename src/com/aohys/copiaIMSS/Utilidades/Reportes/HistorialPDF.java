@@ -10,6 +10,7 @@ package com.aohys.copiaIMSS.Utilidades.Reportes;
 
 
 import com.aohys.copiaIMSS.BaseDatos.Hikari;
+import com.aohys.copiaIMSS.MVC.Modelo.Consulta;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.antNoPato;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.ant_Heredo_Familiar;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.masAnt_Heredo_Familiar;
@@ -19,7 +20,10 @@ import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.patoMedicos;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.patoQuirugicos;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.patoTransfucion;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloAntecedentes.patoTraumaticos;
+import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Diagnostico;
+import com.aohys.copiaIMSS.MVC.Modelo.ModeloConsulta.Tratamiento;
 import com.aohys.copiaIMSS.MVC.Modelo.Paciente;
+import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.MVC.VistaControlador.Principal.PrincipalController;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.awt.Desktop;
@@ -32,14 +36,14 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.multipdf.Overlay;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import rst.pdfbox.layout.elements.Document;
-import rst.pdfbox.layout.elements.ImageElement;
 import rst.pdfbox.layout.elements.Paragraph;
 import rst.pdfbox.layout.elements.VerticalSpacer;
 import rst.pdfbox.layout.elements.render.RenderContext;
@@ -48,10 +52,6 @@ import rst.pdfbox.layout.elements.render.VerticalLayoutHint;
 import rst.pdfbox.layout.text.Alignment;
 import rst.pdfbox.layout.text.BaseFont;
 import rst.pdfbox.layout.text.Constants;
-import rst.pdfbox.layout.text.Position;
-import rst.pdfbox.layout.text.TextFlow;
-import rst.pdfbox.layout.text.TextFlowUtil;
-import rst.pdfbox.layout.text.TextSequenceUtil;
 
 /**
  * @author Alejandro Ortiz Corro
@@ -71,6 +71,9 @@ public class HistorialPDF {
     patoTransfucion pTransfucion = new patoTransfucion();
     patoAlergias patoAlergias = new patoAlergias();
     patoAdicciones pAdicciones = new patoAdicciones();
+    Consulta consulta = new Consulta();
+    Diagnostico diagnostico = new Diagnostico();
+    Tratamiento tratamiento = new Tratamiento();
     
     //Conexion Base de datos
     Hikari dbConn = new Hikari();
@@ -82,7 +85,9 @@ public class HistorialPDF {
     ObservableList<patoTransfucion> listaTransfu = FXCollections.observableArrayList();
     ObservableList<patoAlergias> listaAlergia = FXCollections.observableArrayList();
     ObservableList<patoAdicciones> listaAddicion= FXCollections.observableArrayList();
-    
+    ObservableList<Consulta> listaConsulta = FXCollections.observableArrayList();
+    ObservableList<Diagnostico> listaDiagnos = FXCollections.observableArrayList();
+    ObservableList<Tratamiento> listaTratamientos =FXCollections.observableArrayList();
     
     /**
      * Crea pdf 
@@ -99,6 +104,7 @@ public class HistorialPDF {
             listaTransfu.addAll(pTransfucion.listaAntePaTransfucion(conex, paci.getId_paciente()));
             listaAlergia.addAll(patoAlergias.listaAntePaAlergias(conex, paci.getId_paciente()));
             listaAddicion.addAll(pAdicciones.listaAntePaAdicciones(conex, paci.getId_paciente()));
+            listaConsulta.addAll(consulta.listaConsulPaciente(conex, paci.getId_paciente()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -116,25 +122,10 @@ public class HistorialPDF {
             float vMargin = 70;
             
             Document document = new Document(Constants.A4, hMargin, hMargin,
-                    5f, vMargin);
+                    100f, 130f);
             
             String outputFileName = System.getenv("AppData")+"/AO Hys/Historiales/"+aux.generaID()+".pdf";
-            
-            ImageElement image = 
-                    new ImageElement("src/com/aohys/copiaIMSS/Utilidades/Imagenes/LogoSuperior.png");
-            image.setWidth(image.getWidth()/4);
-            image.setHeight(image.getHeight()/4);
-            document.add(image, new VerticalLayoutHint(Alignment.Left, 0, 0,
-                    0, 0, true));
-            
-            document.add(new VerticalSpacer(100));
-            
-            
             Paragraph paragraph = new Paragraph();
-            String lugarQ = "*Historial Médico*";
-            paragraph.addMarkup(lugarQ, 18, BaseFont.Helvetica);
-            document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
-                    0, 0));
             
             paragraph = new Paragraph();
             LocalDate curDateTime = LocalDate.now();
@@ -154,6 +145,14 @@ public class HistorialPDF {
                     BaseFont.Helvetica);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Right, 0, 0,
                     0, 0, true));
+            
+            document.add(new VerticalSpacer(80));
+            
+            paragraph = new Paragraph();
+            String lugarQ = "*Historial Médico*";
+            paragraph.addMarkup(lugarQ, 18, BaseFont.Helvetica);
+            document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
+                    0, 0));
 
             paragraph = new Paragraph();
             String lugar = "*Paciente*: "+String.format("%s %s %s", 
@@ -446,6 +445,73 @@ public class HistorialPDF {
                 document.add(new VerticalSpacer(10));
             }
             
+            if (!listaConsulta.isEmpty()) {
+                paragraph = new Paragraph();
+                paragraph.addMarkup("*Consulta(s) médicas*", 
+                    14, BaseFont.Helvetica);
+                document.add(paragraph);
+                document.add(new VerticalSpacer(5));
+                for (Consulta ant : listaConsulta) {
+                    Usuario usa = new Usuario();
+                    usa = usa.CargaSoloUno(ant.getId_medico());
+                    paragraph = new Paragraph();
+                    String hFrecuencia = String.format("El *%s* con el medico *%s %s %s* especialista en *%s*", 
+                            ant.getFecha_cons(), usa.getNombre_medico(), usa.getApellido_medico(), usa.getApMaterno_medico(),
+                            usa.getEspecialidad_medico());
+                    paragraph.addMarkup(hFrecuencia, 11, BaseFont.Helvetica);
+                    document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
+                            0, 0));
+                    
+                    listaDiagnos.clear();
+                    listaTratamientos.clear();
+                    try(Connection conex = dbConn.conectarBD()) {
+                        listaDiagnos.addAll(
+                            diagnostico.listaDiagnosticosConsulta(conex, ant.getId_cons()));
+                        listaTratamientos.addAll(
+                                tratamiento.listaTratamientoConsulta(conex, ant.getId_cons()));
+                    } catch (SQLException e) {
+                        Logger.getLogger(HistorialPDF.class.getName()).log(Level.SEVERE, null, e);
+                    }
+                    
+                    if (!listaDiagnos.isEmpty()) {
+                        paragraph = new Paragraph();
+                        paragraph.addMarkup("*Diagnóstico(S)*", 
+                            11, BaseFont.Helvetica);
+                        document.add(paragraph);
+                        for (Diagnostico e : listaDiagnos) {
+                            paragraph = new Paragraph();
+                            String text = String.format("*%s*", e.getDiagnostico_diag());
+                            paragraph.addMarkup(text,10, BaseFont.Helvetica);
+                            document.add(paragraph);
+                            if (!e.getComplemento_diag().isEmpty()) {
+                                paragraph = new Paragraph();
+                                String textint = String.format("Complemento de Dx: %s", 
+                                        e.getComplemento_diag());
+                                paragraph.addMarkup(textint,10, BaseFont.Helvetica);
+                                document.add(paragraph);
+                            }
+                            
+                        }
+                    }
+                    
+                    if (!listaTratamientos.isEmpty()) {
+                        paragraph = new Paragraph();
+                        paragraph.addMarkup("*Procedimiento(s)*", 
+                            11, BaseFont.Helvetica);
+                        document.add(paragraph);
+                        for (Tratamiento e : listaTratamientos) {
+                            paragraph = new Paragraph();
+                            String text = String.format("%s", e.getNombre_proce());
+                            paragraph.addMarkup(text,10, BaseFont.Helvetica);
+                            document.add(paragraph);
+                        }
+                    }
+
+                    document.add(new VerticalSpacer(5));
+                    
+                }
+            }
+            
             document.addRenderListener(new RenderListener() {
                 @Override
                 public void beforePage(RenderContext renderContext){
@@ -454,56 +520,59 @@ public class HistorialPDF {
                 @Override
                 public void afterPage(RenderContext renderContext)
                     throws IOException {
-                       /* String str = String.format("Medico: %s %s %s                                Firma:", 
-                                IngresoController.usua.getNombre_medico(),IngresoController.usua.getApellido_medico(),
-                                IngresoController.usua.getApMaterno_medico());
-                        TextFlow textSt = TextFlowUtil.createTextFlow(str, 11,
-                            PDType1Font.HELVETICA);
-                        float offsetS = renderContext.getDocument().getMarginLeft()
-                            + TextSequenceUtil.getOffset(textSt,
-                                renderContext.getWidth(), Alignment.Left);
-                        textSt.drawText(renderContext.getContentStream(), new Position(
-                            offsetS, 60), Alignment.Right);
-
-
-                        String stra = String.format("Cedula: %s", 
-                                IngresoController.usua.getCedulaProfecional_medico());
-                        TextFlow textStA = TextFlowUtil.createTextFlow(stra, 11,
-                            PDType1Font.HELVETICA);
-                        float offsetSA = renderContext.getDocument().getMarginLeft()
-                            + TextSequenceUtil.getOffset(textStA,
-                                renderContext.getWidth(), Alignment.Left);
-                        textStA.drawText(renderContext.getContentStream(), new Position(
-                            offsetSA, 45), Alignment.Right);  */
-
-
-                        String content = String.format("Pagina %s",
-                            renderContext.getPageIndex() + 1);
-                        TextFlow text = TextFlowUtil.createTextFlow(content, 11,
-                            PDType1Font.HELVETICA);
-                        float offset = renderContext.getDocument().getMarginLeft()
-                            + TextSequenceUtil.getOffset(text,
-                                renderContext.getWidth(), Alignment.Left);
-                        text.drawText(renderContext.getContentStream(), new Position(
-                            offset, 20), Alignment.Right);
-
-
-                        PDImageXObject pdImage = PDImageXObject.createFromFile(
-                                "src/com/aohys/copiaIMSS/Utilidades/Imagenes/Direccion.png", renderContext.getPdDocument());
-                        renderContext.getContentStream().drawImage(pdImage, Constants.A5.getWidth()-(pdImage.getHeight()/5) , 10,  pdImage.getWidth()/6, pdImage.getHeight()/6);
+                       
                 }
             });
             
-            final OutputStream outputStream = new FileOutputStream(outputFileName);
-            document.save(outputStream);
+            try(final OutputStream outputStream = new FileOutputStream(outputFileName);) {
+                document.save(outputStream);
+            } catch (Exception e) {
+                Logger.getLogger(HistorialPDF.class.getName()).log(Level.SEVERE, null, e);
+            }
             File file = new File(outputFileName);
-            Desktop dt = Desktop.getDesktop();
-            dt.open(file);
+            try {
+                creaFondo(file);
+            } catch (Exception ex) {
+                Logger.getLogger(HistorialPDF.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
         } catch (IOException ex) {
             Logger.getLogger(HistorialPDF.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
+    
+    /**
+     * metodo para agregar las imagenes de fondo 
+     * @param file
+     * @throws Exception 
+     */
+    public void creaFondo(File file) throws Exception{        
+        PDDocument realDoc = PDDocument.load(file);
+        //the above is the document you want to watermark
+        //for all the pages, you can add overlay guide, indicating watermark the original pages with the watermark document.
+
+        HashMap<Integer, String> overlayGuide = new HashMap<Integer, String>();
+        for(int i=0; i<realDoc.getNumberOfPages(); i++){
+            overlayGuide.put(i+1, "fondo.pdf");
+            //watermark.pdf is the document which is a one page PDF with your watermark image in it. 
+            //Notice here, you can skip pages from being watermarked.
+        }
+        Overlay overlay = new Overlay();
+        overlay.setInputPDF(realDoc);
+        overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
+        PDDocument otrDDocument = overlay.overlay(overlayGuide);
+        String outputFileName = System.getenv("AppData")+"/AO Hys/Historiales/"+aux.generaID()+".pdf";
+        try(final OutputStream outputStream = 
+                new FileOutputStream(outputFileName);) {
+            otrDDocument.save(outputStream);
+        } catch (Exception e) {
+            Logger.getLogger(NotaAtencionPDF.class.getName()).log(Level.SEVERE, null, e);
+        }
+        File files = new File(outputFileName);
+        Desktop dt = Desktop.getDesktop();
+        dt.open(files);
+    }
+    
     
 }
