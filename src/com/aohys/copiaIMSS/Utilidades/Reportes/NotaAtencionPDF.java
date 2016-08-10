@@ -449,7 +449,8 @@ public class NotaAtencionPDF {
 
         HashMap<Integer, String> overlayGuide = new HashMap<Integer, String>();
         for(int i=0; i<realDoc.getNumberOfPages(); i++){
-            overlayGuide.put(i+1, "fondo.pdf");
+            overlayGuide.put(i+1, 
+                    "src/com/aohys/copiaIMSS/Utilidades/Reportes/Fondos/fondo.pdf");
             //watermark.pdf is the document which is a one page PDF with your watermark image in it. 
             //Notice here, you can skip pages from being watermarked.
         }

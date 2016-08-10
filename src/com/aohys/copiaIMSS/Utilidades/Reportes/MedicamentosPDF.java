@@ -20,9 +20,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.ObservableList;
+import org.apache.pdfbox.multipdf.Overlay;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import rst.pdfbox.layout.elements.Document;
@@ -72,18 +75,12 @@ public class MedicamentosPDF {
             float vMargin = 70;
             
             PageFormat a5_landscape = PageFormat.with().A5().landscape()
-                    .margins(hMargin, hMargin, 10f, vMargin).build();
+                    .margins(hMargin, hMargin, 100f, 130f).build();
             
             Document document = new Document(a5_landscape);
             
             String outputFileName = System.getenv("AppData")+"/AO Hys/Recetas/"+aux.generaID()+".pdf";
             Paragraph paragraph = new Paragraph();
-            ImageElement image = 
-                    new ImageElement("src/com/aohys/copiaIMSS/Utilidades/Imagenes/LogoSuperior.png");
-            image.setWidth(image.getWidth()/4);
-            image.setHeight(image.getHeight()/4);
-            document.add(image, new VerticalLayoutHint(Alignment.Left));
-            
             
             LocalDate curDateTime = LocalDate.now();
             String algo = "*Fecha:* " +curDateTime.format(
@@ -137,19 +134,33 @@ public class MedicamentosPDF {
                 }
             }
             
+            try(final OutputStream outputStream = new FileOutputStream(outputFileName);) {
+                document.save(outputStream);
+                File file = new File(outputFileName);
+                creaFondo(file);
+            } catch (Exception ex) {
+                Logger.getLogger(MedicamentosPDF.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
             
             document.addRenderListener(new RenderListener() {
                 @Override
                 public void beforePage(RenderContext renderContext){
-                   /** PDPage page = renderContext.getPage();
-                    page.setMediaBox(A4_LANDSCAPE);
-                    renderContext.resetPositionToUpperLeft();*/
                 }
 
                 @Override
                 public void afterPage(RenderContext renderContext)
                     throws IOException {
-                        String str = String.format("Medico: %s %s %s               Firma:", 
+                        String firma = String.format("Firma:  ___________________________");
+                        TextFlow texflowFirma = TextFlowUtil.createTextFlow(firma, 11,
+                            PDType1Font.HELVETICA);
+                        float offsetFirma = renderContext.getDocument().getMarginLeft()
+                            + TextSequenceUtil.getOffset(texflowFirma,
+                                renderContext.getWidth(), Alignment.Left);
+                        texflowFirma.drawText(renderContext.getContentStream(), new Position(
+                            offsetFirma, 120), Alignment.Right);
+                    
+                        String str = String.format("Medico: %s %s %s", 
                                 IngresoController.usua.getNombre_medico(),IngresoController.usua.getApellido_medico(),
                                 IngresoController.usua.getApMaterno_medico());
                         TextFlow textSt = TextFlowUtil.createTextFlow(str, 11,
@@ -158,8 +169,7 @@ public class MedicamentosPDF {
                             + TextSequenceUtil.getOffset(textSt,
                                 renderContext.getWidth(), Alignment.Left);
                         textSt.drawText(renderContext.getContentStream(), new Position(
-                            offsetS, 60), Alignment.Right);
-
+                            offsetS, 100), Alignment.Right);
 
                         String stra = String.format("Cedula: %s", 
                                 IngresoController.usua.getCedulaProfecional_medico());
@@ -169,35 +179,44 @@ public class MedicamentosPDF {
                             + TextSequenceUtil.getOffset(textStA,
                                 renderContext.getWidth(), Alignment.Left);
                         textStA.drawText(renderContext.getContentStream(), new Position(
-                            offsetSA, 45), Alignment.Right);
-
-
-                        String content = String.format("Pagina %s",
-                            renderContext.getPageIndex() + 1);
-                        TextFlow text = TextFlowUtil.createTextFlow(content, 11,
-                            PDType1Font.HELVETICA);
-                        float offset = renderContext.getDocument().getMarginLeft()
-                            + TextSequenceUtil.getOffset(text,
-                                renderContext.getWidth(), Alignment.Left);
-                        text.drawText(renderContext.getContentStream(), new Position(
-                            offset, 20), Alignment.Right);
-                        
-                    PDImageXObject pdImage = PDImageXObject.createFromFile(
-                            "src/com/aohys/copiaIMSS/Utilidades/Imagenes/Direccion.png", renderContext.getPdDocument());
-                    renderContext.getContentStream().drawImage(pdImage, Constants.A5.getWidth()-(pdImage.getHeight()/5) , 10,  pdImage.getWidth()/6, pdImage.getHeight()/6);
+                            offsetSA, 80), Alignment.Right);
                 }
             });
             
-            final OutputStream outputStream = new FileOutputStream(outputFileName);
-            document.save(outputStream);
-            File file = new File(outputFileName);
-            Desktop dt = Desktop.getDesktop();
-            dt.open(file);
+            
             
         } catch (IOException ex) {
             Logger.getLogger(MedicamentosPDF.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void creaFondo(File file) throws Exception{        
+        PDDocument realDoc = PDDocument.load(file);
+        //the above is the document you want to watermark
+        //for all the pages, you can add overlay guide, 
+        //indicating watermark the original pages with the watermark document.
         
+        HashMap<Integer, String> overlayGuide = new HashMap<Integer, String>();
+        for(int i=0; i<realDoc.getNumberOfPages(); i++){
+            overlayGuide.put(i+1, 
+                    "src/com/aohys/copiaIMSS/Utilidades/Reportes/Fondos/FormatoReporteMediaCarta.pdf");
+            //this is the document which is a one page PDF with your watermark image in it. 
+        }
+        Overlay overlay = new Overlay();
+        overlay.setInputPDF(realDoc);
+        overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
+        overlay.setAllPagesOverlayPDF(realDoc);
+        PDDocument otrDDocument = overlay.overlay(overlayGuide);
+        String outputFileName = System.getenv("AppData")+"/AO Hys/Recetas/"+aux.generaID()+".pdf";
+        try(final OutputStream outputStream = 
+                new FileOutputStream(outputFileName);) {
+            otrDDocument.save(outputStream);
+        } catch (Exception e) {
+            Logger.getLogger(NotaAtencionPDF.class.getName()).log(Level.SEVERE, null, e);
+        }
+        File files = new File(outputFileName);
+        Desktop dt = Desktop.getDesktop();
+        dt.open(files);
     }
     
 }
