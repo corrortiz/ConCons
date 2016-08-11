@@ -26,10 +26,10 @@ import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import org.apache.pdfbox.multipdf.Overlay;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import rst.pdfbox.layout.elements.Document;
-import rst.pdfbox.layout.elements.ImageElement;
+import rst.pdfbox.layout.elements.Orientation;
 import rst.pdfbox.layout.elements.PageFormat;
 import rst.pdfbox.layout.elements.Paragraph;
 import rst.pdfbox.layout.elements.VerticalSpacer;
@@ -74,11 +74,15 @@ public class MedicamentosPDF {
             float hMargin = 30;
             float vMargin = 70;
             
-            PageFormat a5_landscape = PageFormat.with().A5().landscape()
-                    .margins(hMargin, hMargin, 100f, 130f).build();
+            PageFormat a5_landscape = 
+                    PageFormat.with().mediaBox(
+                            new PDRectangle( Constants.A5.getHeight(), Constants.A5.getWidth()))
+                            .orientation(Orientation.Landscape)
+                            .margins(hMargin, hMargin, 100f, 130f)
+                            .build();
             
             Document document = new Document(a5_landscape);
-            
+           
             String outputFileName = System.getenv("AppData")+"/AO Hys/Recetas/"+aux.generaID()+".pdf";
             Paragraph paragraph = new Paragraph();
             
@@ -134,15 +138,6 @@ public class MedicamentosPDF {
                 }
             }
             
-            try(final OutputStream outputStream = new FileOutputStream(outputFileName);) {
-                document.save(outputStream);
-                File file = new File(outputFileName);
-                creaFondo(file);
-            } catch (Exception ex) {
-                Logger.getLogger(MedicamentosPDF.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            
             document.addRenderListener(new RenderListener() {
                 @Override
                 public void beforePage(RenderContext renderContext){
@@ -183,13 +178,24 @@ public class MedicamentosPDF {
                 }
             });
             
-            
-            
+            try(final OutputStream outputStream = new FileOutputStream(outputFileName);) {
+                document.save(outputStream);
+                File file = new File(outputFileName);
+                creaFondo(file);
+            } catch (Exception ex) {
+                Logger.getLogger(MedicamentosPDF.class.getName()).log(Level.SEVERE, null, ex);
+            }
+             
         } catch (IOException ex) {
             Logger.getLogger(MedicamentosPDF.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
+    /**
+     * crea el overlay del fondo 
+     * @param file
+     * @throws Exception 
+     */
     public void creaFondo(File file) throws Exception{        
         PDDocument realDoc = PDDocument.load(file);
         //the above is the document you want to watermark
@@ -205,7 +211,6 @@ public class MedicamentosPDF {
         Overlay overlay = new Overlay();
         overlay.setInputPDF(realDoc);
         overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
-        overlay.setAllPagesOverlayPDF(realDoc);
         PDDocument otrDDocument = overlay.overlay(overlayGuide);
         String outputFileName = System.getenv("AppData")+"/AO Hys/Recetas/"+aux.generaID()+".pdf";
         try(final OutputStream outputStream = 

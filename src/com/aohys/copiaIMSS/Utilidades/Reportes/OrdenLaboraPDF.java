@@ -23,16 +23,21 @@ import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.pdfbox.multipdf.Overlay;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import rst.pdfbox.layout.elements.Document;
-import rst.pdfbox.layout.elements.ImageElement;
+import rst.pdfbox.layout.elements.Orientation;
+import rst.pdfbox.layout.elements.PageFormat;
 import rst.pdfbox.layout.elements.Paragraph;
 import rst.pdfbox.layout.elements.VerticalSpacer;
+import rst.pdfbox.layout.elements.render.ColumnLayout;
 import rst.pdfbox.layout.elements.render.RenderContext;
 import rst.pdfbox.layout.elements.render.RenderListener;
 import rst.pdfbox.layout.elements.render.VerticalLayoutHint;
@@ -78,26 +83,19 @@ public class OrdenLaboraPDF {
             float hMargin = 15;
             float vMargin = 70;
             
-            Document document = new Document(Constants.A4, hMargin, hMargin,
-                    5f, vMargin);
-            
             String outputFileName = System.getenv("AppData")+"/AO Hys/Laboratoriales/"+aux.generaID()+".pdf";
             
-            ImageElement image = 
-                    new ImageElement("src/com/aohys/copiaIMSS/Utilidades/Imagenes/LogoSuperior.png");
-            image.setWidth(image.getWidth()/4);
-            image.setHeight(image.getHeight()/4);
-            document.add(image, new VerticalLayoutHint(Alignment.Left, 0, 0,
-                    0, 0, true));
+             PageFormat a5_landscape = 
+                    PageFormat.with().mediaBox(
+                            new PDRectangle( Constants.A5.getHeight(), Constants.A5.getWidth()))
+                            .orientation(Orientation.Landscape)
+                            .margins(hMargin, hMargin, 90f, 130f)
+                            .build();
             
-            document.add(new VerticalSpacer(100));
-            
-            
+            Document document = new Document(a5_landscape);
             Paragraph paragraph = new Paragraph();
-            String lugarQ = "*Solicitud de Estudios de Laboratorio*";
-            paragraph.addMarkup(lugarQ, 18, BaseFont.Helvetica);
-            document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
-                    0, 0));
+            
+            
             
             paragraph = new Paragraph();
             LocalDate curDateTime = LocalDate.now();
@@ -108,7 +106,7 @@ public class OrdenLaboraPDF {
             document.add(paragraph, new VerticalLayoutHint(Alignment.Right, 0, 0,
                     0, 0, true));
                         
-            document.add(new VerticalSpacer(10));
+            document.add(new VerticalSpacer(12));
             paragraph = new Paragraph();
             LocalTime curHour= LocalTime.now();
             String algoAS = "*Hora:* " +curHour.format(
@@ -117,23 +115,32 @@ public class OrdenLaboraPDF {
                     BaseFont.Helvetica);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Right, 0, 0,
                     0, 0, true));
+            
+            document.add(new VerticalSpacer(20));
+            
+            paragraph = new Paragraph();
+            String lugarQ = "*Solicitud de Estudios de Laboratorio*";
+            paragraph.addMarkup(lugarQ, 16, BaseFont.Helvetica);
+            document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
+                    0, 0));
+            
 
             paragraph = new Paragraph();
             String lugar = "*Paciente*: "+String.format("%s %s %s", 
                     paci.getNombre_paciente(), paci.getApellido_paciente(), paci.getApMaterno_paciente());
-            paragraph.addMarkup(lugar, 14, BaseFont.Helvetica);
+            paragraph.addMarkup(lugar, 12, BaseFont.Helvetica);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
             paragraph = new Paragraph();
             String lugarS = "*Edad*: "+aux.edadConMes(paci.getFechaNacimiento_paciente());
-            paragraph.addMarkup(lugarS, 14, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarS, 12, BaseFont.Helvetica);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
             paragraph = new Paragraph();
             String lugarSexo = "*Sexo*: "+paci.getSexo_paciente();
-            paragraph.addMarkup(lugarSexo, 14, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarSexo, 12, BaseFont.Helvetica);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
@@ -141,6 +148,7 @@ public class OrdenLaboraPDF {
             
             
             if (!listaLaboDia.isEmpty()) {
+                document.add(new ColumnLayout(2, 10));
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Estudios Solicitados*", 
                     14, BaseFont.Helvetica);
@@ -168,53 +176,46 @@ public class OrdenLaboraPDF {
                 }
 
                 @Override
-                public void afterPage(RenderContext renderContext)
-                    throws IOException {
-                        String str = String.format("Medico: %s %s %s                                Firma:", 
-                                IngresoController.usua.getNombre_medico(),IngresoController.usua.getApellido_medico(),
-                                IngresoController.usua.getApMaterno_medico());
-                        TextFlow textSt = TextFlowUtil.createTextFlow(str, 11,
-                            PDType1Font.HELVETICA);
-                        float offsetS = renderContext.getDocument().getMarginLeft()
-                            + TextSequenceUtil.getOffset(textSt,
-                                renderContext.getWidth(), Alignment.Left);
-                        textSt.drawText(renderContext.getContentStream(), new Position(
-                            offsetS, 60), Alignment.Right);
+                public void afterPage(RenderContext renderContext)throws IOException {
+                    String firma = String.format("Firma:  ___________________________");
+                    TextFlow texflowFirma = TextFlowUtil.createTextFlow(firma, 10,
+                        PDType1Font.HELVETICA);
+                    float offsetFirma = renderContext.getDocument().getMarginLeft()
+                        + TextSequenceUtil.getOffset(texflowFirma,
+                            renderContext.getWidth(), Alignment.Left);
+                    texflowFirma.drawText(renderContext.getContentStream(), new Position(
+                        offsetFirma, 120), Alignment.Right);
 
+                    String str = String.format("Medico: %s %s %s", 
+                            IngresoController.usua.getNombre_medico(),IngresoController.usua.getApellido_medico(),
+                            IngresoController.usua.getApMaterno_medico());
+                    TextFlow textSt = TextFlowUtil.createTextFlow(str, 10,
+                        PDType1Font.HELVETICA);
+                    float offsetS = renderContext.getDocument().getMarginLeft()
+                        + TextSequenceUtil.getOffset(textSt,
+                            renderContext.getWidth(), Alignment.Left);
+                    textSt.drawText(renderContext.getContentStream(), new Position(
+                        offsetS, 100), Alignment.Right);
 
-                        String stra = String.format("Cedula: %s", 
-                                IngresoController.usua.getCedulaProfecional_medico());
-                        TextFlow textStA = TextFlowUtil.createTextFlow(stra, 11,
-                            PDType1Font.HELVETICA);
-                        float offsetSA = renderContext.getDocument().getMarginLeft()
-                            + TextSequenceUtil.getOffset(textStA,
-                                renderContext.getWidth(), Alignment.Left);
-                        textStA.drawText(renderContext.getContentStream(), new Position(
-                            offsetSA, 45), Alignment.Right);
-
-
-                        String content = String.format("Pagina %s",
-                            renderContext.getPageIndex() + 1);
-                        TextFlow text = TextFlowUtil.createTextFlow(content, 11,
-                            PDType1Font.HELVETICA);
-                        float offset = renderContext.getDocument().getMarginLeft()
-                            + TextSequenceUtil.getOffset(text,
-                                renderContext.getWidth(), Alignment.Left);
-                        text.drawText(renderContext.getContentStream(), new Position(
-                            offset, 20), Alignment.Right);
-
-
-                        PDImageXObject pdImage = PDImageXObject.createFromFile(
-                                "src/com/aohys/copiaIMSS/Utilidades/Imagenes/Direccion.png", renderContext.getPdDocument());
-                        renderContext.getContentStream().drawImage(pdImage, Constants.A5.getWidth()-(pdImage.getHeight()/5) , 10,  pdImage.getWidth()/6, pdImage.getHeight()/6);
+                    String stra = String.format("Cedula: %s", 
+                            IngresoController.usua.getCedulaProfecional_medico());
+                    TextFlow textStA = TextFlowUtil.createTextFlow(stra, 10,
+                        PDType1Font.HELVETICA);
+                    float offsetSA = renderContext.getDocument().getMarginLeft()
+                        + TextSequenceUtil.getOffset(textStA,
+                            renderContext.getWidth(), Alignment.Left);
+                    textStA.drawText(renderContext.getContentStream(), new Position(
+                        offsetSA, 80), Alignment.Right);
                 }
             });
             
-            final OutputStream outputStream = new FileOutputStream(outputFileName);
-            document.save(outputStream);
-            File file = new File(outputFileName);
-            Desktop dt = Desktop.getDesktop();
-            dt.open(file);
+            try(final OutputStream outputStream = new FileOutputStream(outputFileName);) {
+                document.save(outputStream);
+                File file = new File(outputFileName);
+                creaFondo(file);
+            } catch (Exception ex) {
+                Logger.getLogger(MedicamentosPDF.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
         } catch (IOException ex) {
             Logger.getLogger(OrdenLaboraPDF.class.getName()).log(Level.SEVERE, null, ex);
@@ -279,8 +280,39 @@ public class OrdenLaboraPDF {
             otroCul = true;
             agregarListaLab(lab.getOTROCULTIVO(),otroCul);
         }
-        
-        
-        
     }
+    
+    /**
+     * crea el overlay del fondo 
+     * @param file
+     * @throws Exception 
+     */
+    public void creaFondo(File file) throws Exception{        
+        PDDocument realDoc = PDDocument.load(file);
+        //the above is the document you want to watermark
+        //for all the pages, you can add overlay guide, 
+        //indicating watermark the original pages with the watermark document.
+        
+        HashMap<Integer, String> overlayGuide = new HashMap<Integer, String>();
+        for(int i=0; i<realDoc.getNumberOfPages(); i++){
+            overlayGuide.put(i+1, 
+                    "src/com/aohys/copiaIMSS/Utilidades/Reportes/Fondos/FormatoReporteMediaCarta.pdf");
+            //this is the document which is a one page PDF with your watermark image in it. 
+        }
+        Overlay overlay = new Overlay();
+        overlay.setInputPDF(realDoc);
+        overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
+        PDDocument otrDDocument = overlay.overlay(overlayGuide);
+        String outputFileName = System.getenv("AppData")+"/AO Hys/Estudios/"+aux.generaID()+".pdf";
+        try(final OutputStream outputStream = 
+                new FileOutputStream(outputFileName);) {
+            otrDDocument.save(outputStream);
+        } catch (Exception e) {
+            Logger.getLogger(NotaAtencionPDF.class.getName()).log(Level.SEVERE, null, e);
+        }
+        File files = new File(outputFileName);
+        Desktop dt = Desktop.getDesktop();
+        dt.open(files);
+    }
+
 }
