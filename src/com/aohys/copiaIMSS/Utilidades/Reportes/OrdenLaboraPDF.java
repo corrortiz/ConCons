@@ -209,14 +209,13 @@ public class OrdenLaboraPDF {
                 }
             });
             
-            try(final OutputStream outputStream = new FileOutputStream(outputFileName);) {
+            try(final OutputStream outputStream = new FileOutputStream(outputFileName)) {
                 document.save(outputStream);
                 File file = new File(outputFileName);
                 creaFondo(file);
             } catch (Exception ex) {
                 Logger.getLogger(MedicamentosPDF.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
         } catch (IOException ex) {
             Logger.getLogger(OrdenLaboraPDF.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -288,7 +287,8 @@ public class OrdenLaboraPDF {
      * @throws Exception 
      */
     public void creaFondo(File file) throws Exception{        
-        PDDocument realDoc = PDDocument.load(file);
+        try(PDDocument realDoc = PDDocument.load(file)) {
+        
         //the above is the document you want to watermark
         //for all the pages, you can add overlay guide, 
         //indicating watermark the original pages with the watermark document.
@@ -303,7 +303,7 @@ public class OrdenLaboraPDF {
         overlay.setInputPDF(realDoc);
         overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
         PDDocument otrDDocument = overlay.overlay(overlayGuide);
-        String outputFileName = System.getenv("AppData")+"/AO Hys/Estudios/"+aux.generaID()+".pdf";
+        String outputFileName = System.getenv("AppData")+"/AO Hys/Laboratoriales/"+aux.generaID()+".pdf";
         try(final OutputStream outputStream = 
                 new FileOutputStream(outputFileName);) {
             otrDDocument.save(outputStream);
@@ -313,6 +313,9 @@ public class OrdenLaboraPDF {
         File files = new File(outputFileName);
         Desktop dt = Desktop.getDesktop();
         dt.open(files);
+        } catch (Exception e) {
+            Logger.getLogger(NotaAtencionPDF.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 
 }

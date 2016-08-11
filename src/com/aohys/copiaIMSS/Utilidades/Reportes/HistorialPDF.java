@@ -526,16 +526,11 @@ public class HistorialPDF {
             
             try(final OutputStream outputStream = new FileOutputStream(outputFileName);) {
                 document.save(outputStream);
+                File file = new File(outputFileName);
+                creaFondo(file);
             } catch (Exception e) {
                 Logger.getLogger(HistorialPDF.class.getName()).log(Level.SEVERE, null, e);
             }
-            File file = new File(outputFileName);
-            try {
-                creaFondo(file);
-            } catch (Exception ex) {
-                Logger.getLogger(HistorialPDF.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
         } catch (IOException ex) {
             Logger.getLogger(HistorialPDF.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -547,32 +542,35 @@ public class HistorialPDF {
      * @param file
      * @throws Exception 
      */
-    public void creaFondo(File file) throws Exception{        
-        PDDocument realDoc = PDDocument.load(file);
-        //the above is the document you want to watermark
-        //for all the pages, you can add overlay guide, indicating watermark the original pages with the watermark document.
+    public void creaFondo(File file) throws Exception{
+        try(PDDocument realDoc = PDDocument.load(file);){
+            //the above is the document you want to watermark
+            //for all the pages, you can add overlay guide, indicating watermark the original pages with the watermark document.
 
-        HashMap<Integer, String> overlayGuide = new HashMap<Integer, String>();
-        for(int i=0; i<realDoc.getNumberOfPages(); i++){
-            overlayGuide.put(i+1, 
-                    "src/com/aohys/copiaIMSS/Utilidades/Reportes/Fondos/fondo.pdf");
-            //watermark.pdf is the document which is a one page PDF with your watermark image in it. 
-            //Notice here, you can skip pages from being watermarked.
-        }
-        Overlay overlay = new Overlay();
-        overlay.setInputPDF(realDoc);
-        overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
-        PDDocument otrDDocument = overlay.overlay(overlayGuide);
-        String outputFileName = System.getenv("AppData")+"/AO Hys/Historiales/"+aux.generaID()+".pdf";
-        try(final OutputStream outputStream = 
-                new FileOutputStream(outputFileName);) {
-            otrDDocument.save(outputStream);
+            HashMap<Integer, String> overlayGuide = new HashMap<Integer, String>();
+            for(int i=0; i<realDoc.getNumberOfPages(); i++){
+                overlayGuide.put(i+1, 
+                        "src/com/aohys/copiaIMSS/Utilidades/Reportes/Fondos/fondo.pdf");
+                //watermark.pdf is the document which is a one page PDF with your watermark image in it. 
+                //Notice here, you can skip pages from being watermarked.
+            }
+            Overlay overlay = new Overlay();
+            overlay.setInputPDF(realDoc);
+            overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
+            PDDocument otrDDocument = overlay.overlay(overlayGuide);
+            String outputFileName = System.getenv("AppData")+"/AO Hys/Historiales/"+aux.generaID()+".pdf";
+            try(final OutputStream outputStream = 
+                    new FileOutputStream(outputFileName);) {
+                otrDDocument.save(outputStream);
+            } catch (Exception e) {
+                Logger.getLogger(NotaAtencionPDF.class.getName()).log(Level.SEVERE, null, e);
+            }
+            File files = new File(outputFileName);
+            Desktop dt = Desktop.getDesktop();
+            dt.open(files);
         } catch (Exception e) {
             Logger.getLogger(NotaAtencionPDF.class.getName()).log(Level.SEVERE, null, e);
         }
-        File files = new File(outputFileName);
-        Desktop dt = Desktop.getDesktop();
-        dt.open(files);
     }
     
     
