@@ -69,7 +69,7 @@ public class patoQuirugicos {
      */
     public void agregaPatoQuir(String id_pQuir, int edad_pQuir, 
             String duracion_pQuir, String cirugia_pQuir, String id_paciente, Connection conex){
-        String sqlst =  "INSERT INTO `patoQuirugicos`\n" +
+        String sqlst =  "INSERT INTO `patoquirugicos`\n" +
                         "(`id_pQuir`,\n" +
                         "`edad_pQuir`,\n" +
                         "`duracion_pQuir`,\n" +
@@ -105,7 +105,7 @@ public class patoQuirugicos {
      */
     public void actualizaPatoQuir(String id_pQuir, int edad_pQuir, 
             String duracion_pQuir, String cirugia_pQuir, String id_paciente, Connection conex){
-        String sqlst =  "UPDATE `patoQuirugicos`\n" +
+        String sqlst =  "UPDATE `patoquirugicos`\n" +
                         "SET\n" +
                         "`id_pQuir` = ?,\n" +
                         "`edad_pQuir` = ?,\n" +
@@ -145,7 +145,7 @@ public class patoQuirugicos {
                         "`duracion_pQuir`,\n" +
                         "`cirugia_pQuir`,\n" +
                         "`id_paciente`\n" +
-                     "FROM `patoQuirugicos` WHERE id_paciente = '"+idPaciente+"';";
+                     "FROM `patoquirugicos` WHERE id_paciente = '"+idPaciente+"';";
         try(PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
             while (res.next()) {
@@ -168,7 +168,7 @@ public class patoQuirugicos {
      * @param conex 
      */
     public void borrarAntePatoQuir(String Dato, Connection conex){
-        String sttm = "DELETE FROM patoQuirugicos WHERE id_pQuir = '"+Dato+"'";
+        String sttm = "DELETE FROM patoquirugicos WHERE id_pQuir = '"+Dato+"'";
         try(PreparedStatement stta = conex.prepareStatement(sttm)) {
             conex.setAutoCommit(false);
             stta.addBatch();

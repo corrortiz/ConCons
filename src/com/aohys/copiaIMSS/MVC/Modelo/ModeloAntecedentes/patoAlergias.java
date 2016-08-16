@@ -64,7 +64,7 @@ public class patoAlergias {
      */
     public void agregaPatolergia(String id_pAler, boolean medOtros_pAler, 
             String descripcion_pAler, String id_paciente, Connection conex){
-        String sqlst =  "INSERT INTO `patoAlergias`\n" +
+        String sqlst =  "INSERT INTO `patoalergias`\n" +
                             "(`id_pAler`,\n" +
                             "`medOtros_pAler`,\n" +
                             "`descripcion_pAler`,\n" +
@@ -99,7 +99,7 @@ public class patoAlergias {
                             "`medOtros_pAler`,\n" +
                             "`descripcion_pAler`,\n" +
                             "`id_paciente`\n" +
-                     "FROM `patoAlergias` WHERE id_paciente = '"+idPaciente+"';";
+                     "FROM `patoalergias` WHERE id_paciente = '"+idPaciente+"';";
         try(PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
             while (res.next()) {
@@ -121,7 +121,7 @@ public class patoAlergias {
      * @param conex 
      */
     public void borrarAntePatoAlergias(String Dato, Connection conex){
-        String sttm = "DELETE FROM patoAlergias WHERE id_pAler = '"+Dato+"'";
+        String sttm = "DELETE FROM patoalergias WHERE id_pAler = '"+Dato+"'";
         try(PreparedStatement stta = conex.prepareStatement(sttm)) {
             conex.setAutoCommit(false);
             stta.addBatch();

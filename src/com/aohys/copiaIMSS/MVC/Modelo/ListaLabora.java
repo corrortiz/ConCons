@@ -39,7 +39,6 @@ public class ListaLabora {
     
     /**
      * regresa una lista de laboratoriales para este paciente
-     * @param conex
      * @param idPaci
      * @return 
      */

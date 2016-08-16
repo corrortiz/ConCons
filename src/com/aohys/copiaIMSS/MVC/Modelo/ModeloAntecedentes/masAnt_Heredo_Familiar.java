@@ -62,7 +62,7 @@ public class masAnt_Heredo_Familiar {
      * @param familiarInfor_masHeredo      */
     public void agregarMasHeredoFami(String id_masHeredo, String familiarResp_masHeredo, 
             boolean disfuncion_masHeredo, String id_paciente, Connection conex, String familiarInfor_masHeredo){
-        String sqlst =  "INSERT INTO masAnt_Heredo_Familiar (id_masHeredo, familiarResp_masHeredo,\n"+
+        String sqlst =  "INSERT INTO masant_heredo_familiar (id_masHeredo, familiarResp_masHeredo,\n"+
                         "disfuncion_masHeredo, id_paciente, familiarInfor_masHeredo)\n"+
                         "VALUES (?,?,?,?,?)";
         try(PreparedStatement sttm = conex.prepareStatement(sqlst)) {
@@ -90,7 +90,7 @@ public class masAnt_Heredo_Familiar {
         masAnt_Heredo_Familiar ant_Heredo_Familiar = null;
         String sttm = "SELECT id_masHeredo, familiarResp_masHeredo,\n"+
                       "disfuncion_masHeredo, id_paciente, familiarInfor_masHeredo \n" +
-                      "FROM masAnt_Heredo_Familiar WHERE id_paciente = '"+idPaciente+"';";
+                      "FROM masant_heredo_familiar WHERE id_paciente = '"+idPaciente+"';";
         try(PreparedStatement stta = conex.prepareStatement(sttm);
                ResultSet res = stta.executeQuery(); ) {
             if (res.next()) {
@@ -118,7 +118,7 @@ public class masAnt_Heredo_Familiar {
      */
     public void actualizaMasAnteHeredo(String id_masHeredo, String familiarResp_masHeredo, 
             boolean disfuncion_masHeredo, String id_paciente, Connection conex, String familiarInfor_masHeredo){
-        String sqlst = " UPDATE masAnt_Heredo_Familiar SET \n" +
+        String sqlst = " UPDATE masant_heredo_familiar SET \n" +
                        " id_masHeredo=?, \n" +
                        " familiarResp_masHeredo=?, \n" +
                        " disfuncion_masHeredo=?, \n" +

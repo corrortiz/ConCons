@@ -9,7 +9,6 @@
 package com.aohys.copiaIMSS.MVC.Modelo;
 
 import com.aohys.copiaIMSS.BaseDatos.Hikari;
-import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.Date;
@@ -113,7 +112,7 @@ public class Cita {
         
         @Override
         protected Void call() throws Exception {
-            String sqlst =  "INSERT INTO Cita (id_cit, fecha_cit,\n"+
+            String sqlst =  "INSERT INTO cita (id_cit, fecha_cit,\n"+
                         "hora_cit, primVis_cit, id_medico, id_Paciente)"+
                         "VALUES (?,?,?,?,?,?)";
             try(Connection conex = dbConn.conectarBD();
@@ -157,7 +156,7 @@ public class Cita {
             ObservableList<Cita> listaCita = FXCollections.observableArrayList();
             String sql ="SELECT id_cit, fecha_cit,\n" +
                         "hora_cit, primVis_cit, id_medico, id_Paciente\n" +
-                        "FROM Cita WHERE fecha_cit = '"+fecha+"' AND id_medico = '"+idUs+"'\n" +
+                        "FROM cita WHERE fecha_cit = '"+fecha+"' AND id_medico = '"+idUs+"'\n" +
                         "ORDER BY hora_cit ASC;";
             try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
@@ -196,7 +195,7 @@ public class Cita {
             ObservableList<Cita> listaCita = FXCollections.observableArrayList();
             String sql ="SELECT id_cit, fecha_cit,\n" +
                     "hora_cit, primVis_cit, id_medico, id_Paciente\n" +
-                    "FROM Cita WHERE id_Paciente = '"+idUs+"'\n" +
+                    "FROM cita WHERE id_Paciente = '"+idUs+"'\n" +
                     "AND fecha_cit >= '"+dia+"'\n" +
                     "ORDER BY fecha_cit DESC;";
             try(Connection conex = dbConn.conectarBD();
@@ -224,7 +223,7 @@ public class Cita {
      * @param conex 
      */
     public void borrarCita(String Dato, Connection conex){
-        String sttm = "DELETE FROM Cita WHERE id_cit = '"+Dato+"'";    
+        String sttm = "DELETE FROM cita WHERE id_cit = '"+Dato+"'";    
         try(PreparedStatement pttm = conex.prepareStatement(sttm)) {
             conex.setAutoCommit(false);
             pttm.addBatch();
@@ -244,7 +243,7 @@ public class Cita {
      * @return  
      */
     public boolean borrarCitasPaciente(String idPaciente, Connection conex){
-        String sttm = "DELETE FROM Cita WHERE id_Paciente = '"+idPaciente+"'";    
+        String sttm = "DELETE FROM cita WHERE id_Paciente = '"+idPaciente+"'";    
         try(PreparedStatement pttm = conex.prepareStatement(sttm)) {
             conex.setAutoCommit(false);
             pttm.addBatch();
@@ -270,7 +269,7 @@ public class Cita {
      */
     public void actualizaCita(String id_cit, Date fecha_cit, Time hora_cit, 
         Boolean primVis_cit, String id_Usuario, String id_Paciente, Connection conex){
-        String sqlst = " UPDATE Cita SET \n" +
+        String sqlst = " UPDATE cita SET \n" +
                        " id_cit=?, \n" +
                        " fecha_cit=?, \n" +
                        " hora_cit=?, \n" +
@@ -308,7 +307,7 @@ public class Cita {
         Cita cit = null;
         String sttm = "SELECT id_cit, fecha_cit,\n" +
                       "hora_cit, primVis_cit, id_medico, id_Paciente\n" +
-                      "FROM Cita WHERE id_cit = '"+idCit+"';";
+                      "FROM cita WHERE id_cit = '"+idCit+"';";
         try(PreparedStatement stta = conex.prepareStatement(sttm);
                ResultSet res = stta.executeQuery(); ) {
             if (res.next()) {
@@ -345,7 +344,7 @@ public class Cita {
         protected ObservableList<LocalTime> call() throws Exception {
             ObservableList<LocalTime> listaCita = FXCollections.observableArrayList();
             String sql ="SELECT hora_cit\n"+
-                        "FROM Cita WHERE fecha_cit = '"+fecha+"' AND id_medico = '"+idUs+"'\n" +
+                        "FROM cita WHERE fecha_cit = '"+fecha+"' AND id_medico = '"+idUs+"'\n" +
                         "ORDER BY hora_cit ASC;";
             try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);

@@ -69,7 +69,7 @@ public class ant_Heredo_Familiar {
      */
     public void agregarPadecimiento(String id_antHeredo, String padecimiento_antHeredo, String familiares_antHeredo, 
             boolean finado_antHeredo, String id_paciente, Connection conex){
-        String sqlst =  "INSERT INTO ant_Heredo_Familiar (id_antHeredo, padecimiento_antHeredo,\n"+
+        String sqlst =  "INSERT INTO ant_heredo_familiar  (id_antHeredo, padecimiento_antHeredo,\n"+
                         "familiares_antHeredo, finado_antHeredo, id_paciente)\n"+
                         "VALUES (?,?,?,?,?)";
         try(PreparedStatement sttm = conex.prepareStatement(sqlst)) {
@@ -100,7 +100,7 @@ public class ant_Heredo_Familiar {
         ObservableList<ant_Heredo_Familiar> listaPade = FXCollections.observableArrayList();
         String sql = "SELECT id_antHeredo, padecimiento_antHeredo,\n"+
                      "familiares_antHeredo, finado_antHeredo, id_paciente\n" +
-                     "FROM ant_Heredo_Familiar WHERE id_paciente = '"+idPaciente+"';";
+                     "FROM ant_heredo_familiar  WHERE id_paciente = '"+idPaciente+"';";
         try(PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
             while (res.next()) {
@@ -123,7 +123,7 @@ public class ant_Heredo_Familiar {
      * @param conex 
      */
     public void BorrarPadecimiento(String Dato, Connection conex){
-        String sttm = "DELETE FROM ant_Heredo_Familiar WHERE id_antHeredo = '"+Dato+"'";
+        String sttm = "DELETE FROM ant_heredo_familiar  WHERE id_antHeredo = '"+Dato+"'";
         try(PreparedStatement stta = conex.prepareStatement(sttm)) {
             conex.setAutoCommit(false);
             stta.addBatch();

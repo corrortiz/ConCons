@@ -9,7 +9,6 @@
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
 import com.aohys.copiaIMSS.BaseDatos.Hikari;
-import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -137,7 +136,7 @@ public class diasConsulta {
     public void actualizaDiasConsulta(String id_diasConsul, Boolean lunes_c, Boolean martes_c, Boolean miercoles_c, 
             Boolean jueves_c, Boolean viernes_c, Boolean sabado_c, Boolean domingo_c, String id_medico,
             Connection conex){
-        String sqlst = " UPDATE diasConsulta SET \n" +
+        String sqlst = " UPDATE diasconsulta SET \n" +
                        " id_diasConsul=?, \n" +
                        " lunes_c=?, \n" +
                        " martes_c=?, \n" +

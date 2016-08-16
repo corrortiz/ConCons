@@ -46,8 +46,15 @@ public class Tratamiento {
     public Tratamiento() {
     }
    
+    /**
+     * 
+     * @param id_proce
+     * @param nombre_proce
+     * @param id_cons
+     * @param conex 
+     */
     public void agregaTratamiento(String id_proce, String nombre_proce, String id_cons, Connection conex){
-        String sqlst =  "INSERT INTO `Procedimiento`\n" +
+        String sqlst =  "INSERT INTO `procedimiento`\n" +
                         "(`id_proce`,\n" +
                         "`nombre_proce`,\n" +
                         "`id_cons`)\n" +
@@ -79,7 +86,7 @@ public class Tratamiento {
         String sql = "SELECT `id_proce`,\n" +
                         "`nombre_proce`,\n" +
                         "`id_cons`\n" +
-                     "FROM `Procedimiento` WHERE id_cons = '"+idDiagnostico+"';";
+                     "FROM `procedimiento` WHERE id_cons = '"+idDiagnostico+"';";
         try(PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
             while (res.next()) {
@@ -94,35 +101,18 @@ public class Tratamiento {
         return listaDiagnostico;
     }
     
-    /*
-    public ObservableList<Diagnostico> listaDiagnosticos(Connection conex, String idPaciente, String idDiagnostico){
-        ObservableList<Diagnostico> listaDiagnostico = FXCollections.observableArrayList();
-        String sql = "SELECT `id_diag`,\n" +
-                        "`diagnostico_diag`,\n" +
-                        "`complemento_diag`,\n" +
-                        "`id_cons`\n" +
-                     "FROM `diagnostico` WHERE id_paciente = '"+idPaciente+"';";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
-            while (res.next()) {
-                listaDiagnostico.add(new Diagnostico( 
-                                    res.getString("id_diag"), 
-                                    res.getString("diagnostico_diag"), 
-                                    res.getString("complemento_diag"), 
-                                    res.getString("id_cons")));
-               }
-           } catch (SQLException ex) {
-               ex.printStackTrace();
-           }
-        return listaDiagnostico;
-    }*/
-    
+    /**
+     * 
+     * @param idDiagnostico
+     * @param conex
+     * @return 
+     */
     public Tratamiento cargaSoloUno(String idDiagnostico, Connection conex){
         Tratamiento somametropia = null;
         String sttm = "SELECT `id_proce`,\n" +
                         "`nombre_proce`,\n" +
                         "`id_cons`\n" +
-                    "FROM Procedimiento WHERE id_cons = '"+idDiagnostico+"';";
+                    "FROM procedimiento WHERE id_cons = '"+idDiagnostico+"';";
         try(PreparedStatement stta = conex.prepareStatement(sttm);
                ResultSet res = stta.executeQuery(); ) {
             if (res.next()) {
@@ -143,7 +133,7 @@ public class Tratamiento {
      * @param conex 
      */
     public void borrarTratamiento(String Dato, Connection conex){
-        String sttm = "DELETE FROM Procedimiento WHERE id_proce = '"+Dato+"'";
+        String sttm = "DELETE FROM procedimiento WHERE id_proce = '"+Dato+"'";
         try(PreparedStatement stta = conex.prepareStatement(sttm)) {
             conex.setAutoCommit(false);
             stta.addBatch();

@@ -9,7 +9,6 @@
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
 import com.aohys.copiaIMSS.BaseDatos.Hikari;
-import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

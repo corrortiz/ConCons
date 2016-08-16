@@ -11,7 +11,6 @@ package com.aohys.copiaIMSS.MVC.Modelo;
 /* Java Bean
 * Clase: Medico  */
 import com.aohys.copiaIMSS.BaseDatos.Hikari;
-import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -60,11 +59,11 @@ public class Usuario{
         private String tipo_medico;
         
         /**
-         * constructor lleno 
+         * 
          * @param id_medico
          * @param contraseña_medico
-     * @param nombre_medico
-     * @param apellido_medico
+         * @param nombre_medico
+         * @param apellido_medico
          * @param apMaterno_medico
          * @param cedulaProfecional_medico
          * @param especialidad_medico
@@ -72,7 +71,7 @@ public class Usuario{
          * @param correo_medico
          * @param tipo_medico 
          */
-	public Usuario(String id_medico, String contraseña_medico, 
+        public Usuario(String id_medico, String contraseña_medico, 
                 String nombre_medico, String apellido_medico, 
                 String apMaterno_medico, String cedulaProfecional_medico, 
                 String especialidad_medico, String telefono_medico, String correo_medico,
@@ -117,7 +116,7 @@ public class Usuario{
                                     String especialidad_medico, String telefono_medico, 
                                     String correo_medico, String tipo_medico,
                                     Connection conex){
-            String sqlst = "INSERT INTO Medico (id_medico, contraseña_medico,"+
+            String sqlst = "INSERT INTO medico (id_medico, contraseña_medico,"+
                                 "nombre_medico, apellido_medico," +
                                 "apMaterno_medico, cedulaProfecional_medico,"+
                                 "especialidad_medico, telefono_medico,"+
@@ -157,7 +156,7 @@ public class Usuario{
                 "        apMaterno_medico, cedulaProfecional_medico,\n" +
                 "        especialidad_medico, telefono_medico,\n" +
                 "        correo_medico, tipo_medico\n" +
-                "FROM Medico;";
+                "FROM medico;";
         try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
@@ -192,7 +191,7 @@ public class Usuario{
                     "        apMaterno_medico, cedulaProfecional_medico,\n" +
                     "        especialidad_medico, telefono_medico,\n" +
                     "        correo_medico, tipo_medico\n" +
-                    "FROM Medico WHERE tipo_medico = 'Medico';";
+                    "FROM medico WHERE tipo_medico = 'Medico';";
             try(Connection conex = dbConn.conectarBD();
                     PreparedStatement stta = conex.prepareStatement(sql);
                   ResultSet res = stta.executeQuery()) {
@@ -228,7 +227,7 @@ public class Usuario{
                 "        apMaterno_medico, cedulaProfecional_medico,\n" +
                 "        especialidad_medico, telefono_medico,\n" +
                 "        correo_medico, tipo_medico\n" +
-                "FROM Medico WHERE tipo_medico = 'Medico';";
+                "FROM medico WHERE tipo_medico = 'Medico';";
         listaMed.add(new Usuario("", "", "Mostrar todas las consultas", "", "", "", "", "", "", ""));
         try(PreparedStatement stta = conex.prepareStatement(sql);
               ResultSet res = stta.executeQuery()) {
@@ -272,7 +271,7 @@ public class Usuario{
                         "apMaterno_medico, cedulaProfecional_medico,\n" +
                         "especialidad_medico, telefono_medico,\n" +
                         "correo_medico, tipo_medico\n" +
-                        "FROM Medico WHERE tipo_medico = 'Medico' \n" +
+                        "FROM medico WHERE tipo_medico = 'Medico' \n" +
                         "AND especialidad_medico = '"+dato+"';";
             try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);
@@ -312,7 +311,7 @@ public class Usuario{
                         "apMaterno_medico, cedulaProfecional_medico,\n" +
                         "especialidad_medico, telefono_medico,\n" +
                         "correo_medico, tipo_medico\n" +
-                        "FROM Medico WHERE tipo_medico = 'Medico'\n" +
+                        "FROM medico WHERE tipo_medico = 'Medico'\n" +
                         "GROUP BY especialidad_medico;";
             try(Connection conex = dbConn.conectarBD();
                     PreparedStatement stta = conex.prepareStatement(sql);
@@ -343,7 +342,7 @@ public class Usuario{
          * @param conex 
          */
         public void BorrarMedico(String Dato, Connection conex){
-            String sttm = "delete from Medico where id_medico = '"+Dato+"'";
+            String sttm = "delete from medico where id_medico = '"+Dato+"'";
             try(PreparedStatement stta = conex.prepareStatement(sttm)) {
                 conex.setAutoCommit(false);
                 stta.addBatch();
@@ -365,7 +364,7 @@ public class Usuario{
          */
         public boolean verificarID(String Dato, Connection conex){
             boolean yaExiste = false;
-            String sttm = "SELECT id_medico FROM Medico";
+            String sttm = "SELECT id_medico FROM medico";
             try(PreparedStatement stta = conex.prepareStatement(sttm);
                   ResultSet rest = stta.executeQuery()) {
                 while (rest.next()) {
@@ -438,10 +437,9 @@ public class Usuario{
         }
         
         /**
-         * Carga solo el medico seleccionado 
+         * 
          * @param Dato
-         * @param conex
-         * @return Medico
+         * @return 
          */
         public Usuario CargaSoloUno(String Dato){
             String sttm = "SELECT  id_medico, contraseña_medico,\n" +
@@ -449,7 +447,7 @@ public class Usuario{
                             "        apMaterno_medico, cedulaProfecional_medico,\n" +
                             "        especialidad_medico, telefono_medico,\n" +
                             "        correo_medico, tipo_medico\n" +
-                            "        FROM Medico\n "+
+                            "        FROM medico\n "+
                             "        WHERE id_medico = '"+Dato+"'";
             try(Connection conex = dbConn.conectarBD();
                     PreparedStatement stta = conex.prepareStatement(sttm);
@@ -493,7 +491,7 @@ public class Usuario{
                                 String especialidad_medico, String telefono_medico, 
                                 String correo_medico,       String IdModificar, 
                                 String tipo_medico, Connection conex){
-            String sqlst = " UPDATE Medico SET \n" +
+            String sqlst = " UPDATE medico SET \n" +
                                 "id_medico=?, \n" +
                                 "contraseña_medico=?, \n" +
                                 "nombre_medico=?, \n" +

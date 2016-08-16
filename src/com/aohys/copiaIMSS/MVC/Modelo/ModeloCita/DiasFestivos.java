@@ -9,7 +9,6 @@
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
 import com.aohys.copiaIMSS.BaseDatos.Hikari;
-import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.MVC.Modelo.Usuario;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
@@ -68,7 +67,7 @@ public class DiasFestivos {
      * @param conex 
      */
     public void agregaDiaFes(String id_DiasFes, Date fecha_DiasFes, Connection conex){
-        String sqlst = "INSERT INTO DiasFestivos "+
+        String sqlst = "INSERT INTO diasfestivos "+
                         "(id_DiasFes, fecha_DiasFes)"+
                         "VALUES (?,?)";    
         try(PreparedStatement sttm = conex.prepareStatement(sqlst)) {
@@ -89,7 +88,7 @@ public class DiasFestivos {
     * @param conex 
     */ 
    public void eliminar(String ID, Connection conex){
-        String sqlst =  "DELETE FROM DiasFestivos \n" +
+        String sqlst =  "DELETE FROM diasfestivos \n" +
                         "WHERE id_DiasFes = '"+ID+"'";
         try (PreparedStatement sttm = conex.prepareStatement(sqlst)){
             conex.setAutoCommit(false);
@@ -110,7 +109,7 @@ public class DiasFestivos {
         protected ObservableList<DiasFestivos> call() throws Exception {
             ObservableList<DiasFestivos> listaFes = FXCollections.observableArrayList();
             String sql = "SELECT id_DiasFes, fecha_DiasFes \n" +
-                        "FROM DiasFestivos\n"+
+                        "FROM diasfestivos \n"+
                         "ORDER BY fecha_DiasFes ASC;";
             try(Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sql);

@@ -9,7 +9,6 @@
 package com.aohys.copiaIMSS.MVC.Modelo;
 
 import com.aohys.copiaIMSS.BaseDatos.Hikari;
-import com.aohys.copiaIMSS.BaseDatos.MysqlConnectionSingle;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.Date;
@@ -106,7 +105,7 @@ public class Paciente {
                     String sexo_paciente, Date fechaNacimiento_paciente, 
                     String curp_paciente,int edad_paciente, String telefono_paciente, 
                     String correo_paciente, Connection conex){
-        String sqlst = "INSERT INTO Paciente "+
+        String sqlst = "INSERT INTO paciente "+
                        " (id_paciente,  nombre_paciente, \n" +
                        " apellido_paciente,  apMaterno_paciente, \n" +
                        " sexo_paciente,  fechaNacimiento_paciente, \n" +
@@ -142,7 +141,7 @@ public class Paciente {
      */
     public void borrarPaciente(String Dato, Connection conex){
         if (new Cita().borrarCitasPaciente(Dato, conex)) {
-            String sqlst = "DELETE FROM Paciente WHERE id_paciente = '"+Dato+"'";    
+            String sqlst = "DELETE FROM paciente WHERE id_paciente = '"+Dato+"'";    
             try (PreparedStatement sttm = conex.prepareStatement(sqlst)){
                 conex.setAutoCommit(false);
                 sttm.addBatch();
@@ -159,7 +158,6 @@ public class Paciente {
     /**
      * Para modificar
      * @param Dato
-     * @param conex
      * @return 
      */
     public Paciente cargaSoloUno(String Dato){
@@ -168,7 +166,7 @@ public class Paciente {
                        " sexo_paciente,  fechaNacimiento_paciente, \n" +
                        " curp_paciente, edad_paciente, \n" +
                        " telefono_paciente, correo_paciente \n" +
-                        "FROM Paciente WHERE id_paciente = '"+Dato+"'"; 
+                        "FROM paciente WHERE id_paciente = '"+Dato+"'"; 
         try (   Connection conex = dbConn.conectarBD();
                 PreparedStatement stta = conex.prepareStatement(sttm);
                 ResultSet res = stta.executeQuery(sttm)){
@@ -211,7 +209,7 @@ public class Paciente {
                        " sexo_paciente,  fechaNacimiento_paciente, \n" +
                        " curp_paciente, edad_paciente, \n" +
                        " telefono_paciente, correo_paciente \n" +
-                        "FROM Paciente WHERE id_paciente = '"+idAs+"'"; 
+                        "FROM paciente WHERE id_paciente = '"+idAs+"'"; 
             try (   Connection conex = dbConn.conectarBD();
                     PreparedStatement stta = conex.prepareStatement(sttm);
                     ResultSet res = stta.executeQuery(sttm)){
@@ -253,7 +251,7 @@ public class Paciente {
             String paciRegrear = null;
             String sttm = "SELECT id_paciente,  nombre_paciente, \n" +
                        " apellido_paciente,  apMaterno_paciente\n" +
-                        "FROM Paciente WHERE id_paciente = '"+idAs+"'"; 
+                        "FROM paciente WHERE id_paciente = '"+idAs+"'"; 
             try (   Connection conex = dbConn.conectarBD();
                     PreparedStatement stta = conex.prepareStatement(sttm);
                     ResultSet res = stta.executeQuery(sttm)){
@@ -282,7 +280,7 @@ public class Paciente {
                        " sexo_paciente,  fechaNacimiento_paciente, \n" +
                        " curp_paciente, edad_paciente, \n" +
                        " telefono_paciente, correo_paciente \n" +
-                        "FROM Paciente ;"; 
+                        "FROM paciente ;"; 
         try (   PreparedStatement stta = conex.prepareStatement(sttm);
                 ResultSet res = stta.executeQuery(sttm)){
             while(res.next()) {
@@ -317,7 +315,7 @@ public class Paciente {
                       "sexo_paciente,  fechaNacimiento_paciente,\n" +
                       "curp_paciente, edad_paciente,\n" +
                       "telefono_paciente, correo_paciente\n" +
-                      "FROM Paciente WHERE concat_ws(' ', nombre_paciente, apellido_paciente, apMaterno_paciente)\n" +
+                      "FROM paciente WHERE concat_ws(' ', nombre_paciente, apellido_paciente, apMaterno_paciente)\n" +
                       "LIKE '%"+dato+"%';"; 
         try (   PreparedStatement stta = conex.prepareStatement(sttm);
                 ResultSet res = stta.executeQuery(sttm)){
@@ -352,7 +350,7 @@ public class Paciente {
                       "sexo_paciente,  fechaNacimiento_paciente,\n" +
                       "curp_paciente, edad_paciente,\n" +
                       "telefono_paciente, correo_paciente\n" +
-                      "FROM Paciente WHERE curp_paciente\n" +
+                      "FROM paciente WHERE curp_paciente\n" +
                       "LIKE '%"+dato+"%';"; 
         try (   PreparedStatement stta = conex.prepareStatement(sttm);
                 ResultSet res = stta.executeQuery(sttm)){
@@ -395,7 +393,7 @@ public class Paciente {
                     String sexo_paciente, Date fechaNacimiento_paciente, 
                     String curp_paciente,int edad_paciente, String telefono_paciente, 
                     String correo_paciente, Connection conex){
-        String sqlst = " UPDATE Paciente SET \n" +
+        String sqlst = " UPDATE paciente SET \n" +
                                 "id_paciente=?, \n" +
                                 "nombre_paciente=?, \n" +
                                 "apellido_paciente=?, \n" +

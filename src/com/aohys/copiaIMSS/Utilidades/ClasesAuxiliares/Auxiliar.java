@@ -358,7 +358,9 @@ public class Auxiliar {
                         cambio.setText(cambio.getText().replaceAll("[^0-9]", ""));
                         break;
                     case 4:
-                        cambio.setText(cambio.getText().replaceAll("[^a-z A-Z 0-9 ñÑ á-ú Á-Ú\\-\\s\\\\\\\\!\\\"#$%&()*+´',./:;<=>?@\\\\[\\\\]^_{|}~]+", ""));
+                        cambio.setText(
+                                cambio.getText().replaceAll(
+                                        "[^a-z A-Z 0-9 ñÑ á-ú Á-Ú\\-\\s\\\\\\\\!\\\"#$%&()*+´'°,./:;<=>?@\\\\[\\\\]^_{|}~]+", ""));
                         break;
                 }
                 if (newLength > nivel) {

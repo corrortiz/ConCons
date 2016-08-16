@@ -140,7 +140,7 @@ public class peridoVacaMedico {
      * @param conex 
      */
     public void borraPeridoVacacional(String Dato, Connection conex){
-        String sttm = "DELETE FROM peridoVacaMedico WHERE id_peridoVacaMedico = '"+Dato+"'";    
+        String sttm = "DELETE FROM peridovacamedico WHERE id_peridoVacaMedico = '"+Dato+"'";    
         try(PreparedStatement pttm = conex.prepareStatement(sttm)) {
             conex.setAutoCommit(false);
             pttm.addBatch();
