@@ -174,7 +174,7 @@ public class TraumáticosController implements Initializable {
      */
     private void formatoTexfields(){
         txtEdad.setTextFormatter(new TextFormatter      (aux.formato(3, 3)));
-        txtSecuelas.setTextFormatter(new TextFormatter  (aux.formato(500, 4)));
+        txtSecuelas.setTextFormatter(new TextFormatter  (aux.formato(3500, 4)));
         aux.toolTipSuperior(txtEdad, "campo numérico");
         aux.toolTipSuperior(txtSecuelas, "campo opcional");
     }

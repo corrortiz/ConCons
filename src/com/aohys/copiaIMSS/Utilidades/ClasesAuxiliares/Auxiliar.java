@@ -234,11 +234,6 @@ public class Auxiliar {
         }); 
     }
     
-    
-    
-    
-    
-    
     /**
      * Alerta Error
      * @param cabeza

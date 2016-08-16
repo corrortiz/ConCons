@@ -155,7 +155,7 @@ public class RayosXController implements Initializable {
      * formato de los texbox
      */
     private void formatoDeText(){
-        txaIndicaciones.setTextFormatter(new TextFormatter (aux.formato(900, 4)));
+        txaIndicaciones.setTextFormatter(new TextFormatter (aux.formato(3500, 4)));
         aux.toolTipSuperior(txaIndicaciones, "campo opcional");
     }
     

@@ -194,8 +194,8 @@ public class LaboratorialesController implements Initializable {
      * formato de los texbox
      */
     private void formatoDeText(){
-        otroExamen.setTextFormatter(new TextFormatter(aux.formato(500, 4)));
-        otroCultivo.setTextFormatter(new TextFormatter(aux.formato(500, 4)));
+        otroExamen.setTextFormatter(new TextFormatter(aux.formato(3500, 4)));
+        otroCultivo.setTextFormatter(new TextFormatter(aux.formato(3500, 4)));
         
         aux.toolTipSuperior(otroExamen, "campo opcional");
         aux.toolTipSuperior(otroCultivo, "campo opcional");

@@ -240,8 +240,8 @@ public class SegundaParteController implements Initializable {
      * formato de los texbox
      */
     private void formatoDeText(){
-        txtComplemento.setTextFormatter(new TextFormatter(aux.formato(500, 4)));
-        txaHigieDiete.setTextFormatter(new TextFormatter(aux.formato(500, 4)));
+        txtComplemento.setTextFormatter(new TextFormatter(aux.formato(3500, 4)));
+        txaHigieDiete.setTextFormatter(new TextFormatter(aux.formato(3500, 4)));
         aux.toolTipSuperior(txtComplemento, "campo opcional");
         aux.toolTipSuperior(txaHigieDiete, "campo opcional");
         

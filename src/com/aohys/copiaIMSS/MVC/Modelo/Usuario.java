@@ -391,9 +391,9 @@ public class Usuario{
         public boolean verificarContraseña(String usuario, String contra, Connection conex){
             boolean concuerdan = false;
             boolean hayusuario = false;
-            String sttm = "SELECT id_medico FROM Medico;";
+            String sttm = "SELECT id_medico FROM medico;";
             String cont = "SELECT contraseña_medico, nombre_medico, apellido_medico, apMaterno_medico \n"
-                    + "FROM Medico WHERE id_medico ='"+usuario+"';";
+                    + "FROM medico WHERE id_medico ='"+usuario+"';";
             try(PreparedStatement stta = conex.prepareStatement(sttm);
                   ResultSet rest = stta.executeQuery()) {
                 while (rest.next()) {

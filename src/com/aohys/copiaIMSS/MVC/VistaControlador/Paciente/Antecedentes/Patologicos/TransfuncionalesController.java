@@ -166,7 +166,7 @@ public class TransfuncionalesController implements Initializable {
      */
     private void formatoTexfields(){
         txtEdad.setTextFormatter(new TextFormatter      (aux.formato(3, 3)));
-        txtReaciones.setTextFormatter(new TextFormatter  (aux.formato(500, 4)));
+        txtReaciones.setTextFormatter(new TextFormatter  (aux.formato(3500, 4)));
         txtReaciones.setDisable(true);
         aux.toolTipSuperior(txtEdad, "campo numérico");
     }

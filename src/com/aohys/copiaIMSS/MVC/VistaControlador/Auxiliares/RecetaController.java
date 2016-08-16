@@ -217,7 +217,7 @@ public class RecetaController implements Initializable {
      * formato de los texbox
      */
     private void formatoDeText(){
-        txtAdicionales.setTextFormatter(new TextFormatter(aux.formato(500, 4)));
+        txtAdicionales.setTextFormatter(new TextFormatter(aux.formato(3500, 4)));
         txtIdicaciones.setTextFormatter(new TextFormatter(aux.formato(5, 3)));
         txtIntervalo.setTextFormatter(new TextFormatter(aux.formato(3, 3)));
         txtDura.setTextFormatter(new TextFormatter(aux.formato(3, 3)));
