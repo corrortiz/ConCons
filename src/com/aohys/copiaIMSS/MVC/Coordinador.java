@@ -23,12 +23,14 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -104,7 +106,10 @@ public class Coordinador extends Application {
             PrincipalController controller = loader.getController();
             controller.pasoPrincipal(this, stage);
             stage.centerOnScreen();
-            stage.setMaximized(false);
+            Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+            if(primaryScreenBounds.getHeight() < 1300){
+                stage.setMaximized(true);
+            }
             // Muesta la escena,
             stage.show();
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -140,7 +145,7 @@ public class Coordinador extends Application {
             IngresoController controller = loader.getController();
             controller.pasoPrincipal(this, primaryStage);
             primaryStage.centerOnScreen();
-            primaryStage.setMaximized(false);
+            
             // Muesta la escena,
             primaryStage.show();
             try(Connection conex = dbConn.conectarBD()) {
