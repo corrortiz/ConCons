@@ -37,7 +37,7 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
-                                    <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2">
+                                    <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" GridPane.columnSpan="2">
                                        <children>
                                           <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="3806.0" style="-fx-background-color: #333300;">
                                              <children>
@@ -46,7 +46,7 @@
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
                                                 </Label>
-                                                <Label styleClass="label-cabezeMayor" text="Elegir Médico" textFill="WHITE" AnchorPane.rightAnchor="10.0">
+                                                <Label styleClass="label-cabezeMayor" text="Elegir Médico" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
                                                    <font>
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
@@ -97,7 +97,7 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
-                                    <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2">
+                                    <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" GridPane.columnSpan="2">
                                        <children>
                                           <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="3806.0" style="-fx-background-color: #333300;">
                                              <children>
@@ -106,7 +106,7 @@
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
                                                 </Label>
-                                                <Label styleClass="label-cabezeMayor" text="Elegir Fecha" textFill="WHITE" AnchorPane.rightAnchor="10.0">
+                                                <Label styleClass="label-cabezeMayor" text="Elegir Fecha" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
                                                    <font>
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
@@ -261,7 +261,7 @@
                            <children>
                               <HBox layoutX="15.0" layoutY="15.0">
                                  <children>
-                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="3806.0" style="-fx-background-color: #333300;">
+                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" prefHeight="30.0" prefWidth="3806.0" style="-fx-background-color: #333300;">
                                        <children>
                                           <Label layoutX="-10.0" styleClass="label-cabezeMayor" text="Agenda de Citas " textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -280,9 +280,9 @@
                               </HBox>
                               <HBox>
                                  <children>
-                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="3806.0" style="-fx-background-color: #333300;">
+                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" prefHeight="30.0" prefWidth="3806.0" style="-fx-background-color: #333300;">
                                        <children>
-                                          <Label fx:id="lbNombreMedico" layoutX="54.0" layoutY="3.0" styleClass="label-cabezeMayor" text="Médico" AnchorPane.leftAnchor="20.0" />
+                                          <Label fx:id="lbNombreMedico" layoutX="54.0" layoutY="3.0" styleClass="label-cabezeMayor" text="Médico" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                  </children>
