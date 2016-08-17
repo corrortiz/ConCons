@@ -107,7 +107,7 @@ public class Coordinador extends Application {
             controller.pasoPrincipal(this, stage);
             stage.centerOnScreen();
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-            if(primaryScreenBounds.getHeight() < 1300){
+            if(primaryScreenBounds.getMaxX() < 1200){
                 stage.setMaximized(true);
             }
             // Muesta la escena,

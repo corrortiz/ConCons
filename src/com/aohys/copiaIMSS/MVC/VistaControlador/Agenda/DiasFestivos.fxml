@@ -44,7 +44,7 @@
                         <Insets left="230.0" right="230.0" />
                      </VBox.margin>
                   </DatePicker>
-                  <Button fx:id="bttGuardar" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Agregar Fecha" />
+                  <Button fx:id="bttGuardar" mnemonicParsing="false" prefHeight="30.0" prefWidth="250.0" text="Agregar Fecha" />
                </children>
             </VBox>
          </center>

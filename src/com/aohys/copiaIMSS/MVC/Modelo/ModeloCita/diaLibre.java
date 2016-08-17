@@ -8,6 +8,7 @@
 
 package com.aohys.copiaIMSS.MVC.Modelo.ModeloCita;
 
+import com.aohys.copiaIMSS.BaseDatos.Hikari;
 import com.aohys.copiaIMSS.Utilidades.ClasesAuxiliares.Auxiliar;
 import java.sql.Connection;
 import java.sql.Date;
@@ -30,7 +31,7 @@ public class diaLibre {
     private StringProperty id_medico;
     //Variables auxiliares
     Auxiliar aux = new Auxiliar();
-
+    Hikari dbConn = new Hikari();
     /**
      * Constructor lleno de la clase dia libre de medico
      * @param id_diaLibre
@@ -76,18 +77,18 @@ public class diaLibre {
 
     /**
      * Carga lista de dias libres del medico seleccionado 
-     * @param conex
      * @param idUs
      * @return 
      */
-    public ObservableList<diaLibre> listaDiasLibresMedico(Connection conex, String idUs){
+    public ObservableList<diaLibre> listaDiasLibresMedico(String idUs){
         ObservableList<diaLibre> listaDiaLibre = FXCollections.observableArrayList();
         String sql ="SELECT id_diaLibre, fecha_diaLibre,\n"+
                     "id_medico\n" +
                     "FROM dialibre WHERE id_medico = '"+idUs+"'" +
                     "ORDER BY fecha_diaLibre ASC;";
-        try(PreparedStatement stta = conex.prepareStatement(sql);
-              ResultSet res = stta.executeQuery()) {
+        try(Connection conex = dbConn.conectarBD();
+            PreparedStatement stta = conex.prepareStatement(sql);
+            ResultSet res = stta.executeQuery()) {
             while (res.next()) {
                 listaDiaLibre.add(new diaLibre( res.getString ("id_diaLibre"), 
                                                 res.getDate   ("fecha_diaLibre"),

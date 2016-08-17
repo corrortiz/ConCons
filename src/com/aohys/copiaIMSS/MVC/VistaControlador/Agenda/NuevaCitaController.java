@@ -14,6 +14,7 @@ import com.aohys.copiaIMSS.MVC.Modelo.Cita.cargaCitasFechaUsuarioTask;
 import com.aohys.copiaIMSS.MVC.Modelo.Cita.horariosCitasFechaUsuarioTask;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.DiasFestivos;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.DiasFestivos.listaDiasFestivosTask;
+import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.diaLibre;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.diasConsulta;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.diasConsulta.listaDiasConsultaMedicoTask;
 import com.aohys.copiaIMSS.MVC.Modelo.ModeloCita.horario;
@@ -91,6 +92,7 @@ public class NuevaCitaController implements Initializable {
     diasConsulta diasConsulta = new diasConsulta();
     peridoVacaMedico periVacaMedico = new peridoVacaMedico();
     DiasFestivos diasFestivos = new DiasFestivos();
+    diaLibre diaLibre = new diaLibre();
     horario horaio = new horario();
     Cita cita = new Cita();
     Paciente paci = new Paciente();
@@ -156,6 +158,7 @@ public class NuevaCitaController implements Initializable {
     
     ObservableList<Integer> listaDiasConsulta = FXCollections.observableArrayList();
     ObservableList<peridoVacaMedico> listPeridoMedicos = FXCollections.observableArrayList();
+    ObservableList<diaLibre> listDiasLibres = FXCollections.observableArrayList();
     ObservableList<DiasFestivos> listDiasFest = FXCollections.observableArrayList();
     ObservableList<Usuario> listaMed = FXCollections.observableArrayList();
     ObservableList<Usuario> listaServ = FXCollections.observableArrayList();
@@ -344,6 +347,8 @@ public class NuevaCitaController implements Initializable {
             listPeridoMedicos.clear();
             listPeridoMedicos.addAll(taskDos.getValue());
             limpiaCuadros();
+            listDiasLibres.clear();
+            listDiasLibres.addAll(diaLibre.listaDiasLibresMedico(idMedico));
             datePickerFormato(usuarioDate);
             usuario = usuarioDate;
             nombreMedico(usuarioDate);
@@ -418,6 +423,13 @@ public class NuevaCitaController implements Initializable {
                              setDisable(true);
                          }
                      }
+                    
+                    for(diaLibre dia : listDiasLibres){
+                        if (dia.getFecha_diaLibre().toLocalDate().equals(item)){
+                             setStyle("-fx-background-color: #ffc0cb;");
+                             setDisable(true);
+                         }
+                    }
                  }
                 //cancela los dias festivos
                 for(DiasFestivos diafes: listDiasFest){

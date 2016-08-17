@@ -86,7 +86,7 @@ public class ConfigurarAgendaController implements Initializable {
             horsss = horario.cargaSoloUno(usuario.getId_medico(), conex);
             disssConsss = diasConsulta.unSoloDiasConsultaMedico(conex, usuario.getId_medico());
             actualizaListaPeriodoVacacional(usuario.getId_medico());
-            tablaDiaLibre(conex);
+            tablaDiaLibre();
             cargaComponentes(conex);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -458,12 +458,11 @@ public class ConfigurarAgendaController implements Initializable {
     
     /**
      * carga la tabla de dias libres programados del medico seleccionado
-     * @param conex 
      */
-    private void tablaDiaLibre(Connection conex){
+    private void tablaDiaLibre(){
         colDiaLibreProgramado.setCellValueFactory (new PropertyValueFactory<>  ("fecha_diaLibre"));
         listDiLibres.clear();
-        listDiLibres.addAll(diLibre.listaDiasLibresMedico(conex, usuario.getId_medico()));
+        listDiLibres.addAll(diLibre.listaDiasLibresMedico(usuario.getId_medico()));
         tvDiaLibre.setItems(listDiLibres);
     }
     
@@ -531,7 +530,7 @@ public class ConfigurarAgendaController implements Initializable {
         bttDiaLibre.setOnAction(envento->{
             try(Connection conex = dbConn.conectarBD()) {
                 agregarDiaLibre(conex);
-                tablaDiaLibre(conex);
+                tablaDiaLibre();
                 aux.informacionUs("Día de descanso programado guardado", "Día de descanso programado guardado", 
                         String.format("El día %s de descanso programado fue guardado exitosamente en la base de datos",
                                 dpAusenciaProgramada.getValue()));
