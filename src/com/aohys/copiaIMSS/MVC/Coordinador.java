@@ -107,12 +107,6 @@ public class Coordinador extends Application {
             controller.pasoPrincipal(this, stage);
             stage.centerOnScreen();
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-            System.out.println(primaryScreenBounds.getHeight()+"altura");
-            System.out.println(primaryScreenBounds.getWidth()+"anchura");
-            System.out.println(primaryScreenBounds.getMaxX()+"anchura max x");
-            System.out.println(primaryScreenBounds.getMaxY()+"anchura max y");
-            System.out.println(primaryScreenBounds.getMinX()+"anchura min x");
-            System.out.println(primaryScreenBounds.getMinY()+"anchura min y");
             if(primaryScreenBounds.getMaxY() <= 768){
                 stage.setMaximized(true);
             }
