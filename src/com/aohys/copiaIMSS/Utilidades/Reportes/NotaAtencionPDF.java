@@ -222,7 +222,7 @@ public class NotaAtencionPDF {
                     0, 0));
             
             paragraph = new Paragraph();
-            String lugarExplora = "*Exploración Física*\n "+consul.getExploracion_cons();
+            String lugarExplora = "*Comentarios*\n "+consul.getExploracion_cons();
             paragraph.addMarkup(lugarExplora, 10, BaseFont.Helvetica);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));

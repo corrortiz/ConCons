@@ -109,12 +109,12 @@
                         <Insets bottom="10.0" left="5.0" right="10.0" top="15.0" />
                      </GridPane.margin>
                      <children>
-                        <Label text="Descripción de la exploración física ">
+                        <Label text="COMENTARIOS">
                            <VBox.margin>
                               <Insets left="10.0" />
                            </VBox.margin>
                         </Label>
-                        <TextArea fx:id="txaExplora" prefHeight="200.0" prefWidth="200.0" promptText="Descripción de la exploración física " wrapText="true" />
+                        <TextArea fx:id="txaExplora" prefHeight="200.0" prefWidth="200.0" promptText="COMENTARIOS" wrapText="true" />
                      </children>
                   </VBox>
                   <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
