@@ -28,6 +28,7 @@ import javafx.collections.ObservableList;
 import org.apache.pdfbox.multipdf.Overlay;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import rst.pdfbox.layout.elements.Document;
 import rst.pdfbox.layout.elements.Orientation;
@@ -88,19 +89,29 @@ public class EstudioPDF {
             
             Document document = new Document(a5_landscape);
             
+            String dir = "src/com/aohys/copiaIMSS/Utilidades/Fonts/";
+            PDType0Font regularFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "OpenSans-Regular.ttf"));  
+            PDType0Font obscuraFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "Roboto-Bold.ttf"));  
+            PDType0Font italicaFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "OpenSans-Italic.ttf"));  
+            PDType0Font italicaObscuraFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "OpenSans-SemiboldItalic.ttf"));  
+            
             paragraph = new Paragraph();
             LocalDate curDateTime = LocalDate.now();
             String algo = "*Fecha:* " +curDateTime.format(
                 DateTimeFormatter.ofPattern("EEEE',' d 'de' MMMM 'del' yyyy"));
             paragraph.addMarkup(algo, 11,
-                    BaseFont.Helvetica);
+                    regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Right, 0, 0,
                     0, 0, true));
                         
             document.add(new VerticalSpacer(20));
             paragraph = new Paragraph();
             String lugarQ = "*Solicitud de estudio*";
-            paragraph.addMarkup(lugarQ, 16, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarQ, 16, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
@@ -109,19 +120,19 @@ public class EstudioPDF {
             paragraph = new Paragraph();
             String lugar = "*Paciente*: "+String.format("%s %s %s", 
                     paci.getNombre_paciente(), paci.getApellido_paciente(), paci.getApMaterno_paciente());
-            paragraph.addMarkup(lugar, 12, BaseFont.Helvetica);
+            paragraph.addMarkup(lugar, 12, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
             paragraph = new Paragraph();
             String lugarS = "*Edad*: "+aux.edadConMes(paci.getFechaNacimiento_paciente());
-            paragraph.addMarkup(lugarS, 12, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarS, 12, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
             paragraph = new Paragraph();
             String lugarSexo = "*Sexo*: "+paci.getSexo_paciente();
-            paragraph.addMarkup(lugarSexo, 12, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarSexo, 12, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
@@ -130,7 +141,7 @@ public class EstudioPDF {
             paragraph = new Paragraph();
             String lugarx = "*Procedimiento:* "+String.format("%s", 
                     rayos.getNombre_rayos());
-            paragraph.addMarkup(lugarx, 11, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarx, 11, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             document.add(new VerticalSpacer(5));
@@ -139,7 +150,7 @@ public class EstudioPDF {
                 paragraph = new Paragraph();
                 String lugarx1 = "*Indicaciones*: "+String.format("%s", 
                         rayos.getIndicaciones_rayos());
-                paragraph.addMarkup(lugarx1, 11, BaseFont.Helvetica);
+                paragraph.addMarkup(lugarx1, 11, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                         0, 0));
                 document.add(new VerticalSpacer(10));

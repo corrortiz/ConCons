@@ -43,6 +43,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.pdfbox.multipdf.Overlay;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import rst.pdfbox.layout.elements.Document;
 import rst.pdfbox.layout.elements.Paragraph;
 import rst.pdfbox.layout.elements.VerticalSpacer;
@@ -125,6 +126,17 @@ public class HistorialPDF {
                     100f, 130f);
             
             String outputFileName = System.getenv("AppData")+"/AO Hys/Historiales/"+aux.generaID()+".pdf";
+            
+            String dir = "src/com/aohys/copiaIMSS/Utilidades/Fonts/";
+            PDType0Font regularFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "OpenSans-Regular.ttf"));  
+            PDType0Font obscuraFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "Roboto-Bold.ttf"));  
+            PDType0Font italicaFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "OpenSans-Italic.ttf"));  
+            PDType0Font italicaObscuraFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "OpenSans-SemiboldItalic.ttf")); 
+            
             Paragraph paragraph = new Paragraph();
             
             paragraph = new Paragraph();
@@ -132,7 +144,7 @@ public class HistorialPDF {
             String algo = "*Fecha:* " +curDateTime.format(
                 DateTimeFormatter.ofPattern("EEEE',' d 'de' MMMM 'del' yyyy"));
             paragraph.addMarkup(algo, 11,
-                    BaseFont.Helvetica);
+                    regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Right, 0, 0,
                     0, 0, true));
                         
@@ -142,7 +154,7 @@ public class HistorialPDF {
             String algoAS = "*Hora:* " +curHour.format(
                 DateTimeFormatter.ofPattern("hh:mm a"));
             paragraph.addMarkup(algoAS, 11,
-                    BaseFont.Helvetica);
+                    regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Right, 0, 0,
                     0, 0, true));
             
@@ -150,20 +162,20 @@ public class HistorialPDF {
             
             paragraph = new Paragraph();
             String lugarQ = "*Historial Médico*";
-            paragraph.addMarkup(lugarQ, 18, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarQ, 18, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
 
             paragraph = new Paragraph();
             String lugar = "*Paciente*: "+String.format("%s %s %s", 
                     paci.getNombre_paciente(), paci.getApellido_paciente(), paci.getApMaterno_paciente());
-            paragraph.addMarkup(lugar, 14, BaseFont.Helvetica);
+            paragraph.addMarkup(lugar, 14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
             paragraph = new Paragraph();
             String lugarS = "*Edad*: "+aux.edadConMes(paci.getFechaNacimiento_paciente());
-            paragraph.addMarkup(lugarS, 14, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarS, 14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
@@ -171,19 +183,19 @@ public class HistorialPDF {
             LocalDate bridDate = paci.getFechaNacimiento_paciente().toLocalDate();
             String cumple = "*Fecha de nacimiento*: " +bridDate.format(
                 DateTimeFormatter.ofPattern("EEEE',' d 'de' MMMM 'del' yyyy"));
-            paragraph.addMarkup(cumple, 14, BaseFont.Helvetica);
+            paragraph.addMarkup(cumple, 14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
             paragraph = new Paragraph();
             String lugarSexo = "*Sexo*: "+paci.getSexo_paciente();
-            paragraph.addMarkup(lugarSexo, 14, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarSexo, 14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
             paragraph = new Paragraph();
             String lugarCURP = "*CURP*: "+paci.getCurp_paciente();
-            paragraph.addMarkup(lugarCURP, 14, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarCURP, 14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             document.add(new VerticalSpacer(10));
@@ -221,45 +233,45 @@ public class HistorialPDF {
                 
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Información personal*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 paragraph = new Paragraph();
                 String hreligion = "*Religión:* "+religion;
-                paragraph.addMarkup(hreligion, 10, BaseFont.Helvetica);
+                paragraph.addMarkup(hreligion, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                         0, 0));
                 paragraph = new Paragraph();
                 String hLugarNaci = "*Lugar de nacimiento:* "+lugarNacimiento;
-                paragraph.addMarkup(hLugarNaci, 10, BaseFont.Helvetica);
+                paragraph.addMarkup(hLugarNaci, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                         0, 0));
                 paragraph = new Paragraph();
                 String hEstadoCivil = "*Estado Civil:* "+estadoCivil;
-                paragraph.addMarkup(hEstadoCivil, 10, BaseFont.Helvetica);
+                paragraph.addMarkup(hEstadoCivil, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                         0, 0));
                 paragraph = new Paragraph();
                 String hEscolaridad = String.format("*Escolaridad:* %s %s", escolaridad, completaImcompleta);
-                paragraph.addMarkup(hEscolaridad, 10, BaseFont.Helvetica);
+                paragraph.addMarkup(hEscolaridad, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                         0, 0));
                 paragraph = new Paragraph();
                 String hHigiene = "*Higiene personal:* "+higiene;
-                paragraph.addMarkup(hHigiene, 10, BaseFont.Helvetica);
+                paragraph.addMarkup(hHigiene, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                         0, 0));
                 
                 if (antNoPatoCargado.getFrecuencia_antNP() == 0) {
                     paragraph = new Paragraph();
                     String hActividadFisica = "*Actividad física:* "+tipoActividad;
-                    paragraph.addMarkup(hActividadFisica, 10, BaseFont.Helvetica);
+                    paragraph.addMarkup(hActividadFisica, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                 }else{
                     paragraph = new Paragraph();
                     String hFrecuencia = String.format("*Actividad física:* %s con una frecuencia de %s veces a(l) %s", 
                             tipoActividad,frecuenciaActividad,vecesActividad );
-                    paragraph.addMarkup(hFrecuencia, 10, BaseFont.Helvetica);
+                    paragraph.addMarkup(hFrecuencia, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                 }
@@ -268,20 +280,20 @@ public class HistorialPDF {
                     paragraph = new Paragraph();
                     String hSexualidad = String.format("*Preferencia sexual:* %s con %s pareja(s)", 
                         sexualidad, numeroParejas);
-                    paragraph.addMarkup(hSexualidad, 10, BaseFont.Helvetica);
+                    paragraph.addMarkup(hSexualidad, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                 }
                 
                 paragraph = new Paragraph();
                 String hSangre = "*Grupo sanguíneo:* "+tipoSangre;
-                paragraph.addMarkup(hSangre, 10, BaseFont.Helvetica);
+                paragraph.addMarkup(hSangre, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                         0, 0));
                 
                 paragraph = new Paragraph();
                 String hAlime = "*Calidad de la alimentación:* "+tipoAlimentacion;
-                paragraph.addMarkup(hAlime, 10, BaseFont.Helvetica);
+                paragraph.addMarkup(hAlime, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                         0, 0));
                 
@@ -299,24 +311,24 @@ public class HistorialPDF {
                 
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Antecedentes Heredo - Familiares*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 
                 paragraph = new Paragraph();
                 String aInfor = "*Familiar informante:* "+familiarInfor_masHeredo;
-                paragraph.addMarkup(aInfor, 10, BaseFont.Helvetica);
+                paragraph.addMarkup(aInfor, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                         0, 0));
                 
                 paragraph = new Paragraph();
                 String aRespo = "*Familiar responsable del paciente:* "+familiarResp_masHeredo;
-                paragraph.addMarkup(aRespo, 10, BaseFont.Helvetica);
+                paragraph.addMarkup(aRespo, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                         0, 0));
                 
                 paragraph = new Paragraph();
                 String aDiscuncion = "*Disfunción familiar:* "+disfuncion;
-                paragraph.addMarkup(aDiscuncion, 10, BaseFont.Helvetica);
+                paragraph.addMarkup(aDiscuncion, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                         0, 0));
                 
@@ -326,14 +338,14 @@ public class HistorialPDF {
             if (!listaPFamiliars.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Padecimientos hereditarios y familiares*", 
-                    12, BaseFont.Helvetica);
+                    12, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 for (ant_Heredo_Familiar ant : listaPFamiliars) {
                     paragraph = new Paragraph();
                     String hFrecuencia = String.format("*%s* padecido por el(la) %s del paciente quien se encuentra %s", 
                             ant.getPadecimiento_antHeredo(),ant.getFamiliares_antHeredo(), 
                             (ant.getFinado_antHeredo())?"finado":"vivo");
-                    paragraph.addMarkup(hFrecuencia, 10, BaseFont.Helvetica);
+                    paragraph.addMarkup(hFrecuencia, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                 }
@@ -343,13 +355,13 @@ public class HistorialPDF {
             if (!listaMedicos.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Padecimientos previos*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 for (patoMedicos ant : listaMedicos) {
                     paragraph = new Paragraph();
                     String hFrecuencia = String.format("*%s* padecido por el paciente cuando tenia %d %s", 
                             ant.getEnfermedad_pMed(),ant.getEdad_pMed(),ant.getDuracion_pMed());
-                    paragraph.addMarkup(hFrecuencia, 10, BaseFont.Helvetica);
+                    paragraph.addMarkup(hFrecuencia, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                 }
@@ -359,13 +371,13 @@ public class HistorialPDF {
             if (!listaQuirugicoses.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Antecedentes Quirúrgicos*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 for (patoQuirugicos ant : listaQuirugicoses) {
                     paragraph = new Paragraph();
                     String hFrecuencia = String.format("Cirugía de *%s* a la cual el paciente fue sometido a la edad de %d %s", 
                             ant.getCirugia_pQuir(),ant.getEdad_pQuir(),ant.getDuracion_pQuir());
-                    paragraph.addMarkup(hFrecuencia, 10, BaseFont.Helvetica);
+                    paragraph.addMarkup(hFrecuencia, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                 }
@@ -375,7 +387,7 @@ public class HistorialPDF {
             if (!listaTrauma.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Antecedentes Traumáticos*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 for (patoTraumaticos ant : listaTrauma) {
                     paragraph = new Paragraph();
@@ -384,7 +396,7 @@ public class HistorialPDF {
                             (ant.getLado_pTrauma().equals("NO APLICA"))?"":"sufrido del lado "+ant.getLado_pTrauma()+" ",
                             ant.getEdad_pTrauma(), ant.getDuracion_pTrauma(), 
                             (ant.getSecuelas_pTrauma().equals(""))?"":"con las siguientes secuelas "+ant.getSecuelas_pTrauma());
-                    paragraph.addMarkup(hFrecuencia, 10, BaseFont.Helvetica);
+                    paragraph.addMarkup(hFrecuencia, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                 }
@@ -394,7 +406,7 @@ public class HistorialPDF {
             if (!listaTransfu.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Antecedentes Transfuncionales*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 for (patoTransfucion ant : listaTransfu) {
                     paragraph = new Paragraph();
@@ -403,7 +415,7 @@ public class HistorialPDF {
                             (ant.getTipoTrasn_pTrans().equals("No lo sabe"))?"transfusión pero no sabe de que tipo fue":
                                     ant.getTipoTrasn_pTrans(),
                             (ant.getReacciones_pTrans())?"en la cual se produjeron las siguientes reacciones: "+ant.getTipoReacion_pTrans():"");
-                    paragraph.addMarkup(hFrecuencia, 10, BaseFont.Helvetica);
+                    paragraph.addMarkup(hFrecuencia, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                 }
@@ -413,13 +425,13 @@ public class HistorialPDF {
             if (!listaAlergia.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Alergias*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 for (patoAlergias ant : listaAlergia) {
                     paragraph = new Paragraph();
                     String hFrecuencia = String.format("a *%s*", 
                             ant.getDescripcion_pAler());
-                    paragraph.addMarkup(hFrecuencia, 10, BaseFont.Helvetica);
+                    paragraph.addMarkup(hFrecuencia, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                 }
@@ -429,7 +441,7 @@ public class HistorialPDF {
             if (!listaAddicion.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Adicciones*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 for (patoAdicciones ant : listaAddicion) {
                     paragraph = new Paragraph();
@@ -438,7 +450,7 @@ public class HistorialPDF {
                             (ant.getEdFinal_pAdicc() == aux.edadNumerico(paci.getFechaNacimiento_paciente().toLocalDate()))?
                                     "y hasta la fecha continua":"y termina a los "+ant.getEdFinal_pAdicc()+" años",
                             (ant.getDependencia_pAdicc())?"si":"no");
-                    paragraph.addMarkup(hFrecuencia, 10, BaseFont.Helvetica);
+                    paragraph.addMarkup(hFrecuencia, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                 }
@@ -448,7 +460,7 @@ public class HistorialPDF {
             if (!listaConsulta.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Consulta(s) médicas*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 document.add(new VerticalSpacer(5));
                 for (Consulta ant : listaConsulta) {
@@ -458,7 +470,7 @@ public class HistorialPDF {
                     String hFrecuencia = String.format("El *%s* con el medico *%s %s %s* especialista en *%s*", 
                             ant.getFecha_cons(), usa.getNombre_medico(), usa.getApellido_medico(), usa.getApMaterno_medico(),
                             usa.getEspecialidad_medico());
-                    paragraph.addMarkup(hFrecuencia, 11, BaseFont.Helvetica);
+                    paragraph.addMarkup(hFrecuencia, 11, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                     
@@ -476,18 +488,18 @@ public class HistorialPDF {
                     if (!listaDiagnos.isEmpty()) {
                         paragraph = new Paragraph();
                         paragraph.addMarkup("*Diagnóstico(S)*", 
-                            11, BaseFont.Helvetica);
+                            11, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                         document.add(paragraph);
                         for (Diagnostico e : listaDiagnos) {
                             paragraph = new Paragraph();
                             String text = String.format("*%s*", e.getDiagnostico_diag());
-                            paragraph.addMarkup(text,10, BaseFont.Helvetica);
+                            paragraph.addMarkup(text,10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                             document.add(paragraph);
                             if (!e.getComplemento_diag().isEmpty()) {
                                 paragraph = new Paragraph();
                                 String textint = String.format("Complemento de Dx: %s", 
                                         e.getComplemento_diag());
-                                paragraph.addMarkup(textint,10, BaseFont.Helvetica);
+                                paragraph.addMarkup(textint,10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                                 document.add(paragraph);
                             }
                             
@@ -497,12 +509,12 @@ public class HistorialPDF {
                     if (!listaTratamientos.isEmpty()) {
                         paragraph = new Paragraph();
                         paragraph.addMarkup("*Procedimiento(s)*", 
-                            11, BaseFont.Helvetica);
+                            11, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                         document.add(paragraph);
                         for (Tratamiento e : listaTratamientos) {
                             paragraph = new Paragraph();
                             String text = String.format("%s", e.getNombre_proce());
-                            paragraph.addMarkup(text,10, BaseFont.Helvetica);
+                            paragraph.addMarkup(text,10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                             document.add(paragraph);
                         }
                     }

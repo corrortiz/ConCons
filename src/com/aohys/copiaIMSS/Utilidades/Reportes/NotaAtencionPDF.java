@@ -39,6 +39,7 @@ import javafx.collections.ObservableList;
 import org.apache.pdfbox.multipdf.Overlay;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import rst.pdfbox.layout.elements.Document;
 import rst.pdfbox.layout.elements.Paragraph;
@@ -48,7 +49,6 @@ import rst.pdfbox.layout.elements.render.RenderContext;
 import rst.pdfbox.layout.elements.render.RenderListener;
 import rst.pdfbox.layout.elements.render.VerticalLayoutHint;
 import rst.pdfbox.layout.text.Alignment;
-import rst.pdfbox.layout.text.BaseFont;
 import rst.pdfbox.layout.text.Constants;
 import rst.pdfbox.layout.text.Position;
 import rst.pdfbox.layout.text.TextFlow;
@@ -113,6 +113,17 @@ public class NotaAtencionPDF {
             
             Document document = new Document(Constants.A4, hMargin, hMargin,
                     100f, 130f);
+
+            String dir = "src/com/aohys/copiaIMSS/Utilidades/Fonts/";
+            PDType0Font regularFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "OpenSans-Regular.ttf"));  
+            PDType0Font obscuraFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "Roboto-Bold.ttf"));  
+            PDType0Font italicaFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "OpenSans-Italic.ttf"));  
+            PDType0Font italicaObscuraFont = PDType0Font.load(document.getPDDocument(), 
+                    new File(dir + "OpenSans-SemiboldItalic.ttf"));  
+           
             
             String outputFileName = System.getenv("AppData")+"/AO Hys/NotasMedicas/"+aux.generaID()+".pdf";
             Paragraph paragraph = new Paragraph();
@@ -122,7 +133,7 @@ public class NotaAtencionPDF {
             String algo = "*Fecha:* " +curDateTime.format(
                 DateTimeFormatter.ofPattern("EEEE',' d 'de' MMMM 'del' yyyy"));
             paragraph.addMarkup(algo, 11,
-                    BaseFont.Helvetica);
+                    regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Right, 0, 0,
                     0, 0, true));
                         
@@ -132,7 +143,7 @@ public class NotaAtencionPDF {
             String algoAS = "*Hora:* " +curHour.format(
                 DateTimeFormatter.ofPattern("hh:mm a"));
             paragraph.addMarkup(algoAS, 11,
-                    BaseFont.Helvetica);
+                    regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Right, 0, 0,
                     0, 0, true));
             
@@ -140,7 +151,7 @@ public class NotaAtencionPDF {
             
             paragraph = new Paragraph();
             String lugarQ = "*Nota de Atención Médica*";
-            paragraph.addMarkup(lugarQ, 18, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarQ, 18, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
@@ -150,26 +161,26 @@ public class NotaAtencionPDF {
                 lugarSexoA = "*Primera Vez*";
             }else
                 lugarSexoA = "*Subsecuente*";
-            paragraph.addMarkup(lugarSexoA, 12, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarSexoA, 12, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
             paragraph = new Paragraph();
             String lugar = "*Paciente*: "+String.format("%s %s %s", 
                     paci.getNombre_paciente(), paci.getApellido_paciente(), paci.getApMaterno_paciente());
-            paragraph.addMarkup(lugar, 14, BaseFont.Helvetica);
+            paragraph.addMarkup(lugar, 14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
             paragraph = new Paragraph();
             String lugarS = "*Edad*: "+aux.edadConMes(paci.getFechaNacimiento_paciente());
-            paragraph.addMarkup(lugarS, 14, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarS, 14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
             paragraph = new Paragraph();
             String lugarSexo = "*Sexo*: "+paci.getSexo_paciente();
-            paragraph.addMarkup(lugarSexo, 14, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarSexo, 14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
@@ -187,7 +198,7 @@ public class NotaAtencionPDF {
             String textSoma = String.format("*Talla* %s cm *Peso* %s kg, *Temperatura* %s°C *Tensión Arterial* %s/%s mmHg \n "
                     + "*Frecuencia Cardíaca* %s latidos/min *Frecuencia Respiratoria* %s resp/min", 
                     peso, talla, temperatura, sistolica, distolica, cardiaca, respiratoria);
-            paragraph.addMarkup(textSoma,12, BaseFont.Helvetica);
+            paragraph.addMarkup(textSoma,12, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph);
             document.add(new VerticalSpacer(20));
             
@@ -195,18 +206,18 @@ public class NotaAtencionPDF {
             if (!listaDiagnos.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Diagnóstico(S)*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 for (Diagnostico e : listaDiagnos) {
                     paragraph = new Paragraph();
                     String text = String.format("*%s*", e.getDiagnostico_diag());
-                    paragraph.addMarkup(text,10, BaseFont.Helvetica);
+                    paragraph.addMarkup(text,10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph);
                     if (!e.getComplemento_diag().isEmpty()) {
                         paragraph = new Paragraph();
                         String textint = String.format("Complemento de Dx: %s", 
                                 e.getComplemento_diag());
-                        paragraph.addMarkup(textint,10, BaseFont.Helvetica);
+                        paragraph.addMarkup(textint,10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                         document.add(paragraph);
                     }
                     document.add(new VerticalSpacer(5));
@@ -217,13 +228,13 @@ public class NotaAtencionPDF {
             
             paragraph = new Paragraph();
             String lugarResumen = "*Resumen Clínico*\n "+consul.getMotivo_cons();
-            paragraph.addMarkup(lugarResumen, 10, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarResumen, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
             paragraph = new Paragraph();
             String lugarExplora = "*Comentarios*\n "+consul.getExploracion_cons();
-            paragraph.addMarkup(lugarExplora, 10, BaseFont.Helvetica);
+            paragraph.addMarkup(lugarExplora, 10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
             document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                     0, 0));
             
@@ -231,7 +242,7 @@ public class NotaAtencionPDF {
                 paragraph = new Paragraph();
                 String textint = String.format("*Indicaciones Higiénico-Dietéticas*\n %s", 
                         consul.getHigiDiete_cons());
-                paragraph.addMarkup(textint,10, BaseFont.Helvetica);
+                paragraph.addMarkup(textint,10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
             }
             
@@ -240,12 +251,12 @@ public class NotaAtencionPDF {
             if (!listaTratamientos.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Procedimiento(s)*", 
-                    12, BaseFont.Helvetica);
+                    12, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 for (Tratamiento e : listaTratamientos) {
                     paragraph = new Paragraph();
                     String text = String.format("%s", e.getNombre_proce());
-                    paragraph.addMarkup(text,10, BaseFont.Helvetica);
+                    paragraph.addMarkup(text,10, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph);
                     document.add(new VerticalSpacer(5));
                 }
@@ -255,7 +266,7 @@ public class NotaAtencionPDF {
             if (!listaDiria.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Medicamentos*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 for (Receta e : listaDiria) {
                     paragraph = new Paragraph();
@@ -263,13 +274,13 @@ public class NotaAtencionPDF {
                             e.getNombreMed_rec(), e.getIndicaMed_rec(), e.getCompleIndicaMed_rec(), 
                             e.getIntevaloMed_rec(), e.getTipoIntervaloMed_rec(), 
                             e.getDuacionMed_rec(), e.getTipoDucacionMed_rec());
-                    paragraph.addMarkup(text,8, BaseFont.Helvetica);
+                    paragraph.addMarkup(text,8, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph);
                     if (!e.getIndiAdicionalesMed_rec().isEmpty()) {
                         paragraph = new Paragraph();
                         String textint = String.format("Indicaciones adicionales: %s", 
                                 e.getIndiAdicionalesMed_rec());
-                        paragraph.addMarkup(textint,8, BaseFont.Helvetica);
+                        paragraph.addMarkup(textint,8, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                         document.add(paragraph);
                     }
                     document.add(new VerticalSpacer(5));
@@ -281,20 +292,20 @@ public class NotaAtencionPDF {
             if (!listaRayos.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Estudios de Radiodiagnóstico*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 for (Rayos rayos : listaRayos) {
                     paragraph = new Paragraph();
                     String lugarx = String.format("%s", 
                             rayos.getNombre_rayos());
-                    paragraph.addMarkup(lugarx, 8, BaseFont.Helvetica);
+                    paragraph.addMarkup(lugarx, 8, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                     document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                             0, 0));
                     if (!rayos.getIndicaciones_rayos().isEmpty()) {
                         paragraph = new Paragraph();
                         String lugarx1 = "*Indicaciones*: "+String.format("%s", 
                                 rayos.getIndicaciones_rayos());
-                        paragraph.addMarkup(lugarx1, 8, BaseFont.Helvetica);
+                        paragraph.addMarkup(lugarx1, 8, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                         document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                                 0, 0));
                     }
@@ -307,7 +318,7 @@ public class NotaAtencionPDF {
             if (!listaLaboDia.isEmpty()) {
                 paragraph = new Paragraph();
                 paragraph.addMarkup("*Estudios de laboratorio*", 
-                    14, BaseFont.Helvetica);
+                    14, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                 document.add(paragraph);
                 document.add(new ColumnLayout(2, 10));
                 listaLaboDia.stream().forEach((laba) -> {
@@ -317,7 +328,7 @@ public class NotaAtencionPDF {
                     for (String str : listaLaboratorial) {
                         paragraph = new Paragraph();
                         String lugarx = "*Estudio*: "+str;
-                        paragraph.addMarkup(lugarx, 8, BaseFont.Helvetica);
+                        paragraph.addMarkup(lugarx, 8, regularFont,obscuraFont,italicaFont,italicaObscuraFont);
                         document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0,
                                 0, 0));
                         document.add(new VerticalSpacer(5));
