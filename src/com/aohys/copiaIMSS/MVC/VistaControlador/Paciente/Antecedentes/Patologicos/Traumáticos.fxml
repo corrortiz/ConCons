@@ -162,7 +162,7 @@
                <contextMenu>
                   <ContextMenu>
                      <items>
-                        <Menu mnemonicParsing="false" text="Antecedentes Quirúrgicos">
+                        <Menu mnemonicParsing="false" text="Antecedentes Traumáticos">
                            <items>
                               <MenuItem mnemonicParsing="false" onAction="#borrar" text="Borrar" />
                            </items>

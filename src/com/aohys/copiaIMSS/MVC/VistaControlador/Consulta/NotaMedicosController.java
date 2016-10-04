@@ -377,7 +377,7 @@ public class NotaMedicosController implements Initializable {
         errorMessage += aux.verificaTexField(txtCardiaca, "Frecuencia cardíaca");
         errorMessage += aux.verificaTexField(txtRespiratoria, "Frecuencia respiratoria");
         errorMessage += aux.verificaTexField(txtTemperatura, "Temperatura");
-        errorMessage += aux.verificaTexField(txaExplora, "Exploración física");
+        errorMessage += aux.verificaTexField(txaExplora, "Comentarios");
         errorMessage += aux.verificaTexField(txaMotivo, "Padecimiento actual");
        
         

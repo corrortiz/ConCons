@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 public class Hikari {
     private static final DataSource DATA_SOURCE;
     private static final String DRIVER   =  "com.mysql.jdbc.Driver";
-    private static final String JDBC_URL =  "jdbc:mysql://copia-cluster.cluster-cyxilzamih2q.us-east-1.rds.amazonaws.com:3306/copia?&useSSL=false";
+    private static final String JDBC_URL =  "jdbc:mysql://localhost:3306/copia?&useSSL=false";
     Connection coneccion;
     
     static {
