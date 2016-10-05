@@ -51,7 +51,6 @@ import rst.pdfbox.layout.elements.render.RenderContext;
 import rst.pdfbox.layout.elements.render.RenderListener;
 import rst.pdfbox.layout.elements.render.VerticalLayoutHint;
 import rst.pdfbox.layout.text.Alignment;
-import rst.pdfbox.layout.text.BaseFont;
 import rst.pdfbox.layout.text.Constants;
 
 /**

@@ -115,6 +115,7 @@ public class NotaAtencionPDF {
                     100f, 130f);
 
             String dir = "src/com/aohys/copiaIMSS/Utilidades/Fonts/";
+           
             PDType0Font regularFont = PDType0Font.load(document.getPDDocument(), 
                     new File(dir + "OpenSans-Regular.ttf"));  
             PDType0Font obscuraFont = PDType0Font.load(document.getPDDocument(), 
@@ -122,7 +123,7 @@ public class NotaAtencionPDF {
             PDType0Font italicaFont = PDType0Font.load(document.getPDDocument(), 
                     new File(dir + "OpenSans-Italic.ttf"));  
             PDType0Font italicaObscuraFont = PDType0Font.load(document.getPDDocument(), 
-                    new File(dir + "OpenSans-SemiboldItalic.ttf"));  
+                    new File(dir + "OpenSans-SemiboldItalic.ttf")); 
            
             
             String outputFileName = System.getenv("AppData")+"/AO Hys/NotasMedicas/"+aux.generaID()+".pdf";
